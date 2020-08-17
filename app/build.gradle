@@ -1,0 +1,96 @@
+apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
+apply plugin: 'kotlin-kapt'
+
+android {
+    compileSdkVersion App.COMPILESDKVERSION
+    buildToolsVersion App.BUILDTOOLSVERSION
+
+    defaultConfig {
+        applicationId App.APPLICATION_ID
+        minSdkVersion App.MINSDKVERSION
+        targetSdkVersion App.TARGETSDKVERSION
+        versionCode App.APP_VERSION_CODE
+        versionName App.APP_VERSION_NAME
+
+        testInstrumentationRunner App.ANDROID_JUNIT_RUNNER
+
+        multiDexEnabled true
+
+        ndk {
+            abiFilters "armeabi-v7a"
+        }
+
+    }
+
+    /**
+     *  签名设置
+     */
+    signingConfigs {
+        debug {
+            storeFile file(DebugConfig.SIGN_STORE_FILE)
+            storePassword DebugConfig.SIGN_STORE_PASSWORD
+            keyAlias DebugConfig.SIGN_KEY_ALIAS
+            keyPassword DebugConfig.SIGN_KEY_PASSWORD
+        }
+
+        release {
+            storeFile file(ReleaseConfig.SIGN_STORE_FILE)
+            storePassword ReleaseConfig.SIGN_STORE_PASSWORD
+            keyAlias ReleaseConfig.SIGN_KEY_ALIAS
+            keyPassword ReleaseConfig.SIGN_KEY_PASSWORD
+        }
+    }
+
+    /**
+     * 设置默认打包名
+     */
+    android.applicationVariants.all { variant ->
+        variant.outputs.all { output ->
+            //获取当前模式debug或release
+            def buildType = variant.buildType.name
+            //获取当前系统时间
+            def releaseTime = new Date().format("yyyyMMddHHmm", TimeZone.getTimeZone("GMT+08:00"))
+            //这里修改apk文件名,格式为 module_buildType_version_time.apk
+            outputFileName = "aos_${buildType}_v${defaultConfig.versionName}_${releaseTime}.apk"
+        }
+    }
+
+    buildTypes {
+        debug {
+            buildConfigField "String", "BASE_URL", "\"" + DebugConfig.BASE_URL + "\""
+            buildConfigField "String", "PRODUCT_CHANNEL", "\"" + DebugConfig.PRODUCT_CHANNEL + "\""
+            signingConfig signingConfigs.debug
+        }
+        release {
+            buildConfigField "String", "BASE_URL", "\"" + ReleaseConfig.BASE_URL + "\""
+            buildConfigField "String", "PRODUCT_CHANNEL", "\"" + ReleaseConfig.PRODUCT_CHANNEL + "\""
+            minifyEnabled false
+            signingConfig signingConfigs.release
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    kotlinOptions {
+        jvmTarget = JavaVersion.VERSION_1_8.toString()
+    }
+
+    dataBinding{
+        enabled true
+    }
+
+}
+
+dependencies {
+    implementation fileTree(dir: "libs", include: ["*.jar"])
+    implementation project(path: ':avchat')
+    testImplementation AndroidTestingLib.JUNIT
+    androidTestImplementation AndroidTestingLib.ANDROIDX_TEST_EXT_JUNIT
+    androidTestImplementation AndroidTestingLib.ESPRESSO_CORE
+}

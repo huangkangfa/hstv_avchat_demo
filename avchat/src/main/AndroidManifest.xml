@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.android.avchat">
+
+    <application android:theme="@style/AppTheme">
+        <activity
+            android:name=".activity.RTCActivity"
+            android:screenOrientation="landscape" />
+        <activity
+            android:name=".activity.RTCEntranceActivity"
+            android:screenOrientation="landscape" />
+    </application>
+
+</manifest>

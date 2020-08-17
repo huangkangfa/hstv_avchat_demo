@@ -1,0 +1,82 @@
+apply plugin: 'com.android.library'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
+apply plugin: 'kotlin-kapt'
+
+android {
+    compileSdkVersion App.COMPILESDKVERSION
+    buildToolsVersion App.BUILDTOOLSVERSION
+
+    defaultConfig {
+        minSdkVersion App.MINSDKVERSION
+        targetSdkVersion App.TARGETSDKVERSION
+        versionCode 1
+        versionName "1.0.0"
+
+        testInstrumentationRunner App.ANDROID_JUNIT_RUNNER
+        consumerProguardFiles "consumer-rules.pro"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    compileOptions{
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+}
+
+dependencies {
+    api fileTree(dir: "libs", include: ["*.jar"])
+
+    api SupportLibs.KOTLIN_STDLIB
+    api SupportLibs.ANDROIDX_CORE_KTX
+    api SupportLibs.ANDROIDX_APPCOMPAT
+
+    api SupportLibs.ANDROIDX_RECYCLERVIEW
+    api SupportLibs.ANDROIDX_CONSTRAINTLAYOUT
+    api SupportLibs.ANDROIDX_LIFECYCLE
+
+    testImplementation AndroidTestingLib.JUNIT
+    androidTestImplementation AndroidTestingLib.ANDROIDX_TEST_EXT_JUNIT
+    androidTestImplementation AndroidTestingLib.ESPRESSO_CORE
+
+    api Libs.NAVIGATION_FRAGMENT_KTX
+    api Libs.NAVIGATION_UI_KTX
+
+    api Libs.GLIDE_OKHTTP
+    api Libs.GLIDE
+    api Libs.GLIDE_TRANSFORMATIONS
+    kapt Kapts.GLIDE_COMPILER
+
+    api Libs.MATERIAL
+
+    api Libs.OKHTTP
+
+    api Libs.RXHTTP
+    api Libs.RXLIFE
+
+    api Libs.RXJAVA
+    api Libs.RXANDROID
+    api Libs.RXBINDING_CORE
+    api Libs.RXPERMISSIONS
+    kapt Kapts.RXHTTP_COMPILER
+
+    api Libs.BINDING_COLLECTION_ADAPTER
+    api Libs.BINDING_COLLECTION_ADAPTER_RECYCLERVIEW
+    api Libs.BINDING_COLLECTION_ADAPTER_VIEWPAGER2
+
+    api Libs.AUTOSZIE
+
+    api Libs.MULTIDEX
+
+    api Libs.GSON
+
+    api Libs.XLOG
+
+}

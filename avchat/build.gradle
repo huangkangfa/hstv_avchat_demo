@@ -1,0 +1,36 @@
+apply plugin: 'com.android.library'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
+apply plugin: 'kotlin-kapt'
+
+android {
+    compileSdkVersion App.COMPILESDKVERSION
+    buildToolsVersion App.BUILDTOOLSVERSION
+
+    defaultConfig {
+        minSdkVersion App.MINSDKVERSION
+        targetSdkVersion App.TARGETSDKVERSION
+        versionCode 1
+        versionName "1.0.0"
+
+        testInstrumentationRunner App.ANDROID_JUNIT_RUNNER
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+}
+
+dependencies {
+    api fileTree(dir: "libs", include: ["*.jar"])
+    testImplementation AndroidTestingLib.JUNIT
+    androidTestImplementation AndroidTestingLib.ANDROIDX_TEST_EXT_JUNIT
+    androidTestImplementation AndroidTestingLib.ESPRESSO_CORE
+
+    api project(path: ':baselib')
+    api Libs.TENCENT_LITEAV
+    api Libs.TENCENT_IM
+}
