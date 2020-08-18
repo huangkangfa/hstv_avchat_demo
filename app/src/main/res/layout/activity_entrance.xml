@@ -5,7 +5,7 @@
     <data>
         <variable
             name="vm"
-            type="com.android.hsdemo.entrance.VMEntrance" />
+            type="com.android.hsdemo.ui.entrance.VMEntrance" />
     </data>
 
     <RelativeLayout

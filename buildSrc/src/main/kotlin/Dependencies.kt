@@ -39,6 +39,12 @@ object DebugConfig {
     //渠道名称
     const val PRODUCT_CHANNEL = "hkf"
 
+    //腾讯云音视频sdkAppId
+    const val TENCENT_APP_ID = 1400410071
+
+    //腾讯云音视频secretkey
+    const val TENCENT_LIVE_SECRETKEY =
+        "7a697d1e8761b81e14078a6015bb3cd7465f171d99de59ac20d25d6bd42e7528"
 }
 
 /**
@@ -57,6 +63,13 @@ object ReleaseConfig {
 
     //渠道名称
     const val PRODUCT_CHANNEL = "coffee"
+
+    //腾讯云音视频sdkAppId
+    const val TENCENT_APP_ID = 1400410071
+
+    //腾讯云音视频secretkey
+    const val TENCENT_LIVE_SECRETKEY =
+        "7a697d1e8761b81e14078a6015bb3cd7465f171d99de59ac20d25d6bd42e7528"
 
 }
 
@@ -82,7 +95,11 @@ object Versions {
     const val RXBINDING = "3.1.0"
     const val RXHTTP = "2.1.1"
     const val RXLIFE = "2.0.0"
-    const val RXPERMISSIONS = "0.12"
+    const val RXPERMISSIONS = "0.10.2"
+
+    const val AUTODISPOSE = "1.4.0"
+
+    const val TIMBER = "4.7.1"
 
     const val NAVIGATION = "2.3.0"
 
@@ -174,6 +191,11 @@ object Libs {
     const val RXBINDING_CORE = "com.jakewharton.rxbinding3:rxbinding-core:${Versions.RXBINDING}"
     const val RXPERMISSIONS = "com.github.tbruyelle:rxpermissions:${Versions.RXPERMISSIONS}"
 
+    //autodispose
+    const val AUTODISPOSE = "com.uber.autodispose:autodispose:${Versions.AUTODISPOSE}"
+    const val AUTODISPOSEANDROID ="com.uber.autodispose:autodispose-android:${Versions.AUTODISPOSE}"
+    const val AUTODISPOSEARCHCOMPONENTS ="com.uber.autodispose:autodispose-android-archcomponents:${Versions.AUTODISPOSE}"
+
     //adapter
     const val BINDING_COLLECTION_ADAPTER =
         "me.tatarka.bindingcollectionadapter2:bindingcollectionadapter:${Versions.BINDING_COLLECTION_ADAPTER}"
@@ -181,6 +203,8 @@ object Libs {
         "me.tatarka.bindingcollectionadapter2:bindingcollectionadapter-recyclerview:${Versions.BINDING_COLLECTION_ADAPTER}"
     const val BINDING_COLLECTION_ADAPTER_VIEWPAGER2 =
         "me.tatarka.bindingcollectionadapter2:bindingcollectionadapter-viewpager2:${Versions.BINDING_COLLECTION_ADAPTER}"
+
+    const val TIMBER = "com.jakewharton.timber:timber:${Versions.TIMBER}"
 
     //autosize
     const val AUTOSZIE = "me.jessyan:autosize:${Versions.AUTOSIZE}"

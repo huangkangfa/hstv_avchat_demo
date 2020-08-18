@@ -41,7 +41,7 @@ public class GenerateTestUserSig {
      * 进入腾讯云实时音视频[控制台](https://console.cloud.tencent.com/rav ) 创建应用，即可看到 SDKAppId，
      * 它是腾讯云用于区分客户的唯一标识。
      */
-    public static final int SDKAPPID = 1400410071;
+    public static int SDKAPPID = AVChatManager.INSTANCE.getMSdkAppId();
 
 
     /**
@@ -63,7 +63,7 @@ public class GenerateTestUserSig {
      * 注意：该方案仅适用于调试Demo，正式上线前请将 UserSig 计算代码和密钥迁移到您的后台服务器上，以避免加密密钥泄露导致的流量盗用。
      * 文档：https://cloud.tencent.com/document/product/647/17275#Server
      */
-    public static final String SECRETKEY = "7a697d1e8761b81e14078a6015bb3cd7465f171d99de59ac20d25d6bd42e7528";
+    public static String SECRETKEY = AVChatManager.INSTANCE.getLiveSecretKey();
 
     /**
      * 计算 UserSig 签名

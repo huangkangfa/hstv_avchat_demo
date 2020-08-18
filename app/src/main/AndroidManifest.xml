@@ -38,13 +38,14 @@
             android:value="600" />
 
         <activity
-            android:name="com.android.hsdemo.entrance.ActivityEntrance"
+            android:name="com.android.hsdemo.ui.entrance.ActivityEntrance"
             android:screenOrientation="landscape">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".ui.rtc.ActivityRTC"/>
     </application>
 
 </manifest>

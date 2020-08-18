@@ -1,9 +1,8 @@
-package com.android.hsdemo.entrance
+package com.android.hsdemo.ui.entrance
 
 import android.app.Activity
 import android.app.Application
 import android.content.Context
-import android.content.Intent
 import android.os.Build
 import android.text.TextUtils
 import android.view.View
@@ -12,11 +11,10 @@ import android.view.inputmethod.InputMethodManager
 import androidx.annotation.RequiresApi
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
-import com.android.avchat.Constant
-import com.android.avchat.activity.RTCActivity
 import com.android.baselib.ActivityManager
 import com.android.baselib.utils.showShortToast
 import com.android.hsdemo.R
+import com.android.hsdemo.ui.rtc.ActivityRTC
 
 class VMEntrance(application: Application) : AndroidViewModel(application) {
     /**
@@ -56,10 +54,11 @@ class VMEntrance(application: Application) : AndroidViewModel(application) {
         }
         val activity: Activity? = ActivityManager.get()
         if (activity != null) {
-            val intent = Intent(activity, RTCActivity::class.java)
-            intent.putExtra(Constant.ROOM_ID, roomId.value)
-            intent.putExtra(Constant.USER_ID, userName.value)
-            activity.startActivity(intent)
+            ActivityRTC.start(activity,userName.value.toString(),roomId.value.toString())
+//            val intent = Intent(activity, RTCActivity::class.java)
+//            intent.putExtra(KEY_ROOM_ID, roomId.value)
+//            intent.putExtra(KEY_USER_ID, userName.value)
+//            activity.startActivity(intent)
         } else {
             showShortToast("发生错误")
         }

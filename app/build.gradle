@@ -61,11 +61,15 @@ android {
         debug {
             buildConfigField "String", "BASE_URL", "\"" + DebugConfig.BASE_URL + "\""
             buildConfigField "String", "PRODUCT_CHANNEL", "\"" + DebugConfig.PRODUCT_CHANNEL + "\""
+            buildConfigField "String", "TENCENT_LIVE_SECRETKEY", "\"" + DebugConfig.TENCENT_LIVE_SECRETKEY + "\""
+            buildConfigField "int", "TENCENT_APP_ID", "" + DebugConfig.TENCENT_APP_ID + ""
             signingConfig signingConfigs.debug
         }
         release {
             buildConfigField "String", "BASE_URL", "\"" + ReleaseConfig.BASE_URL + "\""
             buildConfigField "String", "PRODUCT_CHANNEL", "\"" + ReleaseConfig.PRODUCT_CHANNEL + "\""
+            buildConfigField "String", "TENCENT_LIVE_SECRETKEY", "\"" + ReleaseConfig.TENCENT_LIVE_SECRETKEY + "\""
+            buildConfigField "int", "TENCENT_APP_ID", "" + ReleaseConfig.TENCENT_APP_ID + ""
             minifyEnabled false
             signingConfig signingConfigs.release
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
@@ -81,7 +85,7 @@ android {
         jvmTarget = JavaVersion.VERSION_1_8.toString()
     }
 
-    dataBinding{
+    dataBinding {
         enabled true
     }
 

@@ -3,12 +3,6 @@
     package="com.android.avchat">
 
     <application android:theme="@style/AppTheme">
-        <activity
-            android:name=".activity.RTCActivity"
-            android:screenOrientation="landscape" />
-        <activity
-            android:name=".activity.RTCEntranceActivity"
-            android:screenOrientation="landscape" />
     </application>
 
 </manifest>
