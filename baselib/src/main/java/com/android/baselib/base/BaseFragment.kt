@@ -31,7 +31,7 @@ abstract class BaseFragment<VM : AndroidViewModel, VDB : ViewDataBinding> : Frag
         ).get(vmClass)
         mViewDataBinding.setVariable(getVariableId(), mViewModel)
         mViewDataBinding.lifecycleOwner = this
-        return super.onCreateView(inflater, container, savedInstanceState)
+        return mViewDataBinding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
