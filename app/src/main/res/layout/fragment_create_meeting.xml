@@ -45,6 +45,7 @@
                 <androidx.appcompat.widget.AppCompatEditText
                     android:id="@+id/etMeetingName"
                     style="@style/DefaultEditTextStyle"
+                    android:layout_width="275dp"
                     android:layout_height="35dp"
                     android:hint="@string/hint_meeting_name"/>
 
@@ -61,9 +62,20 @@
                     android:layout_marginEnd="10dp"
                     android:text="@string/meeting_people" />
 
-                <androidx.appcompat.widget.AppCompatEditText
-                    style="@style/DefaultEditTextStyle"
-                    android:layout_height="35dp"/>
+                <TextView
+                    android:layout_width="251dp"
+                    android:layout_height="wrap_content"
+                    android:textSize="15sp"
+                    android:textColor="@color/white"
+                    android:paddingLeft="10dp"
+                    android:paddingRight="10dp"
+                    android:maxLines="1"
+                    android:ellipsize="end"
+                    android:text="1391234975、135678432等3人"/>
+
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"/>
 
             </LinearLayout>
             <LinearLayout
@@ -81,6 +93,7 @@
                 <androidx.appcompat.widget.AppCompatEditText
                     android:id="@+id/etMeetingPwd"
                     style="@style/DefaultEditTextStyle"
+                    android:layout_width="275dp"
                     android:layout_height="35dp"
                     android:hint="@string/hint_meeting_pwd"/>
 
@@ -99,6 +112,7 @@
 
                 <androidx.appcompat.widget.AppCompatEditText
                     style="@style/DefaultEditTextStyle"
+                    android:layout_width="275dp"
                     android:layout_height="35dp"/>
 
             </LinearLayout>

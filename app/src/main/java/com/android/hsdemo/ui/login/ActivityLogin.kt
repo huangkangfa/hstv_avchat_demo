@@ -85,7 +85,10 @@ class ActivityLogin : BaseFragmentActivity() {
                             override fun success(t: User) {
                                 dialogWait.dismiss()
                                 showShortToast("注册成功")
-                                goMain(t,fragmentRegister.mViewModel.userPassword2.value.toString())
+                                goMain(
+                                    t,
+                                    fragmentRegister.mViewModel.userPassword2.value.toString()
+                                )
                             }
 
                             override fun failed(msg: String) {
@@ -142,7 +145,7 @@ class ActivityLogin : BaseFragmentActivity() {
         fragmentLogin.mViewModel.login(this, object : HttpCallback<User> {
             override fun success(t: User) {
                 dialogWait.dismiss()
-                goMain(t,fragmentLogin.mViewModel.userPassword.value.toString())
+                goMain(t, fragmentLogin.mViewModel.userPassword.value.toString())
             }
 
             override fun failed(msg: String) {
@@ -174,7 +177,7 @@ class ActivityLogin : BaseFragmentActivity() {
     /**
      * 跳转至首页
      */
-    fun goMain(t: User,pwd:String){
+    fun goMain(t: User, pwd: String) {
         //存储关键信息
         Preferences.saveValue(KEY_USER_NAME, t.userName.toString())
         Preferences.saveValue(KEY_USER_PASSWORD, pwd)
@@ -191,7 +194,7 @@ class ActivityLogin : BaseFragmentActivity() {
     }
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent): Boolean {
-        if(keyCode == KeyEvent.KEYCODE_BACK){
+        if (keyCode == KeyEvent.KEYCODE_BACK && getVisibleFragment() == fragmentLogin) {
             dialogHint.show()
             return true
         }
