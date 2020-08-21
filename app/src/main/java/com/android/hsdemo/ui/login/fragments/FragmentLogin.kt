@@ -63,22 +63,39 @@ class FragmentLogin : BaseFragment<VMLogin, FragmentLoginBinding>(), View.OnFocu
         if (focus) {
             when {
                 btnRegistered == view -> {
-                    changeViewBackground(0, btns)
-                    changeTextColor(0, tvs)
-                    changeImageSrc(0, imgs)
+                    btns[0]?.selectedResId?.let { btnRegistered.setBackgroundResource(it) }
+                    tvs[0]?.selectedResId?.let { context?.getColor(it)?.let { btnRegisteredTv.setTextColor(it) } }
+                    imgs[0]?.selectedResId?.let { btnRegisteredImg.setImageResource(it) }
                 }
                 btnLogin == view -> {
-                    changeViewBackground(1, btns)
-                    changeTextColor(1, tvs)
-                    changeImageSrc(1, imgs)
+                    btns[1]?.selectedResId?.let { btnLogin.setBackgroundResource(it) }
+                    tvs[1]?.selectedResId?.let { context?.getColor(it)?.let { btnLoginTv.setTextColor(it) } }
+                    imgs[1]?.selectedResId?.let { btnLoginImg.setImageResource(it) }
                 }
                 else -> {
-                    changeViewBackground(2, btns)
-                    changeTextColor(2, tvs)
-                    changeImageSrc(2, imgs)
+                    btns[2]?.selectedResId?.let { btnForget.setBackgroundResource(it) }
+                    tvs[2]?.selectedResId?.let { context?.getColor(it)?.let { btnForgetTv.setTextColor(it) } }
+                    imgs[2]?.selectedResId?.let { btnForgetImg.setImageResource(it) }
                 }
             }
         } else {
+            when {
+                btnRegistered == view -> {
+                    btns[0]?.unSelectedResId?.let { btnRegistered.setBackgroundResource(it) }
+                    tvs[0]?.unSelectedResId?.let { context?.getColor(it)?.let { btnRegisteredTv.setTextColor(it) } }
+                    imgs[0]?.unSelectedResId?.let { btnRegisteredImg.setImageResource(it) }
+                }
+                btnLogin == view -> {
+                    btns[1]?.unSelectedResId?.let { btnLogin.setBackgroundResource(it) }
+                    tvs[1]?.unSelectedResId?.let { context?.getColor(it)?.let { btnLoginTv.setTextColor(it) } }
+                    imgs[1]?.unSelectedResId?.let { btnLoginImg.setImageResource(it) }
+                }
+                else -> {
+                    btns[2]?.unSelectedResId?.let { btnForget.setBackgroundResource(it) }
+                    tvs[2]?.unSelectedResId?.let { context?.getColor(it)?.let { btnForgetTv.setTextColor(it) } }
+                    imgs[2]?.unSelectedResId?.let { btnForgetImg.setImageResource(it) }
+                }
+            }
             if (isFocusClear(btns)) {
                 changeViewBackground(-1, btns)
                 changeTextColor(-1, tvs)

@@ -96,11 +96,11 @@ class VMLogin(application: Application) : AndroidViewModel(application) {
      */
     fun login(owner: LifecycleOwner, callback: HttpCallback<User>) {
         if (TextUtils.isEmpty(userName.value.toString())) {
-            showShortToast("用户张账号不能为空")
+            callback.failed("用户张账号不能为空")
             return
         }
         if (TextUtils.isEmpty(userPassword.value.toString())) {
-            showShortToast("密码不能为空")
+            callback.failed("密码不能为空")
             return
         }
         RemoteRepositoryImpl.login(userName.value.toString(), userPassword.value.toString())
@@ -115,11 +115,11 @@ class VMLogin(application: Application) : AndroidViewModel(application) {
      */
     fun sendVerifyCode(owner: LifecycleOwner, callback: HttpCallback<String>) {
         if (TextUtils.isEmpty(userName2.value.toString())) {
-            showShortToast("手机号码不能为空")
+            callback.failed("手机号码不能为空")
             return
         }
         if (userName2.value.toString().length != 11) {
-            showShortToast("手机号码不正确")
+            callback.failed("手机号码不正确")
             return
         }
         var type = 0
@@ -138,23 +138,23 @@ class VMLogin(application: Application) : AndroidViewModel(application) {
      */
     fun modifyPassword(owner: LifecycleOwner, callback: HttpCallback<String>) {
         if (TextUtils.isEmpty(userName2.value.toString())) {
-            showShortToast("手机号码不能为空")
+            callback.failed("手机号码不能为空")
             return
         }
         if (TextUtils.isEmpty(verificationCode.value.toString())) {
-            showShortToast("验证码不能为空")
+            callback.failed("验证码不能为空")
             return
         }
         if (TextUtils.isEmpty(userPassword2.value.toString())) {
-            showShortToast("密码不能为空")
+            callback.failed("密码不能为空")
             return
         }
         if (TextUtils.isEmpty(repeatPassword.value.toString())) {
-            showShortToast("重复密码不能为空")
+            callback.failed("重复密码不能为空")
             return
         }
-        if (TextUtils.equals(repeatPassword.value.toString(),userPassword2.value.toString())) {
-            showShortToast("2次密码不一致")
+        if (!TextUtils.equals(repeatPassword.value.toString(),userPassword2.value.toString())) {
+            callback.failed("2次密码不一致")
             return
         }
         RemoteRepositoryImpl.modifyPassword(
@@ -173,23 +173,23 @@ class VMLogin(application: Application) : AndroidViewModel(application) {
      */
     fun register(owner: LifecycleOwner, callback: HttpCallback<User>) {
         if (TextUtils.isEmpty(userName2.value.toString())) {
-            showShortToast("手机号码不能为空")
+            callback.failed("手机号码不能为空")
             return
         }
         if (TextUtils.isEmpty(verificationCode.value.toString())) {
-            showShortToast("验证码不能为空")
+            callback.failed("验证码不能为空")
             return
         }
         if (TextUtils.isEmpty(userPassword2.value.toString())) {
-            showShortToast("密码不能为空")
+            callback.failed("密码不能为空")
             return
         }
         if (TextUtils.isEmpty(repeatPassword.value.toString())) {
-            showShortToast("重复密码不能为空")
+            callback.failed("重复密码不能为空")
             return
         }
-        if (TextUtils.equals(repeatPassword.value.toString(),userPassword2.value.toString())) {
-            showShortToast("2次密码不一致")
+        if (!TextUtils.equals(repeatPassword.value.toString(),userPassword2.value.toString())) {
+            callback.failed("2次密码不一致")
             return
         }
         RemoteRepositoryImpl.register(

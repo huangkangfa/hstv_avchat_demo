@@ -1,5 +1,6 @@
 package com.android.baselib.utils
 
+import android.app.Activity
 import android.util.TypedValue
 import com.android.baselib.global.AppGlobal.context
 

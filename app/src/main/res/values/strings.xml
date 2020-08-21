@@ -6,6 +6,9 @@
     <string name="create_meeting">发起会议</string>
     <string name="address_book">通讯录</string>
 
+    <string name="create_meeting_new">新建会议</string>
+    <string name="initiate">发起</string>
+
     <string name="rtc_room_input_error_tip">"房间号和用户名不能为空"</string>
     <string name="rtc_permisson_error_tip">"用户没有允许需要的权限，加入通话失败"</string>
 
@@ -27,5 +30,12 @@
     <string name="input_verification_code">请输入验证码</string>
     <string name="input_password">请输入密码</string>
     <string name="send_verify_code">发送验证码</string>
+
+    <string name="meeting_name">会议名称 : </string>
+    <string name="hint_meeting_name">请输入会议名称</string>
+    <string name="meeting_people">会议人员 : </string>
+    <string name="meeting_pwd">参会密码 : </string>
+    <string name="hint_meeting_pwd">请输入参会密码</string>
+    <string name="user_balance">账户余额 : </string>
 
 </resources>

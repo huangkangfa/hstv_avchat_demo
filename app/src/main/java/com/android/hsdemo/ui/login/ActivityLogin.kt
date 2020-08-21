@@ -2,6 +2,7 @@ package com.android.hsdemo.ui.login
 
 import android.content.Context
 import android.content.Intent
+import android.view.KeyEvent
 import android.view.View
 import androidx.fragment.app.Fragment
 import com.android.baselib.base.BaseFragmentActivity
@@ -9,12 +10,14 @@ import com.android.baselib.utils.Preferences
 import com.android.baselib.utils.showShortToast
 import com.android.hsdemo.*
 import com.android.hsdemo.custom.dialog.DialogWait
+import com.android.hsdemo.custom.dialog.DialogHint
 import com.android.hsdemo.model.User
 import com.android.hsdemo.network.HttpCallback
 import com.android.hsdemo.ui.login.fragments.FragmentLogin
 import com.android.hsdemo.ui.login.fragments.FragmentRegisterAndForget
 import com.android.hsdemo.ui.login.vm.VMLogin
 import com.android.hsdemo.ui.main.ActivityMain
+import kotlin.system.exitProcess
 
 class ActivityLogin : BaseFragmentActivity() {
 
@@ -31,12 +34,14 @@ class ActivityLogin : BaseFragmentActivity() {
     private lateinit var fragmentForget: FragmentRegisterAndForget
 
     private lateinit var dialogWait: DialogWait
+    private lateinit var dialogHint: DialogHint
 
     override fun afterCreate() {
+
         fragmentLogin = FragmentLogin()
         fragmentRegister = FragmentRegisterAndForget(VMLogin.FragmentType.TYPE_REGISTER)
         fragmentForget = FragmentRegisterAndForget(VMLogin.FragmentType.TYPE_FORGET)
-        dialogWait = DialogWait(this@ActivityLogin)
+        initDialog()
 
         replaceFragment(
             R.id.flBody,
@@ -44,6 +49,15 @@ class ActivityLogin : BaseFragmentActivity() {
             "login",
             false
         ).commit()
+    }
+
+    private fun initDialog() {
+        dialogWait = DialogWait(this@ActivityLogin)
+        dialogHint = DialogHint(this@ActivityLogin)
+        dialogHint.setContent("确定要退出应用吗？")
+        dialogHint.setOnSureClickListener(View.OnClickListener {
+            exitProcess(0)
+        })
     }
 
     /**
@@ -173,6 +187,15 @@ class ActivityLogin : BaseFragmentActivity() {
         )
         //跳转主界面
         ActivityMain.start(this@ActivityLogin)
+        this@ActivityLogin.finish()
+    }
+
+    override fun onKeyDown(keyCode: Int, event: KeyEvent): Boolean {
+        if(keyCode == KeyEvent.KEYCODE_BACK){
+            dialogHint.show()
+            return true
+        }
+        return super.onKeyDown(keyCode, event)
     }
 
 }

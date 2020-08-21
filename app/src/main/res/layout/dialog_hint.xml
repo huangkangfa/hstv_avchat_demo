@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/main_bg"
+    android:gravity="center_horizontal"
+    android:orientation="vertical"
+    android:paddingTop="55dp"
+    android:paddingBottom="55dp">
+
+    <TextView
+        android:id="@+id/tvContent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ellipsize="end"
+        android:textColor="@color/white"
+        android:textSize="19sp"
+        android:textStyle="bold" />
+
+    <com.android.hsdemo.custom.ClipLinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="55dp"
+        android:orientation="horizontal">
+
+        <LinearLayout
+            android:id="@+id/btnOK"
+            style="@style/DefaultButtonStyle"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="30dp">
+
+            <ImageView
+                android:id="@+id/btnOKImg"
+                style="@style/DefaultButtonInnerImageStyle"
+                android:src="@mipmap/icon_sure_0" />
+
+            <TextView
+                android:id="@+id/btnOKTv"
+                style="@style/DefaultButtonInnerTextStyle"
+                android:text="@string/sure" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/btnCancel"
+            style="@style/DefaultButtonStyle"
+            android:layout_marginEnd="10dp">
+
+            <ImageView
+                android:id="@+id/btnCancelImg"
+                style="@style/DefaultButtonInnerImageStyle"
+                android:src="@mipmap/icon_back_0" />
+
+            <TextView
+                android:id="@+id/btnCancelTv"
+                style="@style/DefaultButtonInnerTextStyle"
+                android:text="@string/back" />
+        </LinearLayout>
+
+    </com.android.hsdemo.custom.ClipLinearLayout>
+
+</LinearLayout>

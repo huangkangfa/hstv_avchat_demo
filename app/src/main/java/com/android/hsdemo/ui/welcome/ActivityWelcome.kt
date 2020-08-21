@@ -13,6 +13,7 @@ import com.android.hsdemo.network.RemoteRepositoryImpl
 import com.android.hsdemo.ui.login.ActivityLogin
 import com.android.hsdemo.ui.main.ActivityMain
 import com.rxjava.rxlife.life
+import kotlinx.coroutines.*
 
 class ActivityWelcome : AppCompatActivity() {
 
@@ -21,31 +22,47 @@ class ActivityWelcome : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        init()
+    }
+
+    private fun init() {
         if (TextUtils.isEmpty(userName)) {
-            ActivityLogin.start(this@ActivityWelcome)
-            this@ActivityWelcome.finish()
+            goLogin()
         } else {
             //再次登录
             autoLogin(this@ActivityWelcome, object : HttpCallback<User> {
                 override fun success(t: User) {
-                    Preferences.saveValue(KEY_TOKEN, t.token.toString())
-                    Preferences.saveValue(KEY_USERSIG, t.userSig.toString())
-                    Preferences.saveValue(KEY_ACCID, t.accid.toString())
-                    Preferences.saveValue(
-                        KEY_MEETINGNOTICEACCOUNT,
-                        t.meetingNoticeAccount.toString()
-                    )
-                    //跳转主界面
-                    ActivityMain.start(this@ActivityWelcome)
-                    this@ActivityWelcome.finish()
+                    goMain(t)
                 }
 
                 override fun failed(msg: String) {
                     showShortToast("自动登录失败，请手动登录")
-                    ActivityLogin.start(this@ActivityWelcome)
-                    this@ActivityWelcome.finish()
+                    goLogin()
                 }
             })
+        }
+    }
+
+    private fun goMain(t: User) {
+        Preferences.saveValue(KEY_TOKEN, t.token.toString())
+        Preferences.saveValue(KEY_USERSIG, t.userSig.toString())
+        Preferences.saveValue(KEY_ACCID, t.accid.toString())
+        Preferences.saveValue(
+            KEY_MEETINGNOTICEACCOUNT,
+            t.meetingNoticeAccount.toString()
+        )
+        //跳转主界面
+        ActivityMain.start(this@ActivityWelcome)
+        this@ActivityWelcome.finish()
+    }
+
+    private fun goLogin() {
+        GlobalScope.launch(Dispatchers.IO) {
+            delay(1000)
+            withContext(Dispatchers.Main) {
+                ActivityLogin.start(this@ActivityWelcome)
+                this@ActivityWelcome.finish()
+            }
         }
     }
 

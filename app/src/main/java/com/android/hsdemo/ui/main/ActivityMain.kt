@@ -3,6 +3,7 @@ package com.android.hsdemo.ui.main
 import android.content.Context
 import android.content.Intent
 import android.os.Build
+import android.view.KeyEvent
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
@@ -11,6 +12,8 @@ import com.android.baselib.base.BaseFragmentActivity
 import com.android.hsdemo.BTN_MAIN_BACKGROUNDS
 import com.android.hsdemo.BTN_TEXT_COLORS
 import com.android.hsdemo.R
+import com.android.hsdemo.custom.dialog.DialogHint
+import com.android.hsdemo.custom.dialog.DialogWait
 import com.android.hsdemo.model.StatusView
 import com.android.hsdemo.ui.main.fragments.FragmentAddressBook
 import com.android.hsdemo.ui.main.fragments.FragmentCreateMeeting
@@ -20,6 +23,7 @@ import com.android.hsdemo.util.*
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_login.*
 import kotlinx.android.synthetic.main.fragment_register_forget.*
+import kotlin.system.exitProcess
 
 class ActivityMain : BaseFragmentActivity(), View.OnFocusChangeListener {
 
@@ -38,12 +42,16 @@ class ActivityMain : BaseFragmentActivity(), View.OnFocusChangeListener {
     private var tvs = arrayOfNulls<StatusView<TextView>>(4)
     private var imgs = arrayOfNulls<StatusView<ImageView>>(4)
 
+    private lateinit var dialogHint: DialogHint
+
     override fun afterCreate() {
 
         btnPersionCenter.onFocusChangeListener = this
         btnJoinMeeting.onFocusChangeListener = this
         btnCreateMeeting.onFocusChangeListener = this
         btnAddressBook.onFocusChangeListener = this
+
+        initDialog()
 
         btns[0] =
             StatusView<View>(btnPersionCenter, 0, BTN_MAIN_BACKGROUNDS[0], BTN_MAIN_BACKGROUNDS[1])
@@ -89,6 +97,14 @@ class ActivityMain : BaseFragmentActivity(), View.OnFocusChangeListener {
 
         controlFocusStatusOfView(btnPersionCenter, true)
 
+    }
+
+    private fun initDialog() {
+        dialogHint = DialogHint(this@ActivityMain)
+        dialogHint.setContent("确定要退出应用吗？")
+        dialogHint.setOnSureClickListener(View.OnClickListener {
+            exitProcess(0)
+        })
     }
 
     @RequiresApi(Build.VERSION_CODES.M)
@@ -149,6 +165,14 @@ class ActivityMain : BaseFragmentActivity(), View.OnFocusChangeListener {
                 changeViewBackground(-1, btns)
             }
         }
+    }
+
+    override fun onKeyDown(keyCode: Int, event: KeyEvent): Boolean {
+        if(keyCode == KeyEvent.KEYCODE_BACK){
+            dialogHint.show()
+            return true
+        }
+        return super.onKeyDown(keyCode, event)
     }
 
 }
