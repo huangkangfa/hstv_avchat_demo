@@ -14,8 +14,8 @@ import java.lang.reflect.ParameterizedType
 
 abstract class BaseFragment<VM : AndroidViewModel, VDB : ViewDataBinding> : Fragment() {
 
-    protected lateinit var mViewModel: VM
-    protected lateinit var mViewDataBinding: VDB
+    lateinit var mViewModel: VM
+    lateinit var mViewDataBinding: VDB
 
     override fun onCreateView(
         inflater: LayoutInflater,

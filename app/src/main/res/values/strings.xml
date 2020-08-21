@@ -1,6 +1,11 @@
 <resources>
     <string name="app_name">华数会议</string>
 
+    <string name="personal_center">个人中心</string>
+    <string name="join_meeting">参加会议</string>
+    <string name="create_meeting">发起会议</string>
+    <string name="address_book">通讯录</string>
+
     <string name="rtc_room_input_error_tip">"房间号和用户名不能为空"</string>
     <string name="rtc_permisson_error_tip">"用户没有允许需要的权限，加入通话失败"</string>
 
@@ -11,13 +16,16 @@
     <string name="sure">确定</string>
     <string name="back">返回</string>
 
-    <string name="user_name">用户账号</string>
-    <string name="user_password">用户密码</string>
-    <string name="repeat_password">重复密码</string>
-    <string name="new_password">新密码</string>
-    <string name="repeat_new_password">重复新密码</string>
+    <string name="user_name">用户账号 : </string>
+    <string name="user_password">用户密码 : </string>
+    <string name="user_verification_code">验证码 : </string>
+    <string name="repeat_password">重复密码 : </string>
+    <string name="new_password">新密码 : </string>
+    <string name="repeat_new_password">重复新密码 : </string>
 
     <string name="input_user">请输入账号</string>
+    <string name="input_verification_code">请输入验证码</string>
     <string name="input_password">请输入密码</string>
+    <string name="send_verify_code">发送验证码</string>
 
 </resources>

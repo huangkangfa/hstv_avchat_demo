@@ -1,7 +1,7 @@
 package com.android.hsdemo
 
 import com.android.avchat.AVchatApplication
-import com.android.hsdemo.http.NetConfig
+import com.android.hsdemo.network.http.NetConfig
 import com.tencent.imsdk.v2.V2TIMSDKConfig
 import com.tencent.imsdk.v2.V2TIMSDKListener
 import com.tencent.imsdk.v2.V2TIMUserFullInfo

@@ -5,7 +5,7 @@
     <data>
         <variable
             name="vm"
-            type="com.android.hsdemo.ui.entrance.VMEntrance" />
+            type="com.android.hsdemo.ui.entrance.vm.VMEntrance" />
     </data>
 
     <RelativeLayout
@@ -74,7 +74,7 @@
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
             android:layout_above="@+id/bt_back"
-            android:background="@drawable/rtc_button_bg"
+            android:background="@drawable/button_bg"
             android:textColor="@android:color/white"
             android:layout_marginLeft="60dp"
             android:layout_marginRight="60dp"
@@ -87,7 +87,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
             android:layout_centerHorizontal="true"
-            android:background="@drawable/rtc_button_bg"
+            android:background="@drawable/button_bg"
             android:textColor="@android:color/white"
             android:layout_marginBottom="60dp"
             android:layout_marginLeft="60dp"

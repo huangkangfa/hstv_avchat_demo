@@ -4,8 +4,8 @@ import android.Manifest
 import android.content.Context
 import android.content.Intent
 import android.text.TextUtils
-import com.android.avchat.KEY_ROOM_ID
-import com.android.avchat.KEY_USER_ID
+import com.android.hsdemo.KEY_ROOM_ID
+import com.android.hsdemo.KEY_USER_ID
 import com.android.baselib.base.BaseActivity
 import com.android.baselib.utils.showShortToast
 import com.android.hsdemo.BR

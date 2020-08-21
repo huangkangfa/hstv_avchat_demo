@@ -12,7 +12,6 @@ import android.content.pm.Signature
 import android.text.TextUtils
 import android.util.Log
 import com.android.baselib.global.AppGlobal.context
-import com.android.baselib.utils.Encrypt.Companion.encryptSHA1ToString
 import com.android.baselib.utils.Process.getForegroundProcessName
 import java.io.File
 
@@ -323,35 +322,6 @@ fun getAppSignature(
         e.printStackTrace()
         null
     }
-}
-
-/**
- * 获取应用签名的的SHA1值
- *
- * 可据此判断高德，百度地图key是否正确
- *
- * @param context 上下文
- * @return 应用签名的SHA1字符串, 比如：53:FD:54:DC:19:0F:11:AC:B5:22:9E:F1:1A:68:88:1B:8B:E8:54:42
- */
-fun getAppSignatureSHA1(context: Context): String? {
-    return getAppSignatureSHA1(context, context.packageName)
-}
-
-/**
- * 获取应用签名的的SHA1值
- *
- * 可据此判断高德，百度地图key是否正确
- *
- * @param context     上下文
- * @param packageName 包名
- * @return 应用签名的SHA1字符串, 比如：53:FD:54:DC:19:0F:11:AC:B5:22:9E:F1:1A:68:88:1B:8B:E8:54:42
- */
-fun getAppSignatureSHA1(
-    context: Context,
-    packageName: String?
-): String? {
-    val signature = getAppSignature(context, packageName) ?: return null
-    return encryptSHA1ToString(signature[0].toByteArray()).replace("(?<=[0-9A-F]{2})[0-9A-F]{2}", ":$0")
 }
 
 /**

@@ -34,7 +34,7 @@ object DebugConfig {
     const val SIGN_KEY_PASSWORD = "hs123456"
 
     //基本域名
-    const val BASE_URL = "url_debug"
+    const val BASE_URL = "http://test.asus-tbox-api.eyuntx.com/"
 
     //渠道名称
     const val PRODUCT_CHANNEL = "hkf"
@@ -59,7 +59,7 @@ object ReleaseConfig {
     const val SIGN_KEY_PASSWORD = "hs123456"
 
     //基本域名
-    const val BASE_URL = "url_release"
+    const val BASE_URL = "http://test.asus-tbox-api.eyuntx.com/"
 
     //渠道名称
     const val PRODUCT_CHANNEL = "coffee"
@@ -88,12 +88,14 @@ object Versions {
     const val ESPRESSO_CORE = "3.2.0"
     const val JUNIT = "4.13"
 
-    const val OKHTTP = "4.8.0"
+    const val OKHTTP = "4.8.1"
+    const val RXHTTP = "2.3.5"
 
-    const val RXJAVA = "2.2.19"
-    const val RXANDROID = "2.1.1"
+    const val RXJAVA = "3.0.2"
+    const val RXANDROID = "3.0.0"
+    const val RXANDROIDLIFE = "3.0.0"
     const val RXBINDING = "3.1.0"
-    const val RXHTTP = "2.1.1"
+    const val RXLIFE_COROUTINE = "2.0.0"
     const val RXLIFE = "2.0.0"
     const val RXPERMISSIONS = "0.10.2"
 
@@ -184,17 +186,22 @@ object Libs {
     const val OKHTTP = "com.squareup.okhttp3:okhttp:${Versions.OKHTTP}"
 
     //rx
-    const val RXHTTP = "com.rxjava.rxhttp:rxhttp:${Versions.RXHTTP}"
-    const val RXLIFE = "com.ljx.rxlife2:rxlife-rxjava:${Versions.RXLIFE}"
-    const val RXJAVA = "io.reactivex.rxjava2:rxjava:${Versions.RXJAVA}"
-    const val RXANDROID = "io.reactivex.rxjava2:rxandroid:${Versions.RXANDROID}"
+    const val RXHTTP = "com.ljx.rxhttp:rxhttp:${Versions.RXHTTP}"
+    const val RXLIFE_COROUTINE =
+        "com.ljx.rxlife:rxlife-coroutine:${Versions.RXLIFE_COROUTINE}" //管理协程生命周期，页面销毁，关闭请求
+    const val RXLIFE = "com.ljx.rxlife3:rxlife-rxjava:${Versions.RXLIFE}"
+    const val RXJAVA = "io.reactivex.rxjava3:rxjava:${Versions.RXJAVA}"
+    const val RXANDROID = "io.reactivex.rxjava3:rxandroid:${Versions.RXANDROID}"
+    const val RXANDROIDLIFE = "com.ljx.rxlife3:rxlife-rxjava:${Versions.RXANDROIDLIFE}"
     const val RXBINDING_CORE = "com.jakewharton.rxbinding3:rxbinding-core:${Versions.RXBINDING}"
     const val RXPERMISSIONS = "com.github.tbruyelle:rxpermissions:${Versions.RXPERMISSIONS}"
 
     //autodispose
     const val AUTODISPOSE = "com.uber.autodispose:autodispose:${Versions.AUTODISPOSE}"
-    const val AUTODISPOSEANDROID ="com.uber.autodispose:autodispose-android:${Versions.AUTODISPOSE}"
-    const val AUTODISPOSEARCHCOMPONENTS ="com.uber.autodispose:autodispose-android-archcomponents:${Versions.AUTODISPOSE}"
+    const val AUTODISPOSEANDROID =
+        "com.uber.autodispose:autodispose-android:${Versions.AUTODISPOSE}"
+    const val AUTODISPOSEARCHCOMPONENTS =
+        "com.uber.autodispose:autodispose-android-archcomponents:${Versions.AUTODISPOSE}"
 
     //adapter
     const val BINDING_COLLECTION_ADAPTER =
@@ -234,6 +241,6 @@ object Kapts {
     const val GLIDE_COMPILER = "com.github.bumptech.glide:compiler:${Versions.GLIDE}"
 
     //rx
-    const val RXHTTP_COMPILER = "com.rxjava.rxhttp:rxhttp-compiler:${Versions.RXHTTP}"
+    const val RXHTTP_COMPILER = "com.ljx.rxhttp:rxhttp-compiler:${Versions.RXHTTP}"
 
 }

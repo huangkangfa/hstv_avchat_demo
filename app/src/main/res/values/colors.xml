@@ -1,11 +1,44 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#6200EE</color>
-    <color name="colorPrimaryDark">#3700B3</color>
-    <color name="colorAccent">#03DAC5</color>
+
+    <!-- 应用的主要色调,actionBar默认使用该颜色,Toolbar导航栏的底色-->
+    <color name="colorPrimary">#FFCA28</color>
+    <!-- 应用的主要暗色调,statusBarColor默认使用该颜色-->
+    <color name="colorPrimaryDark">#1D313F</color>
+    <!--  状态栏颜色,默认使用colorPrimaryDark-->
+    <color name="statusBarColor">#1D313F</color>
+    <!--  窗口背景颜色-->
+    <color name="windowBackground">#2C353F</color>
+    <!--  底部栏颜色-->
+    <color name="navigationBarColor">#2C353F</color>
+    <!--  应用的前景色,ListView的分割线,switch滑动区默认使用该颜色-->
+    <color name="colorForeground">#62707A</color>
+    <!--  应用的背景色,popMenu的背景默认使用该颜色-->
+    <color name="colorBackground">#62707A</color>
+    <!--  CheckBox,RadioButton,SwitchCompat等一般控件的选中效果默认采用该颜色-->
+    <color name="colorAccent">#FDB027</color>
+    <!--  CheckBox,RadioButton,SwitchCompat等默认状态的颜色。-->
+    <color name="colorControlNormal">#FFFFFF</color>
+    <!--  控件按压时的色调-->
+    <color name="colorControlHighlight">#FDB027</color>
+    <!--  控件选中时的颜色,默认使用colorAccent-->
+    <color name="colorControlActivated">#FDB027</color>
+    <!--  默认按钮的背景颜色-->
+    <color name="colorButtonNormal">#FFFFFF</color>
+    <!--  默认EditView输入框字体的颜色-->
+    <color name="editTextColor">#FFFFFF</color>
+    <!--  Button,textView的文字颜色-->
+    <color name="textColor">#FFFFFF</color>
+    <!--  DisableOnly RadioButton checkbox等控件的文字,应用的主要文字颜色,actionBar的标题文字默认使用该颜色-->
+    <color name="textColorPrimary">#FFFFFF</color>
+    <!-- switch thumbs 默认状态的颜色. (switch off)-->
+    <color name="colorSwitchThumbNormal">#FFFFFF</color>
 
     <color name="rtc_main_bg">#1B1B1B</color>
     <color name="rtc_green_bg">#00A66B</color>
     <color name="rtc_title_bg">#B7B7B7</color>
+
     <color name="white">#ffffff</color>
+    <color name="black">#2F1609</color>
+
 </resources>

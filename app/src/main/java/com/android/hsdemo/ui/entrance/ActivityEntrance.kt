@@ -8,6 +8,7 @@ import com.android.baselib.base.BaseActivity
 import com.android.hsdemo.BR
 import com.android.hsdemo.R
 import com.android.hsdemo.databinding.ActivityEntranceBinding
+import com.android.hsdemo.ui.entrance.vm.VMEntrance
 import kotlinx.android.synthetic.main.activity_entrance.*
 
 class ActivityEntrance : BaseActivity<VMEntrance, ActivityEntranceBinding>() {

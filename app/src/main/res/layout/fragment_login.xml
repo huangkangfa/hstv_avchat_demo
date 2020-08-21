@@ -2,84 +2,127 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android">
 
     <data>
+
         <variable
             name="vm"
-            type="com.android.hsdemo.ui.login.VMLogin" />
+            type="com.android.hsdemo.ui.login.vm.VMLogin" />
     </data>
 
     <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="@color/white"
-        android:gravity="center"
-        android:padding="20dp"
+        android:layout_width="580dp"
+        android:layout_height="326dp"
+        android:background="@drawable/bg_gradient_body"
+        android:gravity="center_horizontal"
         android:orientation="vertical">
 
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:padding="5dp"
+            android:layout_marginTop="65dp"
+            android:layout_marginBottom="22dp"
+            android:gravity="center_vertical"
             android:orientation="horizontal">
 
             <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                style="@style/DefaultShowTextStyle"
+                android:layout_marginEnd="10dp"
                 android:text="@string/user_name" />
 
             <androidx.appcompat.widget.AppCompatEditText
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:text="@{vm.userName}"
-                android:hint="@string/input_user" />
+                android:id="@+id/etUserName"
+                style="@style/DefaultEditTextStyle"
+                android:hint="@string/input_user"
+                android:inputType="phone"
+                android:maxLength="11"
+                android:text="@={vm.userName}" />
 
         </LinearLayout>
 
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:padding="5dp"
-            android:orientation="horizontal">
+            android:layout_marginBottom="57dp"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:padding="5dp">
 
             <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                style="@style/DefaultShowTextStyle"
+                android:layout_marginEnd="10dp"
                 android:text="@string/user_password" />
 
             <androidx.appcompat.widget.AppCompatEditText
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:text="@{vm.userPassword}"
-                android:hint="@string/input_user" />
+                android:id="@+id/etPassword"
+                style="@style/DefaultEditTextStyle"
+                android:hint="@string/input_password"
+                android:inputType="numberPassword"
+                android:maxLength="6"
+                android:nextFocusDown="@+id/btnLogin"
+                android:text="@={vm.userPassword}" />
 
         </LinearLayout>
 
-        <LinearLayout
+        <com.android.hsdemo.custom.ClipLinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:padding="5dp"
             android:orientation="horizontal">
 
-            <Button
-                android:text="@string/registered"
-                android:layout_marginEnd="10dp"
-                android:onClick="onRegisteredClick"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
-            <Button
-                android:text="@string/login"
-                android:layout_marginEnd="10dp"
-                android:onClick="onLoginClick"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
-            <Button
-                android:text="@string/forget_password"
-                android:onClick="onForgetPasswordClick"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
+            <LinearLayout
+                android:id="@+id/btnRegistered"
+                style="@style/DefaultButtonStyle"
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="17dp"
+                android:nextFocusUp="@+id/etPassword"
+                android:onClick="onRegisteredClick">
 
-        </LinearLayout>
+                <ImageView
+                    android:id="@+id/btnRegisteredImg"
+                    style="@style/DefaultButtonInnerImageStyle"
+                    android:src="@mipmap/icon_register_0" />
+
+                <TextView
+                    android:id="@+id/btnRegisteredTv"
+                    style="@style/DefaultButtonInnerTextStyle"
+                    android:text="@string/registered" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/btnLogin"
+                style="@style/DefaultButtonStyle"
+                android:layout_marginEnd="17dp"
+                android:nextFocusUp="@+id/etPassword"
+                android:onClick="onLoginClick">
+
+                <ImageView
+                    android:id="@+id/btnLoginImg"
+                    style="@style/DefaultButtonInnerImageStyle"
+                    android:src="@mipmap/icon_login_0" />
+
+                <TextView
+                    android:id="@+id/btnLoginTv"
+                    style="@style/DefaultButtonInnerTextStyle"
+                    android:text="@string/login" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/btnForget"
+                style="@style/DefaultButtonStyle"
+                android:layout_marginEnd="10dp"
+                android:nextFocusUp="@+id/etPassword"
+                android:onClick="onForgetPasswordClick">
+
+                <ImageView
+                    android:id="@+id/btnForgetImg"
+                    style="@style/DefaultButtonInnerImageStyle"
+                    android:src="@mipmap/icon_forget_0" />
+
+                <TextView
+                    android:id="@+id/btnForgetTv"
+                    style="@style/DefaultButtonInnerTextStyle"
+                    android:text="@string/forget_password" />
+            </LinearLayout>
+
+        </com.android.hsdemo.custom.ClipLinearLayout>
 
     </LinearLayout>
 

@@ -1,15 +1,118 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android">
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center_horizontal"
+    android:background="@drawable/main_bg"
+    android:orientation="vertical">
 
-    <data>
-        <variable
-            name="vm"
-            type="com.android.hsdemo.ui.main.VMMain" />
-    </data>
+    <FrameLayout
+        android:id="@+id/flMain"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
 
-    <RelativeLayout
+    <com.android.hsdemo.custom.ClipLinearLayout
+        android:id="@+id/llBottom"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:orientation="horizontal">
 
-    </RelativeLayout>
-</layout>
+        <LinearLayout
+            android:id="@+id/btnJoinMeeting"
+            style="@style/DefaultButtonStyle"
+            android:layout_width="120dp"
+            android:layout_height="120dp"
+            android:layout_marginEnd="33dp"
+            android:background="@drawable/button_main_bg"
+            android:orientation="vertical">
+
+            <ImageView
+                android:id="@+id/btnJoinMeetingImg"
+                style="@style/DefaultButtonInnerImageStyle"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginBottom="12dp"
+                android:layout_marginEnd="0dp"
+                android:src="@mipmap/icon_main_join_meeting_0" />
+
+            <TextView
+                android:id="@+id/btnJoinMeetingTv"
+                style="@style/DefaultButtonInnerTextStyle"
+                android:text="@string/join_meeting" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/btnCreateMeeting"
+            style="@style/DefaultButtonStyle"
+            android:layout_width="120dp"
+            android:layout_height="120dp"
+            android:layout_marginEnd="33dp"
+            android:background="@drawable/button_main_bg"
+            android:orientation="vertical">
+
+            <ImageView
+                android:id="@+id/btnCreateMeetingImg"
+                style="@style/DefaultButtonInnerImageStyle"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginBottom="12dp"
+                android:layout_marginEnd="0dp"
+                android:src="@mipmap/icon_main_create_meeting_0" />
+
+            <TextView
+                android:id="@+id/btnCreateMeetingTv"
+                style="@style/DefaultButtonInnerTextStyle"
+                android:text="@string/create_meeting" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/btnAddressBook"
+            style="@style/DefaultButtonStyle"
+            android:layout_width="120dp"
+            android:layout_height="120dp"
+            android:layout_marginEnd="33dp"
+            android:background="@drawable/button_main_bg"
+            android:orientation="vertical">
+
+            <ImageView
+                android:id="@+id/btnAddressBookImg"
+                style="@style/DefaultButtonInnerImageStyle"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginBottom="12dp"
+                android:layout_marginEnd="0dp"
+                android:src="@mipmap/icon_main_contact_0" />
+
+            <TextView
+                android:id="@+id/btnAddressBookTv"
+                style="@style/DefaultButtonInnerTextStyle"
+                android:text="@string/address_book" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/btnPersionCenter"
+            style="@style/DefaultButtonStyle"
+            android:layout_width="120dp"
+            android:layout_height="120dp"
+            android:background="@drawable/button_main_bg"
+            android:orientation="vertical">
+
+            <ImageView
+                android:id="@+id/btnPersionCenterImg"
+                style="@style/DefaultButtonInnerImageStyle"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginBottom="12dp"
+                android:layout_marginEnd="0dp"
+                android:src="@mipmap/icon_main_persion_center_0" />
+
+            <TextView
+                android:id="@+id/btnPersionCenterTv"
+                style="@style/DefaultButtonInnerTextStyle"
+                android:text="@string/personal_center" />
+        </LinearLayout>
+
+    </com.android.hsdemo.custom.ClipLinearLayout>
+
+</LinearLayout>

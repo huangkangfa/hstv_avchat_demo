@@ -36,9 +36,6 @@ fun initXLog(){
     val androidPrinter: Printer =
         AndroidPrinter() // 通过 com.elvishew.xlog.XLog.Log 打印日志的打印器
 
-    val consolePrinter: Printer =
-        ConsolePrinter() // 通过 System.out 打印日志到控制台的打印器
-
     val filePrinter: Printer =
         FilePrinter.Builder(CacheGlobal.getLogCacheDir()) // 指定保存日志文件的路径
             .fileNameGenerator(DateFileNameGenerator()) // 指定日志文件名生成器，默认为 ChangelessFileNameGenerator("log")
@@ -46,7 +43,7 @@ fun initXLog(){
             .cleanStrategy(FileLastModifiedCleanStrategy(1024 * 1024 * 20)) // 指定日志文件清除策略，默认为 NeverCleanStrategy()
             .flattener(ClassicFlattener()) // 指定日志平铺器，默认为 DefaultFlattener
             .build()
-    XLog.init(config,androidPrinter,consolePrinter,filePrinter)
+    XLog.init(config,androidPrinter,filePrinter)
 }
 
 /**

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/main"
+    style="@style/DefaultButtonStyle">
+
+    <ImageView
+        android:id="@+id/img"
+        style="@style/DefaultButtonInnerImageStyle"
+        android:src="@mipmap/icon_forget_0" />
+
+    <TextView
+        android:id="@+id/tv"
+        style="@style/DefaultButtonInnerTextStyle" />
+</LinearLayout>

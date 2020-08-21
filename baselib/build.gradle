@@ -59,13 +59,14 @@ dependencies {
     api Libs.OKHTTP
 
     api Libs.RXHTTP
+    api Libs.RXLIFE_COROUTINE
     api Libs.RXLIFE
 
     api Libs.RXJAVA
     api Libs.RXANDROID
+    api Libs.RXANDROIDLIFE
     api Libs.RXBINDING_CORE
     api Libs.RXPERMISSIONS
-    kapt Kapts.RXHTTP_COMPILER
 
     api Libs.BINDING_COLLECTION_ADAPTER
     api Libs.BINDING_COLLECTION_ADAPTER_RECYCLERVIEW

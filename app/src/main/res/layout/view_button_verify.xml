@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:focusable="true"
+    android:orientation="vertical">
+
+    <Button
+        android:id="@+id/btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:minWidth="90dp"
+        android:minHeight="35dp"
+        android:text="@string/send_verify_code"
+        android:background="@drawable/bg_color_edit"
+        android:focusable="true"
+        android:textColor="#B4FFFFFF"
+        android:textSize="15sp" />
+</LinearLayout>
