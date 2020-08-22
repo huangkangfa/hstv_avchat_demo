@@ -9,8 +9,6 @@ open class Meeting {
     var title: String? = null //会议名称
     @SerializedName("meetingNo")
     var meetingNo: String? = null //会议编号
-    @SerializedName("roomId")
-    var roomId: String? = null //会议的房间号
     @SerializedName("allMute")
     var allMute: Boolean? = null //全员静音
     @SerializedName("masterId")

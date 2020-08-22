@@ -17,6 +17,9 @@ import androidx.lifecycle.OnLifecycleEvent
 import com.android.hsdemo.R
 import kotlinx.android.synthetic.main.view_button_verify.view.*
 
+/**
+ * 倒计时获取验证码按钮
+ */
 class ButtonVerify @JvmOverloads constructor(
     private val mContext: Context,
     attrs: AttributeSet? = null,

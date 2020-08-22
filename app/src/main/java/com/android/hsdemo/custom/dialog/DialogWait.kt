@@ -7,6 +7,9 @@ import com.android.baselib.base.BaseDialog
 import com.android.hsdemo.R
 import kotlinx.android.synthetic.main.dialog_wait.*
 
+/**
+ * 加载弹框
+ */
 class DialogWait(mActivity: Activity) : BaseDialog(mActivity) {
 
     init {

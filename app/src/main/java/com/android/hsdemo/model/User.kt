@@ -9,7 +9,7 @@ class User {
     @SerializedName("secretKey")
     var secretKey: String? = null
 
-    @SerializedName("usersig")
+    @SerializedName("userSig")
     var userSig: String? = null
 
     @SerializedName("userName")

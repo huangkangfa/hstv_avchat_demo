@@ -61,6 +61,7 @@ class FragmentLogin : BaseFragment<VMLogin, FragmentLoginBinding>(), View.OnFocu
     @RequiresApi(Build.VERSION_CODES.M)
     override fun onFocusChange(view: View, focus: Boolean) {
         if (focus) {
+            view.animate().scaleX(1.1f).scaleY(1.1f).setDuration(500).start()
             when {
                 btnRegistered == view -> {
                     btns[0]?.selectedResId?.let { btnRegistered.setBackgroundResource(it) }
@@ -100,6 +101,8 @@ class FragmentLogin : BaseFragment<VMLogin, FragmentLoginBinding>(), View.OnFocu
                 changeViewBackground(-1, btns)
                 changeTextColor(-1, tvs)
                 changeImageSrc(-1, imgs)
+            }else{
+                view.animate().scaleX(1.0f).scaleY(1.0f).setDuration(500).start()
             }
         }
     }

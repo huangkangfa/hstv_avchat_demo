@@ -65,7 +65,7 @@ interface RemoteRepository {
     ): Observable<MeetingDetail>
 
     fun joinOrLeaveMeeting(
-        meetingId: Boolean,
+        meetingId: String,
         type: Int
     ): Observable<String>
 
@@ -155,7 +155,7 @@ object RemoteRepositoryImpl : RemoteRepository {
      * 用户列表接口
      */
     override fun getUserList(): Observable<List<User>> {
-        return RxHttp.postForm(API_MYMEETINGLIST)
+        return RxHttp.postForm(API_USERLIST)
             .asResponseList(User().javaClass)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
@@ -211,7 +211,7 @@ object RemoteRepositoryImpl : RemoteRepository {
      * 加入/离开会议
      * type 1-加入会议，2-离开会议
      */
-    override fun joinOrLeaveMeeting(meetingId: Boolean, type: Int): Observable<String> {
+    override fun joinOrLeaveMeeting(meetingId: String, type: Int): Observable<String> {
         return RxHttp.postForm(API_JOIN_LEAVE_MEETING)
             .add("meetingId", meetingId)
             .add("type", type)

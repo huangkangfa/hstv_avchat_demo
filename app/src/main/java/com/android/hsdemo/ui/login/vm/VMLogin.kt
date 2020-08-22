@@ -5,6 +5,7 @@ import android.text.TextUtils
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.MutableLiveData
+import com.android.avchat.AVChatManager
 import com.android.baselib.global.AppGlobal.context
 import com.android.baselib.utils.Preferences
 import com.android.baselib.utils.showShortToast
@@ -14,7 +15,9 @@ import com.android.hsdemo.R
 import com.android.hsdemo.network.HttpCallback
 import com.android.hsdemo.network.RemoteRepositoryImpl
 import com.android.hsdemo.model.User
+import com.elvishew.xlog.XLog
 import com.rxjava.rxlife.life
+import com.tencent.imsdk.v2.V2TIMCallback
 
 
 class VMLogin(application: Application) : AndroidViewModel(application) {
@@ -106,7 +109,17 @@ class VMLogin(application: Application) : AndroidViewModel(application) {
         RemoteRepositoryImpl.login(userName.value.toString(), userPassword.value.toString())
             .life(owner)
             .subscribe(
-                { user: User -> callback.success(user) }
+                { user: User ->
+                    AVChatManager.login(user.accid.toString(),user.userSig.toString(),object :V2TIMCallback{
+                        override fun onError(p0: Int, p1: String?) {
+                            callback.failed("登录失败 IM ERROR $p0 $p1")
+                        }
+
+                        override fun onSuccess() {
+                            callback.success(user)
+                        }
+                    })
+                }
             ) { throwable: Throwable? -> callback.failed(throwable?.message.toString()) }
     }
 

@@ -18,8 +18,10 @@
     <string name="forget_password">忘记密码</string>
     <string name="sure">确定</string>
     <string name="back">返回</string>
+    <string name="join">加入</string>
 
     <string name="user_name">用户账号 : </string>
+    <string name="user_name2">用户昵称 : </string>
     <string name="user_password">用户密码 : </string>
     <string name="user_verification_code">验证码 : </string>
     <string name="repeat_password">重复密码 : </string>
@@ -37,5 +39,9 @@
     <string name="meeting_pwd">参会密码 : </string>
     <string name="hint_meeting_pwd">请输入参会密码</string>
     <string name="user_balance">账户余额 : </string>
+    <string name="meeting_no">会议号 : </string>
+    <string name="input_meeting_no">输入会议号</string>
+    <string name="input_quick_join_meeting">快速加入会议</string>
+    <string name="latest_people">最近联系人</string>
 
 </resources>

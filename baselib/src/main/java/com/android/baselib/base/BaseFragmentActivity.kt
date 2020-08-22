@@ -22,6 +22,17 @@ abstract class BaseFragmentActivity : FragmentActivity() {
     abstract fun afterCreate()
 
     /**
+     * 获取当前显示的fragment
+     */
+    fun getVisibleFragment(): Fragment? {
+        val fragments: List<Fragment> = supportFragmentManager.fragments
+        for (fragment in fragments) {
+            if (fragment.isVisible) return fragment
+        }
+        return null
+    }
+
+    /**
      * 添加Fragment
      * @param isAddBackStack 是否添加回退栈
      */
@@ -30,31 +41,22 @@ abstract class BaseFragmentActivity : FragmentActivity() {
         fragment: Fragment,
         tag: String,
         isAddBackStack: Boolean,
-        listener: OnCustomAnimationsLister?
+        listener: OnCustomAnimationsLister? = null
     ): FragmentTransaction {
-        val transaction: FragmentTransaction = supportFragmentManager.beginTransaction()
+        val mTransaction = supportFragmentManager.beginTransaction()
         if (listener != null) {
-            transaction.setCustomAnimations(
+            mTransaction.setCustomAnimations(
                 listener.setEnterAnimations(),
                 listener.setExitAnimations(),
                 listener.setPopEnterAnimations(),
                 listener.setPopExitAnimations()
             )
         }
-        transaction.add(contentId, fragment, tag)
+        mTransaction.add(contentId, fragment, tag)
         if (isAddBackStack) {
-            transaction.addToBackStack(tag)
+            mTransaction.addToBackStack(tag)
         }
-        return transaction
-    }
-
-    fun addFragment(
-        contentId: Int,
-        fragment: Fragment,
-        tag: String,
-        isAddBackStack: Boolean
-    ): FragmentTransaction {
-        return addFragment(contentId, fragment, tag, isAddBackStack, null)
+        return mTransaction
     }
 
     /**
@@ -66,31 +68,22 @@ abstract class BaseFragmentActivity : FragmentActivity() {
         fragment: Fragment,
         tag: String,
         isAddBackStack: Boolean,
-        listener: OnCustomAnimationsLister?
+        listener: OnCustomAnimationsLister? = null
     ): FragmentTransaction {
-        val transaction: FragmentTransaction = supportFragmentManager.beginTransaction()
+        val mTransaction = supportFragmentManager.beginTransaction()
         if (listener != null) {
-            transaction.setCustomAnimations(
+            mTransaction.setCustomAnimations(
                 listener.setEnterAnimations(),
                 listener.setExitAnimations(),
                 listener.setPopEnterAnimations(),
                 listener.setPopExitAnimations()
             )
         }
-        transaction.replace(contentId, fragment, tag)
+        mTransaction.replace(contentId, fragment, tag)
         if (isAddBackStack) {
-            transaction.addToBackStack(tag)
+            mTransaction.addToBackStack(tag)
         }
-        return transaction
-    }
-
-    fun replaceFragment(
-        contentId: Int,
-        fragment: Fragment,
-        tag: String,
-        isAddBackStack: Boolean
-    ): FragmentTransaction {
-        return replaceFragment(contentId, fragment, tag, isAddBackStack, null)
+        return mTransaction
     }
 
     interface OnCustomAnimationsLister {

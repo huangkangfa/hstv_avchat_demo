@@ -47,6 +47,8 @@
                     style="@style/DefaultEditTextStyle"
                     android:layout_width="275dp"
                     android:layout_height="35dp"
+                    android:text="@={vm.meetingName}"
+                    android:nextFocusDown="@+id/btnSelectPeople"
                     android:hint="@string/hint_meeting_name"/>
 
             </LinearLayout>
@@ -65,20 +67,24 @@
                 <TextView
                     android:layout_width="251dp"
                     android:layout_height="wrap_content"
-                    android:textSize="15sp"
-                    android:textColor="@color/white"
+                    android:ellipsize="end"
+                    android:maxLines="1"
                     android:paddingLeft="10dp"
                     android:paddingRight="10dp"
-                    android:maxLines="1"
-                    android:ellipsize="end"
-                    android:text="1391234975、135678432等3人"/>
+                    android:textColor="@color/white"
+                    android:textSize="15sp"
+                    android:text="@={vm.meetingPeopleStr}"/>
 
                 <ImageView
+                    android:id="@+id/btnSelectPeople"
                     android:layout_width="24dp"
-                    android:layout_height="24dp"/>
+                    android:layout_height="24dp"
+                    android:focusable="true"
+                    android:src="@mipmap/icon_select_people_0"/>
 
             </LinearLayout>
             <LinearLayout
+                android:id="@+id/llMeetingPwd"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
@@ -95,10 +101,14 @@
                     style="@style/DefaultEditTextStyle"
                     android:layout_width="275dp"
                     android:layout_height="35dp"
+                    android:inputType="numberPassword"
+                    android:nextFocusUp="@+id/btnSelectPeople"
+                    android:text="@={vm.meetingPassword}"
                     android:hint="@string/hint_meeting_pwd"/>
 
             </LinearLayout>
             <LinearLayout
+                android:id="@+id/llUserBalance"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
@@ -110,30 +120,114 @@
                     android:layout_marginEnd="10dp"
                     android:text="@string/user_balance" />
 
-                <androidx.appcompat.widget.AppCompatEditText
-                    style="@style/DefaultEditTextStyle"
+                <TextView
                     android:layout_width="275dp"
-                    android:layout_height="35dp"/>
+                    android:layout_height="wrap_content"
+                    android:textSize="15sp"
+                    android:textColor="@color/white"
+                    android:paddingLeft="10dp"
+                    android:paddingRight="10dp"
+                    android:maxLines="1"
+                    android:ellipsize="end"
+                    android:text="@={vm.userBalance}"/>
 
             </LinearLayout>
 
             <LinearLayout
-                android:id="@+id/btnCreateMeeting"
-                style="@style/DefaultButtonStyle"
-                android:layout_width="230dp"
-                android:layout_height="47dp"
-                android:layout_marginTop="25dp">
-
-                <ImageView
-                    android:id="@+id/btnCreateMeetingImg"
-                    style="@style/DefaultButtonInnerImageStyle"
-                    android:src="@mipmap/icon_f_create2_meeting_0" />
+                android:id="@+id/llMeetingNo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
 
                 <TextView
-                    android:id="@+id/btnCreateMeetingTv"
-                    style="@style/DefaultButtonInnerTextStyle"
-                    android:text="@string/initiate" />
+                    style="@style/DefaultShowTextStyle"
+                    android:layout_marginEnd="10dp"
+                    android:layout_width="75dp"
+                    android:text="@string/meeting_no" />
+
+                <TextView
+                    android:layout_width="275dp"
+                    android:layout_height="wrap_content"
+                    android:textSize="19sp"
+                    android:textColor="@color/white"
+                    android:paddingLeft="10dp"
+                    android:paddingRight="10dp"
+                    android:textStyle="bold"
+                    android:maxLines="1"
+                    android:ellipsize="end"
+                    android:text="@={vm.meetingNo}"/>
+
             </LinearLayout>
+
+            <com.android.hsdemo.custom.ClipLinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="35dp"
+                android:orientation="horizontal">
+
+                <LinearLayout
+                    android:id="@+id/btnCreateMeeting"
+                    style="@style/DefaultButtonStyle"
+                    android:layout_width="230dp"
+                    android:layout_height="47dp">
+
+                    <ImageView
+                        android:id="@+id/btnCreateMeetingImg"
+                        style="@style/DefaultButtonInnerImageStyle"
+                        android:src="@mipmap/icon_f_create2_meeting_0" />
+
+                    <TextView
+                        android:id="@+id/btnCreateMeetingTv"
+                        style="@style/DefaultButtonInnerTextStyle"
+                        android:text="@string/initiate" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/llJoin"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="30dp"
+                    android:visibility="gone"
+                    android:orientation="horizontal">
+                    <LinearLayout
+                        android:id="@+id/btnJoin"
+                        style="@style/DefaultButtonStyle"
+                        android:layout_marginRight="15dp"
+                        android:layout_width="186dp"
+                        android:layout_height="47dp">
+
+                        <ImageView
+                            android:id="@+id/btnJoinImg"
+                            style="@style/DefaultButtonInnerImageStyle"
+                            android:src="@mipmap/icon_join_0" />
+
+                        <TextView
+                            android:id="@+id/btnJoinTv"
+                            style="@style/DefaultButtonInnerTextStyle"
+                            android:text="@string/join" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/btnCancel"
+                        style="@style/DefaultButtonStyle"
+                        android:layout_width="186dp"
+                        android:layout_height="47dp">
+
+                        <ImageView
+                            android:id="@+id/btnCancelImg"
+                            style="@style/DefaultButtonInnerImageStyle"
+                            android:src="@mipmap/icon_back_0" />
+
+                        <TextView
+                            android:id="@+id/btnCancelTv"
+                            style="@style/DefaultButtonInnerTextStyle"
+                            android:text="@string/back" />
+                    </LinearLayout>
+                </LinearLayout>
+
+            </com.android.hsdemo.custom.ClipLinearLayout>
 
         </LinearLayout>
 

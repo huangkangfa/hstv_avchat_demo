@@ -11,7 +11,8 @@ import com.android.hsdemo.R
 import com.android.hsdemo.model.StatusView
 
 /**
- * 登录、注册、忘记密码 那块的按钮
+ * 聚焦失焦变化而变化UI的按钮
+ * todo 未完
  */
 open class ButtonFocus(
     context: Context,

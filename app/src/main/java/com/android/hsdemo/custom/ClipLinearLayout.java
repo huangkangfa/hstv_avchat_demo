@@ -6,6 +6,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
+/**
+ * 可以使子内容超出边界的LinearLayout
+ */
 public class ClipLinearLayout extends LinearLayout {
 
     private ControlViewBringToFront mControlViewBringToFront;

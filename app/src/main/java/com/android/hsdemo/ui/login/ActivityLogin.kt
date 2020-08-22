@@ -29,18 +29,15 @@ class ActivityLogin : BaseFragmentActivity() {
 
     override fun getLayoutId(): Int = R.layout.activity_login
 
-    private lateinit var fragmentLogin: FragmentLogin
-    private lateinit var fragmentRegister: FragmentRegisterAndForget
-    private lateinit var fragmentForget: FragmentRegisterAndForget
+    private var fragmentLogin: FragmentLogin = FragmentLogin()
+    private var fragmentRegister: FragmentRegisterAndForget = FragmentRegisterAndForget(VMLogin.FragmentType.TYPE_REGISTER)
+    private var fragmentForget: FragmentRegisterAndForget = FragmentRegisterAndForget(VMLogin.FragmentType.TYPE_FORGET)
 
     private lateinit var dialogWait: DialogWait
     private lateinit var dialogHint: DialogHint
 
     override fun afterCreate() {
 
-        fragmentLogin = FragmentLogin()
-        fragmentRegister = FragmentRegisterAndForget(VMLogin.FragmentType.TYPE_REGISTER)
-        fragmentForget = FragmentRegisterAndForget(VMLogin.FragmentType.TYPE_FORGET)
         initDialog()
 
         replaceFragment(
@@ -58,17 +55,6 @@ class ActivityLogin : BaseFragmentActivity() {
         dialogHint.setOnSureClickListener(View.OnClickListener {
             exitProcess(0)
         })
-    }
-
-    /**
-     * 获取当前显示的fragment
-     */
-    private fun getVisibleFragment(): Fragment? {
-        val fragments: List<Fragment> = this@ActivityLogin.supportFragmentManager.fragments
-        for (fragment in fragments) {
-            if (fragment.isVisible) return fragment
-        }
-        return null
     }
 
     /**

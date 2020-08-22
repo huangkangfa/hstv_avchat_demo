@@ -7,6 +7,9 @@ import android.util.DisplayMetrics
 import android.util.Log
 import android.widget.ScrollView
 
+/**
+ * 有最大高度值的ScrollView
+ */
 class HasMaxHeightScrollView @JvmOverloads constructor(
     private val mContext: Context,
     attrs: AttributeSet? = null,

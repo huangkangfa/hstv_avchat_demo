@@ -8,6 +8,7 @@ import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.annotation.RequiresApi
+import androidx.fragment.app.Fragment
 import com.android.baselib.base.BaseFragmentActivity
 import com.android.hsdemo.BTN_MAIN_BACKGROUNDS
 import com.android.hsdemo.BTN_TEXT_COLORS
@@ -15,12 +16,17 @@ import com.android.hsdemo.R
 import com.android.hsdemo.custom.dialog.DialogHint
 import com.android.hsdemo.custom.dialog.DialogWait
 import com.android.hsdemo.model.StatusView
+import com.android.hsdemo.ui.login.fragments.FragmentLogin
 import com.android.hsdemo.ui.main.fragments.FragmentAddressBook
 import com.android.hsdemo.ui.main.fragments.FragmentCreateMeeting
 import com.android.hsdemo.ui.main.fragments.FragmentJoinMeeting
 import com.android.hsdemo.ui.main.fragments.FragmentPersionCenter
 import com.android.hsdemo.util.*
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.activity_main.btnCreateMeeting
+import kotlinx.android.synthetic.main.activity_main.btnCreateMeetingImg
+import kotlinx.android.synthetic.main.activity_main.btnCreateMeetingTv
+import kotlinx.android.synthetic.main.fragment_create_meeting.*
 import kotlinx.android.synthetic.main.fragment_login.*
 import kotlinx.android.synthetic.main.fragment_register_forget.*
 import kotlin.system.exitProcess
@@ -43,15 +49,25 @@ class ActivityMain : BaseFragmentActivity(), View.OnFocusChangeListener {
     private var imgs = arrayOfNulls<StatusView<ImageView>>(4)
 
     private lateinit var dialogHint: DialogHint
+    private lateinit var dialogWait: DialogWait
+
+    private var fragmentJoinMeeting: FragmentJoinMeeting = FragmentJoinMeeting()
+    private var fragmentCreateMeeting: FragmentCreateMeeting = FragmentCreateMeeting()
+    private var fragmentAddressBook: FragmentAddressBook = FragmentAddressBook()
+    private var fragmentPersionCenter: FragmentPersionCenter = FragmentPersionCenter()
+    private var currentFragment: Fragment = Fragment()
 
     override fun afterCreate() {
+        initDialog()
+        initFocus()
+        initFragments()
+    }
 
+    private fun initFocus() {
         btnPersionCenter.onFocusChangeListener = this
         btnJoinMeeting.onFocusChangeListener = this
         btnCreateMeeting.onFocusChangeListener = this
         btnAddressBook.onFocusChangeListener = this
-
-        initDialog()
 
         btns[0] =
             StatusView<View>(btnPersionCenter, 0, BTN_MAIN_BACKGROUNDS[0], BTN_MAIN_BACKGROUNDS[1])
@@ -95,11 +111,11 @@ class ActivityMain : BaseFragmentActivity(), View.OnFocusChangeListener {
                 R.mipmap.icon_main_contact_0
             )
 
-        controlFocusStatusOfView(btnPersionCenter, true)
-
+        controlFocusStatusOfView(btnJoinMeeting, true)
     }
 
     private fun initDialog() {
+        dialogWait = DialogWait(this@ActivityMain)
         dialogHint = DialogHint(this@ActivityMain)
         dialogHint.setContent("确定要退出应用吗？")
         dialogHint.setOnSureClickListener(View.OnClickListener {
@@ -116,48 +132,28 @@ class ActivityMain : BaseFragmentActivity(), View.OnFocusChangeListener {
                     changeViewBackground(0, btns)
                     changeTextColor(0, tvs)
                     changeImageSrc(0, imgs)
-                    replaceFragment(
-                        R.id.flMain,
-                        FragmentPersionCenter(),
-                        "persionCenter",
-                        false
-                    ).commit()
+                    showFragment(fragmentPersionCenter)
                 }
                 btnJoinMeeting == view -> {
                     //参加会议
                     changeViewBackground(1, btns)
                     changeTextColor(1, tvs)
                     changeImageSrc(1, imgs)
-                    replaceFragment(
-                        R.id.flMain,
-                        FragmentJoinMeeting(),
-                        "joinMeeting",
-                        false
-                    ).commit()
+                    showFragment(fragmentJoinMeeting)
                 }
                 btnCreateMeeting == view -> {
                     //发起会议
                     changeViewBackground(2, btns)
                     changeTextColor(2, tvs)
                     changeImageSrc(2, imgs)
-                    replaceFragment(
-                        R.id.flMain,
-                        FragmentCreateMeeting(),
-                        "createMeeting",
-                        false
-                    ).commit()
+                    showFragment(fragmentCreateMeeting)
                 }
                 else -> {
                     //通讯录
                     changeViewBackground(3, btns)
                     changeTextColor(3, tvs)
                     changeImageSrc(3, imgs)
-                    replaceFragment(
-                        R.id.flMain,
-                        FragmentAddressBook(),
-                        "addressBook",
-                        false
-                    ).commit()
+                    showFragment(fragmentAddressBook)
                 }
             }
         } else {
@@ -168,11 +164,63 @@ class ActivityMain : BaseFragmentActivity(), View.OnFocusChangeListener {
     }
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent): Boolean {
-        if(keyCode == KeyEvent.KEYCODE_BACK){
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            val currentFragment = getVisibleFragment()
+            if (currentFragment == fragmentCreateMeeting) {
+                if (fragmentCreateMeeting.btnCreateMeeting.visibility == View.GONE) {
+                    fragmentCreateMeeting.changeTypeUI(true)
+                    return true
+                }
+            }
+            //退出应用时
             dialogHint.show()
             return true
         }
         return super.onKeyDown(keyCode, event)
+    }
+
+    fun showLoading(str: String = "") {
+        dialogWait.show(str)
+    }
+
+    fun dismissLoading() {
+        dialogWait.dismiss()
+    }
+
+    private fun initFragments() {
+        addFragment(
+            R.id.flMain,
+            fragmentPersionCenter,
+            "persionCenter",
+            false
+        ).hide(fragmentPersionCenter).commit()
+        addFragment(
+            R.id.flMain,
+            fragmentAddressBook,
+            "addressBook",
+            false
+        ).hide(fragmentAddressBook).commit()
+        addFragment(
+            R.id.flMain,
+            fragmentCreateMeeting,
+            "createMeeting",
+            false
+        ).hide(fragmentCreateMeeting).commit()
+        addFragment(
+            R.id.flMain,
+            fragmentJoinMeeting,
+            "joinMeeting",
+            false
+        ).commit()
+    }
+
+    private fun showFragment(fragment: Fragment) {
+        if (currentFragment == fragment)
+            return
+        val transaction = supportFragmentManager.beginTransaction()
+        transaction.hide(currentFragment)
+        currentFragment = fragment
+        transaction.show(fragment).commit()
     }
 
 }

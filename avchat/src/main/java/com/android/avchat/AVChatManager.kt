@@ -4,6 +4,7 @@ import com.android.avchat.impl.IMImpl
 import com.android.avchat.impl.RTCImpl
 import com.android.avchat.interfaces.IIMInterface
 import com.android.avchat.interfaces.IRTCInterface
+import com.elvishew.xlog.XLog
 import com.tencent.imsdk.v2.V2TIMCallback
 import com.tencent.imsdk.v2.V2TIMManager
 import com.tencent.imsdk.v2.V2TIMSDKConfig
