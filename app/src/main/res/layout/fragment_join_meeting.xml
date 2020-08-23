@@ -20,10 +20,12 @@
             android:layout_width="580dp"
             android:layout_height="326dp"
             android:background="@drawable/bg_gradient_body"
+            android:focusable="true"
             android:gravity="center_horizontal"
             android:orientation="vertical">
 
             <TextView
+                android:id="@+id/tvTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="19dp"
@@ -40,6 +42,75 @@
                 android:layout_marginStart="50dp"
                 android:layout_marginTop="30dp"
                 android:layout_marginEnd="50dp"/>
+
+            <LinearLayout
+                android:id="@+id/llInput"
+                android:visibility="gone"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:focusable="true"
+                android:orientation="vertical">
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="65dp"
+                    android:layout_marginBottom="22dp"
+                    android:gravity="center_vertical"
+                    android:focusable="true"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        style="@style/DefaultShowTextStyle"
+                        android:layout_width="80dp"
+                        android:layout_marginEnd="10dp"
+                        android:text="@string/meeting_no" />
+
+                    <androidx.appcompat.widget.AppCompatEditText
+                        android:id="@+id/etMeetingNo"
+                        style="@style/DefaultEditTextStyle"
+                        android:hint="@string/input_meeting_no"
+                        android:inputType="number"/>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:focusable="true"
+                    android:gravity="center_vertical">
+
+                    <TextView
+                        style="@style/DefaultShowTextStyle"
+                        android:layout_width="80dp"
+                        android:layout_marginEnd="10dp"
+                        android:text="@string/meeting_pwd" />
+
+                    <androidx.appcompat.widget.AppCompatEditText
+                        android:id="@+id/etPassword"
+                        style="@style/DefaultEditTextStyle"
+                        android:hint="@string/hint_meeting_pwd"
+                        android:inputType="numberPassword"/>
+
+                </LinearLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/btnOK"
+                android:visibility="gone"
+                style="@style/DefaultButtonStyle"
+                android:layout_marginTop="60dp">
+
+                <ImageView
+                    android:id="@+id/btnOKImg"
+                    style="@style/DefaultButtonInnerImageStyle"
+                    android:src="@mipmap/icon_sure_0" />
+
+                <TextView
+                    android:id="@+id/btnOKTv"
+                    style="@style/DefaultButtonInnerTextStyle"
+                    android:text="@string/sure" />
+            </LinearLayout>
 
         </LinearLayout>
 

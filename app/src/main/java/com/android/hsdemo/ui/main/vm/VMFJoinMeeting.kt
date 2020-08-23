@@ -1,28 +1,19 @@
 package com.android.hsdemo.ui.main.vm
 
 import android.app.Application
-import android.content.Context
-import android.widget.ImageView
-import android.widget.RelativeLayout
-import android.widget.TextView
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.MutableLiveData
-import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.android.baselib.recyleview.adapter.AbstractAdapter
 import com.android.baselib.recyleview.adapter.ListItem
 import com.android.baselib.recyleview.adapter.setUP
-import com.android.baselib.utils.Preferences
-import com.android.hsdemo.KEY_ACCID
-import com.android.hsdemo.R
 import com.android.hsdemo.model.ItemOfMeeting
 import com.android.hsdemo.model.Meeting
 import com.android.hsdemo.network.HttpCallback
 import com.android.hsdemo.network.RemoteRepositoryImpl
-import com.android.hsdemo.ui.rtc.ActivityRTC
 import com.rxjava.rxlife.life
 import kotlinx.android.synthetic.main.fragment_join_meeting.*
+import kotlinx.coroutines.CoroutineScope
 
 class VMFJoinMeeting(application: Application) : AndroidViewModel(application) {
 
@@ -32,6 +23,8 @@ class VMFJoinMeeting(application: Application) : AndroidViewModel(application) {
     private var data: ArrayList<ItemOfMeeting> = arrayListOf(ItemOfMeeting(0, null))
 
     private lateinit var adapter: AbstractAdapter<ItemOfMeeting>
+
+    var isInitOK = false
 
     /**
      * 初始化RecycleView列表
@@ -48,6 +41,7 @@ class VMFJoinMeeting(application: Application) : AndroidViewModel(application) {
             itemOfData,
             manager = manager
         )
+        isInitOK = true
     }
 
     /**

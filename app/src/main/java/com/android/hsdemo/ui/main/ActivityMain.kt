@@ -29,6 +29,10 @@ import kotlinx.android.synthetic.main.activity_main.btnCreateMeetingTv
 import kotlinx.android.synthetic.main.fragment_create_meeting.*
 import kotlinx.android.synthetic.main.fragment_login.*
 import kotlinx.android.synthetic.main.fragment_register_forget.*
+import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import kotlin.system.exitProcess
 
 class ActivityMain : BaseFragmentActivity(), View.OnFocusChangeListener {
@@ -167,8 +171,16 @@ class ActivityMain : BaseFragmentActivity(), View.OnFocusChangeListener {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
             val currentFragment = getVisibleFragment()
             if (currentFragment == fragmentCreateMeeting) {
+                //处理创建会议的二级界面返回
                 if (fragmentCreateMeeting.btnCreateMeeting.visibility == View.GONE) {
                     fragmentCreateMeeting.changeTypeUI(true)
+                    return true
+                }
+            }
+            if(currentFragment == fragmentJoinMeeting){
+                //处理参加会议的二级界面返回
+                if (fragmentJoinMeeting.btnOK.visibility == View.VISIBLE) {
+                    fragmentJoinMeeting.changeTypeUI(true)
                     return true
                 }
             }
@@ -190,10 +202,10 @@ class ActivityMain : BaseFragmentActivity(), View.OnFocusChangeListener {
     private fun initFragments() {
         addFragment(
             R.id.flMain,
-            fragmentPersionCenter,
-            "persionCenter",
+            fragmentCreateMeeting,
+            "createMeeting",
             false
-        ).hide(fragmentPersionCenter).commit()
+        ).hide(fragmentCreateMeeting).commit()
         addFragment(
             R.id.flMain,
             fragmentAddressBook,
@@ -202,16 +214,16 @@ class ActivityMain : BaseFragmentActivity(), View.OnFocusChangeListener {
         ).hide(fragmentAddressBook).commit()
         addFragment(
             R.id.flMain,
-            fragmentCreateMeeting,
-            "createMeeting",
+            fragmentPersionCenter,
+            "persionCenter",
             false
-        ).hide(fragmentCreateMeeting).commit()
+        ).hide(fragmentPersionCenter).commit()
         addFragment(
             R.id.flMain,
             fragmentJoinMeeting,
             "joinMeeting",
             false
-        ).commit()
+        ).show(fragmentJoinMeeting).commit()
     }
 
     private fun showFragment(fragment: Fragment) {

@@ -21,6 +21,8 @@ class VMFAddressBook(application: Application) : AndroidViewModel(application) {
 
     private lateinit var adapter: AbstractAdapter<ItemOfUser>
 
+    var isInitOK = false
+
     /**
      * 初始化RecycleView列表
      */
@@ -34,6 +36,7 @@ class VMFAddressBook(application: Application) : AndroidViewModel(application) {
             itemOfUser,
             manager = manager
         )
+        isInitOK = true
     }
 
     /**

@@ -55,5 +55,4 @@ abstract class BaseFragment<VM : AndroidViewModel, VDB : ViewDataBinding> : Frag
      */
     protected abstract fun afterCreate()
 
-
 }
