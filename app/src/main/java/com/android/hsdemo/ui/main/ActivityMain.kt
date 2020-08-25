@@ -16,23 +16,13 @@ import com.android.hsdemo.R
 import com.android.hsdemo.custom.dialog.DialogHint
 import com.android.hsdemo.custom.dialog.DialogWait
 import com.android.hsdemo.model.StatusView
-import com.android.hsdemo.ui.login.fragments.FragmentLogin
 import com.android.hsdemo.ui.main.fragments.FragmentAddressBook
 import com.android.hsdemo.ui.main.fragments.FragmentCreateMeeting
 import com.android.hsdemo.ui.main.fragments.FragmentJoinMeeting
 import com.android.hsdemo.ui.main.fragments.FragmentPersionCenter
 import com.android.hsdemo.util.*
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.activity_main.btnCreateMeeting
-import kotlinx.android.synthetic.main.activity_main.btnCreateMeetingImg
-import kotlinx.android.synthetic.main.activity_main.btnCreateMeetingTv
-import kotlinx.android.synthetic.main.fragment_create_meeting.*
-import kotlinx.android.synthetic.main.fragment_login.*
-import kotlinx.android.synthetic.main.fragment_register_forget.*
-import kotlinx.coroutines.Dispatchers.IO
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import kotlin.system.exitProcess
 
 class ActivityMain : BaseFragmentActivity(), View.OnFocusChangeListener {
@@ -55,16 +45,16 @@ class ActivityMain : BaseFragmentActivity(), View.OnFocusChangeListener {
     private lateinit var dialogHint: DialogHint
     private lateinit var dialogWait: DialogWait
 
-    private var fragmentJoinMeeting: FragmentJoinMeeting = FragmentJoinMeeting()
-    private var fragmentCreateMeeting: FragmentCreateMeeting = FragmentCreateMeeting()
-    private var fragmentAddressBook: FragmentAddressBook = FragmentAddressBook()
-    private var fragmentPersionCenter: FragmentPersionCenter = FragmentPersionCenter()
+    private lateinit var fragmentJoinMeeting: FragmentJoinMeeting
+    private lateinit var fragmentCreateMeeting: FragmentCreateMeeting
+    private lateinit var fragmentAddressBook: FragmentAddressBook
+    private lateinit var fragmentPersionCenter: FragmentPersionCenter
     private var currentFragment: Fragment = Fragment()
 
     override fun afterCreate() {
         initDialog()
-        initFocus()
         initFragments()
+        initFocus()
     }
 
     private fun initFocus() {
@@ -115,7 +105,12 @@ class ActivityMain : BaseFragmentActivity(), View.OnFocusChangeListener {
                 R.mipmap.icon_main_contact_0
             )
 
-        controlFocusStatusOfView(btnJoinMeeting, true)
+        GlobalScope.launch(Dispatchers.IO) {
+            delay(200)
+            withContext(Dispatchers.Main) {
+                controlFocusStatusOfView(btnJoinMeeting, true)
+            }
+        }
     }
 
     private fun initDialog() {
@@ -177,10 +172,10 @@ class ActivityMain : BaseFragmentActivity(), View.OnFocusChangeListener {
                     return true
                 }
             }
-            if(currentFragment == fragmentJoinMeeting){
+            if (currentFragment == fragmentJoinMeeting) {
                 //处理参加会议的二级界面返回
-                if (fragmentJoinMeeting.btnOK.visibility == View.VISIBLE) {
-                    fragmentJoinMeeting.changeTypeUI(true)
+                if (!fragmentJoinMeeting.fType) {
+                    fragmentJoinMeeting.changeFragment(true)
                     return true
                 }
             }
@@ -200,6 +195,12 @@ class ActivityMain : BaseFragmentActivity(), View.OnFocusChangeListener {
     }
 
     private fun initFragments() {
+
+        fragmentJoinMeeting = FragmentJoinMeeting()
+        fragmentCreateMeeting = FragmentCreateMeeting()
+        fragmentAddressBook = FragmentAddressBook()
+        fragmentPersionCenter = FragmentPersionCenter()
+
         addFragment(
             R.id.flMain,
             fragmentCreateMeeting,

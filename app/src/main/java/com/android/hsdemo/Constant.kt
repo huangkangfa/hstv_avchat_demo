@@ -3,6 +3,7 @@ package com.android.hsdemo
 // 相关key值
 const val KEY_ROOM_ID = "room_id"
 const val KEY_USER_ID = "user_id"
+const val KEY_ROOM_NAME = "room_name"
 
 const val KEY_USER_NAME = "user_name"
 const val KEY_USER_PASSWORD = "user_password"

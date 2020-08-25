@@ -3,25 +3,28 @@ package com.android.hsdemo.ui.rtc
 import android.Manifest
 import android.content.Context
 import android.content.Intent
+import android.os.Build
 import android.text.TextUtils
-import com.android.hsdemo.KEY_ROOM_ID
-import com.android.hsdemo.KEY_USER_ID
+import android.view.View
+import androidx.annotation.RequiresApi
 import com.android.baselib.base.BaseActivity
 import com.android.baselib.utils.showShortToast
-import com.android.hsdemo.BR
-import com.android.hsdemo.R
+import com.android.hsdemo.*
+import com.android.hsdemo.KEY_ROOM_ID
 import com.android.hsdemo.databinding.ActivityRtcBinding
+import com.elvishew.xlog.XLog
 import com.tbruyelle.rxpermissions2.RxPermissions
 import com.uber.autodispose.android.lifecycle.autoDispose
 import kotlinx.android.synthetic.main.activity_rtc.*
 
-class ActivityRTC : BaseActivity<VMRTC, ActivityRtcBinding>() {
+class ActivityRTC : BaseActivity<VMRTC, ActivityRtcBinding>(), View.OnFocusChangeListener {
 
     companion object {
-        fun start(context: Context, userId: String, roomId: String) {
+        fun start(context: Context, userId: String, roomId: String, roomName: String) {
             val intent = Intent(context, ActivityRTC().javaClass)
             intent.putExtra(KEY_USER_ID, userId)
             intent.putExtra(KEY_ROOM_ID, roomId)
+            intent.putExtra(KEY_ROOM_NAME, roomName)
             context.startActivity(intent)
         }
     }
@@ -32,7 +35,15 @@ class ActivityRTC : BaseActivity<VMRTC, ActivityRtcBinding>() {
 
     override fun afterCreate() {
         handleIntent()
-        mViewModel.mLocalPreviewView.value = trtc_tc_cloud_view_main
+        mViewModel.mLocalPreviewView.value = vTRTCMain
+
+        //设置放大动画
+        btnMuteAudio.onFocusChangeListener = this
+        btnMuteVideo.onFocusChangeListener = this
+        btnScreen.onFocusChangeListener = this
+        btnControl.onFocusChangeListener = this
+        btnExit.onFocusChangeListener = this
+
         requestPermissions()
     }
 
@@ -56,15 +67,9 @@ class ActivityRTC : BaseActivity<VMRTC, ActivityRtcBinding>() {
     }
 
     private fun initView() {
-        if (!TextUtils.isEmpty(mViewModel.mRoomId.toString())) {
-            trtc_tv_room_number.text = mViewModel.mRoomId.value.toString()
-        }
-        mViewModel.mRemoteViewList.value?.add(trtc_tc_cloud_view_1)
-        mViewModel.mRemoteViewList.value?.add(trtc_tc_cloud_view_2)
-        mViewModel.mRemoteViewList.value?.add(trtc_tc_cloud_view_3)
-        mViewModel.mRemoteViewList.value?.add(trtc_tc_cloud_view_4)
-        mViewModel.mRemoteViewList.value?.add(trtc_tc_cloud_view_5)
-        mViewModel.mRemoteViewList.value?.add(trtc_tc_cloud_view_6)
+        mViewModel.mRemoteViewList.value?.add(trtcRemoteView1)
+        mViewModel.mRemoteViewList.value?.add(trtcRemoteView2)
+        mViewModel.mRemoteViewList.value?.add(trtcRemoteView3)
     }
 
     private fun handleIntent() {
@@ -72,11 +77,15 @@ class ActivityRTC : BaseActivity<VMRTC, ActivityRtcBinding>() {
         if (null != intent) {
             val userId = intent.getStringExtra(KEY_USER_ID);
             val roomId = intent.getStringExtra(KEY_ROOM_ID);
+            val roomName = intent.getStringExtra(KEY_ROOM_NAME);
             if (userId != null) {
                 mViewModel.mUserId.value = userId.toString()
             }
             if (roomId != null) {
                 mViewModel.mRoomId.value = roomId.toString()
+            }
+            if (roomName != null) {
+                mViewModel.mRoomName.value = roomName.toString()
             }
         }
     }
@@ -84,6 +93,14 @@ class ActivityRTC : BaseActivity<VMRTC, ActivityRtcBinding>() {
     override fun onDestroy() {
         mViewModel.exitRoom()
         super.onDestroy()
+    }
+
+    override fun onFocusChange(view: View, focus: Boolean) {
+        if(focus){
+            view.animate().scaleX(1.1f).scaleY(1.1f).setDuration(500).start()
+        }else{
+            view.animate().scaleX(1.0f).scaleY(1.0f).setDuration(500).start()
+        }
     }
 
 }

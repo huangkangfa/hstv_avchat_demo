@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <com.android.hsdemo.custom.ClipLinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/listItem"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:focusable="true"
@@ -11,7 +12,7 @@
         android:id="@+id/btnP"
         android:layout_width="120dp"
         android:layout_height="120dp"
-        android:background="@drawable/border_0"
+        android:background="@drawable/selector_border_focus"
         android:focusable="true"
         android:padding="1dp">
 

@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <data>
+
+        <variable
+            name="vm"
+            type="com.android.hsdemo.ui.main.vm.VMFJoinMeeting" />
+    </data>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center_horizontal"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:id="@+id/llInput"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="65dp"
+                android:layout_marginBottom="22dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <TextView
+                    style="@style/DefaultShowTextStyle"
+                    android:layout_width="80dp"
+                    android:layout_marginEnd="10dp"
+                    android:text="@string/meeting_no" />
+
+                <androidx.appcompat.widget.AppCompatEditText
+                    android:id="@+id/etMeetingNo"
+                    style="@style/DefaultEditTextStyle"
+                    android:hint="@string/input_meeting_no"
+                    android:inputType="number" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <TextView
+                    style="@style/DefaultShowTextStyle"
+                    android:layout_width="80dp"
+                    android:layout_marginEnd="10dp"
+                    android:text="@string/meeting_pwd" />
+
+                <androidx.appcompat.widget.AppCompatEditText
+                    android:id="@+id/etPassword"
+                    style="@style/DefaultEditTextStyle"
+                    android:hint="@string/hint_meeting_pwd"
+                    android:inputType="numberPassword" />
+
+            </LinearLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/btnOK"
+            style="@style/DefaultButtonStyle"
+            android:layout_marginTop="60dp"
+            android:background="@drawable/selector_button_focus">
+
+            <ImageView
+                android:id="@+id/btnOKImg"
+                style="@style/DefaultButtonInnerImageStyle"
+                android:src="@mipmap/icon_sure_0" />
+
+            <TextView
+                android:id="@+id/btnOKTv"
+                style="@style/DefaultButtonInnerTextStyle"
+                android:text="@string/sure" />
+        </LinearLayout>
+    </LinearLayout>
+</layout>

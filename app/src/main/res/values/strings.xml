@@ -44,4 +44,7 @@
     <string name="input_quick_join_meeting">快速加入会议</string>
     <string name="latest_people">最近联系人</string>
 
+    <string name="user_name_">账号:</string>
+    <string name="user_name2_">昵称:</string>
+
 </resources>

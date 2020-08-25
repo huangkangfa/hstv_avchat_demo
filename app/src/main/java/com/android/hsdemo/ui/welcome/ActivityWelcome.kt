@@ -12,6 +12,7 @@ import com.android.hsdemo.network.HttpCallback
 import com.android.hsdemo.network.RemoteRepositoryImpl
 import com.android.hsdemo.ui.login.ActivityLogin
 import com.android.hsdemo.ui.main.ActivityMain
+import com.android.hsdemo.ui.rtc.ActivityRTC
 import com.rxjava.rxlife.life
 import kotlinx.coroutines.*
 
@@ -22,6 +23,8 @@ class ActivityWelcome : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+//        ActivityRTC.start(this@ActivityWelcome,"15168797927","1256732","demo房间")
+//        this@ActivityWelcome.finish()
         init()
     }
 

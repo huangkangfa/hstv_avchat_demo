@@ -53,9 +53,6 @@
             android:name=".ui.main.ActivityMain"
             android:screenOrientation="landscape" />
         <activity
-            android:name=".ui.entrance.ActivityEntrance"
-            android:screenOrientation="landscape" />
-        <activity
             android:name=".ui.rtc.ActivityRTC"
             android:screenOrientation="landscape" />
     </application>

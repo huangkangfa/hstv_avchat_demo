@@ -2,6 +2,7 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android">
 
     <data>
+
         <variable
             name="vm"
             type="com.android.hsdemo.ui.rtc.VMRTC" />
@@ -10,11 +11,12 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:clipChildren="false"
         android:background="@color/rtc_main_bg">
 
 
         <com.tencent.rtmp.ui.TXCloudVideoView
-            android:id="@+id/trtc_tc_cloud_view_main"
+            android:id="@+id/vTRTCMain"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
 
@@ -36,170 +38,122 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="60dp">
-
-
-            <ImageView
-                android:id="@+id/trtc_ic_back"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="10dp"
-                android:layout_marginTop="15dp"
-                android:onClick="@{vm.onBackClick}"
-                android:background="@mipmap/rtc_ic_back" />
-
-            <TextView
-                android:id="@+id/trtc_tv_room_number"
-                android:layout_width="match_parent"
-                android:layout_height="40dp"
-                android:layout_marginTop="15dp"
-                android:gravity="center_horizontal"
-                android:text="1111"
-                android:textColor="@android:color/white"
-                android:textSize="20sp" />
-
-        </LinearLayout>
-
-
-        <com.tencent.rtmp.ui.TXCloudVideoView
-            android:id="@+id/trtc_tc_cloud_view_1"
-            android:layout_width="90dp"
-            android:layout_height="160dp"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentBottom="true"
-            android:layout_marginRight="15dp"
-            android:layout_marginBottom="80dp" />
-
-        <com.tencent.rtmp.ui.TXCloudVideoView
-            android:id="@+id/trtc_tc_cloud_view_2"
-            android:layout_width="90dp"
-            android:layout_height="160dp"
-            android:layout_above="@id/trtc_tc_cloud_view_1"
-            android:layout_alignParentRight="true"
-            android:layout_marginRight="15dp"
-            android:layout_marginBottom="10dp" />
-
-        <com.tencent.rtmp.ui.TXCloudVideoView
-            android:id="@+id/trtc_tc_cloud_view_3"
-            android:layout_width="90dp"
-            android:layout_height="160dp"
-            android:layout_above="@id/trtc_tc_cloud_view_2"
-            android:layout_alignParentRight="true"
-            android:layout_marginRight="15dp"
-            android:layout_marginBottom="10dp" />
-
-
-        <com.tencent.rtmp.ui.TXCloudVideoView
-            android:id="@+id/trtc_tc_cloud_view_4"
-            android:layout_width="90dp"
-            android:layout_height="160dp"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentBottom="true"
-            android:layout_marginLeft="15dp"
-            android:layout_marginBottom="80dp" />
-
-
-        <com.tencent.rtmp.ui.TXCloudVideoView
-            android:id="@+id/trtc_tc_cloud_view_5"
-            android:layout_width="90dp"
-            android:layout_height="160dp"
-            android:layout_above="@id/trtc_tc_cloud_view_4"
-            android:layout_alignParentLeft="true"
-            android:layout_marginLeft="15dp"
-            android:layout_marginBottom="10dp" />
-
-
-        <com.tencent.rtmp.ui.TXCloudVideoView
-            android:id="@+id/trtc_tc_cloud_view_6"
-            android:layout_width="90dp"
-            android:layout_height="160dp"
-            android:layout_above="@id/trtc_tc_cloud_view_5"
-            android:layout_alignParentLeft="true"
-            android:layout_marginLeft="15dp"
-            android:layout_marginBottom="10dp" />
-
-
-        <LinearLayout
-            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_marginLeft="60dp"
-            android:layout_marginRight="60dp"
-            android:layout_marginBottom="30dp"
+            android:gravity="center"
             android:orientation="vertical">
 
+            <TextView
+                android:id="@+id/roomTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="30dp"
+                android:text="@={vm.mRoomName}"
+                android:textColor="@android:color/white"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
             <LinearLayout
-                android:id="@+id/trtc_ll_controller"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="horizontal"
-                android:visibility="visible">
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
 
-                <LinearLayout
-                    android:layout_width="0dp"
+                <TextView
+                    android:id="@+id/roomDesc"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="vertical">
-
-                    <Button
-                        android:id="@+id/trtc_btn_switch_camera"
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
-                        android:layout_gravity="center_horizontal"
-                        android:onClick="@{vm.onSwitchCameraClick}"
-                        android:background="@drawable/rtc_switch_camera" />
-                </LinearLayout>
-
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="vertical">
-
-                    <Button
-                        android:id="@+id/trtc_btn_mute_audio"
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
-                        android:layout_gravity="center_horizontal"
-                        android:onClick="@{vm.onMuteAudioClick}"
-                        android:background="@{vm.drawableOfMuteAudio}" />
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="vertical">
-
-                    <Button
-                        android:id="@+id/trtc_btn_mute_video"
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
-                        android:layout_gravity="center_horizontal"
-                        android:onClick="@{vm.onMuteVideoClick}"
-                        android:background="@{vm.drawableOfMuteVideo}" />
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="vertical">
-
-                    <Button
-                        android:id="@+id/trtc_btn_log_info"
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
-                        android:layout_gravity="center_horizontal"
-                        android:onClick="@{vm.onShowDebugViewClick}"
-                        android:background="@mipmap/rtc_log_button" />
-                </LinearLayout>
-
+                    android:layout_marginTop="6dp"
+                    android:text="@={vm.mRoomId}"
+                    android:textColor="@android:color/white"
+                    android:textSize="15sp"
+                    android:textStyle="bold" />
 
             </LinearLayout>
 
         </LinearLayout>
+
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_marginTop="30dp"
+            android:layout_marginEnd="39dp"
+            android:orientation="vertical">
+            <com.tencent.rtmp.ui.TXCloudVideoView
+                android:id="@+id/trtcRemoteView1"
+                android:layout_width="208dp"
+                android:layout_height="117dp"/>
+            <com.tencent.rtmp.ui.TXCloudVideoView
+                android:id="@+id/trtcRemoteView2"
+                android:layout_width="208dp"
+                android:layout_height="117dp"
+                android:layout_marginTop="18dp" />
+            <com.tencent.rtmp.ui.TXCloudVideoView
+                android:id="@+id/trtcRemoteView3"
+                android:layout_width="208dp"
+                android:layout_height="117dp"
+                android:layout_marginTop="18dp" />
+        </LinearLayout>
+
+        <com.android.hsdemo.custom.ClipLinearLayout
+            android:id="@+id/llController"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="35dp"
+            android:gravity="center_vertical"
+            android:clipChildren="false"
+            android:orientation="horizontal">
+            <View
+                android:id="@+id/btnMuteAudio"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_gravity="center_horizontal"
+                android:background="@drawable/selector_slice"
+                android:focusable="true"
+                android:layout_marginEnd="72dp"
+                android:onClick="@{vm.onMuteAudioClick}" />
+            <View
+                android:id="@+id/btnMuteVideo"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_gravity="center_horizontal"
+                android:background="@drawable/selector_camera"
+                android:focusable="true"
+                android:layout_marginEnd="72dp"
+                android:onClick="@{vm.onMuteVideoClick}" />
+
+            <View
+                android:id="@+id/btnScreen"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_gravity="center_horizontal"
+                android:background="@drawable/selector_screen"
+                android:focusable="true"
+                android:layout_marginEnd="72dp"
+                android:onClick="@{vm.onScreenClick}" />
+
+            <View
+                android:id="@+id/btnControl"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_gravity="center_horizontal"
+                android:background="@drawable/selector_control"
+                android:focusable="true"
+                android:layout_marginEnd="72dp"
+                android:onClick="@{vm.onControlClick}" />
+
+            <View
+                android:id="@+id/btnExit"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_gravity="center_horizontal"
+                android:background="@drawable/selector_exit"
+                android:focusable="true"
+                android:onClick="@{vm.onExitClick}" />
+
+        </com.android.hsdemo.custom.ClipLinearLayout>
 
     </RelativeLayout>
 </layout>

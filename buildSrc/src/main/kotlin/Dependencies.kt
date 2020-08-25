@@ -64,11 +64,10 @@ object ReleaseConfig {
     const val PRODUCT_CHANNEL = "coffee"
 
     //腾讯云音视频sdkAppId
-    const val TENCENT_APP_ID = 1400410071
+    const val TENCENT_APP_ID = 1400414829
 
     //腾讯云音视频secretkey
-    const val TENCENT_LIVE_SECRETKEY =
-        "7a697d1e8761b81e14078a6015bb3cd7465f171d99de59ac20d25d6bd42e7528"
+    const val TENCENT_LIVE_SECRETKEY = "MTcb6RyKUazDDxSFpJbpujJe42pXAPZV"
 
 }
 

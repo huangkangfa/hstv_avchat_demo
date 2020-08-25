@@ -15,6 +15,7 @@ public class ClipLinearLayout extends LinearLayout {
 
     public ClipLinearLayout(Context context, AttributeSet attrs) {
         super(context, attrs);
+        setClipChildren(false);
         setChildrenDrawingOrderEnabled(true);
         mControlViewBringToFront = new ControlViewBringToFront(this);
     }

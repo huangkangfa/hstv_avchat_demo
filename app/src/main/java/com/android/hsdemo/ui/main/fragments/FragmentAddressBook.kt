@@ -1,17 +1,21 @@
 package com.android.hsdemo.ui.main.fragments
 
 import android.view.View
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.LifecycleOwner
 import androidx.recyclerview.widget.GridLayoutManager
 import com.android.baselib.base.BaseFragment
+import com.android.baselib.recyleview.SpaceItem
 import com.android.baselib.recyleview.adapter.ListItem
+import com.android.baselib.utils.dp2px
 import com.android.hsdemo.BR
 import com.android.hsdemo.R
 import com.android.hsdemo.databinding.FragmentAddressBookBinding
 import com.android.hsdemo.model.ItemOfUser
 import com.android.hsdemo.ui.main.vm.VMFAddressBook
+import com.bumptech.glide.Glide
 import kotlinx.android.synthetic.main.fragment_address_book.*
 import kotlinx.android.synthetic.main.fragment_address_book.recyclerView
 import kotlinx.android.synthetic.main.fragment_join_meeting.*
@@ -19,6 +23,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import me.jessyan.autosize.utils.ScreenUtils
 
 class FragmentAddressBook : BaseFragment<VMFAddressBook, FragmentAddressBookBinding>() {
 
@@ -34,8 +39,14 @@ class FragmentAddressBook : BaseFragment<VMFAddressBook, FragmentAddressBookBind
         { holder, item ->
             val userName = holder.getView<TextView>(R.id.userName)
             val userPhone = holder.getView<TextView>(R.id.userPhone)
+            val userImg = holder.getView<ImageView>(R.id.userImg)
             userName.text = item._data.nickName
             userPhone.text = item._data.userName
+            Glide.with(holder.itemView)
+                .load(item._data.userAvatar)
+                .placeholder(R.mipmap.icon_default)
+                .error(R.mipmap.icon_default)
+                .into(userImg)
         }, {
 
         }
@@ -43,9 +54,10 @@ class FragmentAddressBook : BaseFragment<VMFAddressBook, FragmentAddressBookBind
 
     override fun afterCreate() {
         //初始化RecycleView
+        recyclerView.addItemDecoration(SpaceItem(bottom = dp2px(5f)))
         mViewModel.initRecycleView(
             recyclerView,
-            GridLayoutManager(context, 2, GridLayoutManager.HORIZONTAL, false),
+            GridLayoutManager(context, 3, GridLayoutManager.VERTICAL, false),
             itemOfUser
         )
     }

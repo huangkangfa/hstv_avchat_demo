@@ -96,7 +96,7 @@ class FragmentCreateMeeting : BaseFragment<VMFCreateMeeting, FragmentCreateMeeti
             mViewModel.joinMeeting(this,object :HttpCallback<String>{
                 override fun success(t: String) {
                     currentActivity.dismissLoading()
-                    ActivityRTC.start(requireActivity(),Preferences.getString(KEY_ACCID),mViewModel.meetingNo.value.toString())
+                    ActivityRTC.start(requireActivity(),Preferences.getString(KEY_ACCID),mViewModel.meetingNo.value.toString(),mViewModel.meetingName.value.toString())
                 }
 
                 override fun failed(msg: String) {

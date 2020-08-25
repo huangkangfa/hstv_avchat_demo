@@ -8,6 +8,7 @@ import androidx.annotation.LayoutRes
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.ViewModelProvider
 import java.lang.reflect.ParameterizedType
@@ -54,5 +55,70 @@ abstract class BaseFragment<VM : AndroidViewModel, VDB : ViewDataBinding> : Frag
      * create初始化后的操作
      */
     protected abstract fun afterCreate()
+
+    /**
+     * 获取当前显示的fragment
+     */
+    fun getVisibleFragment(): Fragment? {
+        val fragments: List<Fragment> = childFragmentManager.fragments
+        for (fragment in fragments) {
+            if (fragment.isVisible) return fragment
+        }
+        return null
+    }
+
+    /**
+     * 添加Fragment
+     * @param isAddBackStack 是否添加回退栈
+     */
+    fun addFragment(
+        contentId: Int,
+        fragment: Fragment,
+        tag: String,
+        isAddBackStack: Boolean,
+        listener: BaseFragmentActivity.OnCustomAnimationsLister? = null
+    ): FragmentTransaction {
+        val mTransaction = childFragmentManager.beginTransaction()
+        if (listener != null) {
+            mTransaction.setCustomAnimations(
+                listener.setEnterAnimations(),
+                listener.setExitAnimations(),
+                listener.setPopEnterAnimations(),
+                listener.setPopExitAnimations()
+            )
+        }
+        mTransaction.add(contentId, fragment, tag)
+        if (isAddBackStack) {
+            mTransaction.addToBackStack(tag)
+        }
+        return mTransaction
+    }
+
+    /**
+     * 覆盖Fragment
+     * @param isAddBackStack 是否添加回退栈
+     */
+    fun replaceFragment(
+        contentId: Int,
+        fragment: Fragment,
+        tag: String,
+        isAddBackStack: Boolean,
+        listener: BaseFragmentActivity.OnCustomAnimationsLister? = null
+    ): FragmentTransaction {
+        val mTransaction = childFragmentManager.beginTransaction()
+        if (listener != null) {
+            mTransaction.setCustomAnimations(
+                listener.setEnterAnimations(),
+                listener.setExitAnimations(),
+                listener.setPopEnterAnimations(),
+                listener.setPopExitAnimations()
+            )
+        }
+        mTransaction.replace(contentId, fragment, tag)
+        if (isAddBackStack) {
+            mTransaction.addToBackStack(tag)
+        }
+        return mTransaction
+    }
 
 }
