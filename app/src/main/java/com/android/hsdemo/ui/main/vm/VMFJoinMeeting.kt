@@ -1,19 +1,21 @@
 package com.android.hsdemo.ui.main.vm
 
 import android.app.Application
+import android.text.TextUtils
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.MutableLiveData
 import androidx.recyclerview.widget.RecyclerView
-import com.android.baselib.recyleview.adapter.AbstractAdapter
-import com.android.baselib.recyleview.adapter.ListItem
-import com.android.baselib.recyleview.adapter.setUP
+import com.android.baselib.custom.recyleview.adapter.AbstractAdapter
+import com.android.baselib.custom.recyleview.adapter.ListItem
+import com.android.baselib.custom.recyleview.adapter.setUP
+import com.android.baselib.utils.MD5Utils
 import com.android.hsdemo.model.ItemOfMeeting
 import com.android.hsdemo.model.Meeting
+import com.android.hsdemo.model.MeetingDetail
 import com.android.hsdemo.network.HttpCallback
 import com.android.hsdemo.network.RemoteRepositoryImpl
 import com.rxjava.rxlife.life
-import kotlinx.android.synthetic.main.fragment_join_meeting.*
-import kotlinx.coroutines.CoroutineScope
 
 class VMFJoinMeeting(application: Application) : AndroidViewModel(application) {
 
@@ -22,9 +24,22 @@ class VMFJoinMeeting(application: Application) : AndroidViewModel(application) {
      */
     private var data: ArrayList<ItemOfMeeting> = arrayListOf(ItemOfMeeting(0, null))
 
-    private lateinit var adapter: AbstractAdapter<ItemOfMeeting>
+    /**
+     * 自己输入加入会议会议号
+     */
+    val meetingNo: MutableLiveData<String> = MutableLiveData("")
 
-    var isInitOK = false
+    /**
+     * 自己输入加入会议会议密码
+     */
+    val meetingPassword: MutableLiveData<String> = MutableLiveData("")
+
+    /**
+     * 会议室名称
+     */
+    val meetingTitle: MutableLiveData<String> = MutableLiveData("")
+
+    private lateinit var adapter: AbstractAdapter<ItemOfMeeting>
 
     /**
      * 初始化RecycleView列表
@@ -41,7 +56,6 @@ class VMFJoinMeeting(application: Application) : AndroidViewModel(application) {
             itemOfData,
             manager = manager
         )
-        isInitOK = true
     }
 
     /**
@@ -52,6 +66,54 @@ class VMFJoinMeeting(application: Application) : AndroidViewModel(application) {
             .life(owner)
             .subscribe(
                 { result: List<Meeting> -> callback.success(result) }
+            ) { throwable: Throwable? -> callback.failed(throwable?.message.toString()) }
+    }
+
+    /**
+     * 参加会议
+     */
+    fun joinMeeting(owner: LifecycleOwner, callback: HttpCallback<MeetingDetail>) {
+        meetingTitle.value = ""
+        if (TextUtils.isEmpty(meetingNo.value.toString())) {
+            callback.failed("会议号不能为空")
+            return
+        }
+        getMeetingDetail(meetingNo.value.toString(),owner,object :HttpCallback<MeetingDetail>{
+            override fun success(t: MeetingDetail) {
+                if (!TextUtils.isEmpty(t.pwd.toString()) && !TextUtils.equals(
+                        MD5Utils.toMD5(meetingPassword.value.toString()),
+                        t.pwd.toString()
+                    )
+                ) {
+                    callback.failed("密码不正确")
+                } else {
+                    RemoteRepositoryImpl.joinOrLeaveMeeting(t.id.toString(), 1)
+                        .life(owner)
+                        .subscribe(
+                            {
+                                meetingTitle.value = t.title.toString()
+                                callback.success(t)
+                            }
+                        ) { throwable: Throwable? -> callback.failed(throwable?.message.toString()) }
+                }
+            }
+
+            override fun failed(msg: String) {
+                callback.failed(msg)
+            }
+        })
+    }
+
+    /**
+     * 获取会议详情
+     */
+    private fun getMeetingDetail(meetingNo:String,owner: LifecycleOwner, callback: HttpCallback<MeetingDetail>) {
+        RemoteRepositoryImpl.getMeetingDetail(meetingNo)
+            .life(owner)
+            .subscribe(
+                { result: MeetingDetail ->
+                    callback.success(result)
+                }
             ) { throwable: Throwable? -> callback.failed(throwable?.message.toString()) }
     }
 

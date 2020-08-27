@@ -4,9 +4,9 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LifecycleOwner
 import androidx.recyclerview.widget.RecyclerView
-import com.android.baselib.recyleview.adapter.AbstractAdapter
-import com.android.baselib.recyleview.adapter.ListItem
-import com.android.baselib.recyleview.adapter.setUP
+import com.android.baselib.custom.recyleview.adapter.AbstractAdapter
+import com.android.baselib.custom.recyleview.adapter.ListItem
+import com.android.baselib.custom.recyleview.adapter.setUP
 import com.android.hsdemo.model.ItemOfUser
 import com.android.hsdemo.model.User
 import com.android.hsdemo.network.HttpCallback

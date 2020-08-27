@@ -1,11 +1,15 @@
 package com.android.hsdemo.util
 
+import android.content.Context
 import android.os.Build
 import android.view.View
+import android.view.animation.Animation
+import android.view.animation.AnimationUtils
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.annotation.RequiresApi
 import com.android.baselib.global.AppGlobal.context
+import com.android.hsdemo.R
 import com.android.hsdemo.model.StatusView
 import com.elvishew.xlog.XLog
 
@@ -109,4 +113,13 @@ fun changeImageSrc(
             }
         }
     }
+}
+
+/**
+ * 获取动画对象
+ */
+fun getAnimation(context: Context, res: Int, listener: Animation.AnimationListener): Animation {
+    val anim = AnimationUtils.loadAnimation(context, res)
+    anim.setAnimationListener(listener)
+    return anim
 }

@@ -41,7 +41,7 @@ interface RemoteRepository {
     ): Observable<User>
 
     fun modifyUserInfo(
-        url: String,
+        url: String?,
         nickName: String
     ): Observable<String>
 
@@ -54,7 +54,7 @@ interface RemoteRepository {
     ): Observable<Meeting>
 
     fun opReport(
-        id: Long,
+        id: String,
         t: Int,
         a: String?,
         e: String?
@@ -70,6 +70,8 @@ interface RemoteRepository {
     ): Observable<String>
 
     fun getMyMeetingList(): Observable<List<Meeting>>
+
+    fun getUserListByAccids(accids: String): Observable<List<User>>
 }
 
 object RemoteRepositoryImpl : RemoteRepository {
@@ -142,7 +144,7 @@ object RemoteRepositoryImpl : RemoteRepository {
      * url          头像
      * nickName     昵称
      */
-    override fun modifyUserInfo(url: String, nickName: String): Observable<String> {
+    override fun modifyUserInfo(url: String?, nickName: String): Observable<String> {
         return RxHttp.postForm(API_MODIFYUSERINFO)
             .add("url", url)
             .add("nickName", nickName)
@@ -185,7 +187,7 @@ object RemoteRepositoryImpl : RemoteRepository {
      * a    被操控的会议成员的IM账号(type为1,2,3,4,7时必填)
      * e    扩展字段
      */
-    override fun opReport(id: Long, t: Int, a: String?, e: String?): Observable<String> {
+    override fun opReport(id: String, t: Int, a: String?, e: String?): Observable<String> {
         return RxHttp.postForm(API_OPREPORT_METTING)
             .add("id", id)
             .add("t", t)
@@ -226,6 +228,17 @@ object RemoteRepositoryImpl : RemoteRepository {
     override fun getMyMeetingList(): Observable<List<Meeting>> {
         return RxHttp.postForm(API_MYMEETINGLIST)
             .asResponseList(Meeting().javaClass)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+    }
+
+    /**
+     * 根据accids获取对应用户们的信息
+     */
+    override fun getUserListByAccids(accids: String): Observable<List<User>> {
+        return RxHttp.postForm(API_USERLIST_BY_ACCIDS)
+            .add("accids", accids)
+            .asResponseList(User().javaClass)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
     }

@@ -11,8 +11,8 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:paddingTop="30dp"
-        android:gravity="center_horizontal">
+        android:gravity="center_horizontal"
+        android:paddingTop="30dp">
 
         <LinearLayout
             android:layout_width="580dp"
@@ -47,11 +47,12 @@
                     style="@style/DefaultEditTextStyle"
                     android:layout_width="275dp"
                     android:layout_height="35dp"
-                    android:text="@={vm.meetingName}"
+                    android:hint="@string/hint_meeting_name"
                     android:nextFocusDown="@+id/btnSelectPeople"
-                    android:hint="@string/hint_meeting_name"/>
+                    android:text="@={vm.meetingName}" />
 
             </LinearLayout>
+
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -71,18 +72,19 @@
                     android:maxLines="1"
                     android:paddingLeft="10dp"
                     android:paddingRight="10dp"
+                    android:text="@={vm.meetingPeopleStr}"
                     android:textColor="@color/white"
-                    android:textSize="15sp"
-                    android:text="@={vm.meetingPeopleStr}"/>
+                    android:textSize="15sp" />
 
                 <ImageView
                     android:id="@+id/btnSelectPeople"
                     android:layout_width="24dp"
                     android:layout_height="24dp"
                     android:focusable="true"
-                    android:src="@mipmap/icon_select_people_0"/>
+                    android:src="@mipmap/icon_select_people_0" />
 
             </LinearLayout>
+
             <LinearLayout
                 android:id="@+id/llMeetingPwd"
                 android:layout_width="wrap_content"
@@ -101,12 +103,13 @@
                     style="@style/DefaultEditTextStyle"
                     android:layout_width="275dp"
                     android:layout_height="35dp"
+                    android:hint="@string/hint_meeting_pwd"
                     android:inputType="numberPassword"
                     android:nextFocusUp="@+id/btnSelectPeople"
-                    android:text="@={vm.meetingPassword}"
-                    android:hint="@string/hint_meeting_pwd"/>
+                    android:text="@={vm.meetingPassword}" />
 
             </LinearLayout>
+
             <LinearLayout
                 android:id="@+id/llUserBalance"
                 android:layout_width="wrap_content"
@@ -120,16 +123,28 @@
                     android:layout_marginEnd="10dp"
                     android:text="@string/user_balance" />
 
-                <TextView
+                <LinearLayout
                     android:layout_width="275dp"
                     android:layout_height="wrap_content"
-                    android:textSize="15sp"
-                    android:textColor="@color/white"
-                    android:paddingLeft="10dp"
-                    android:paddingRight="10dp"
-                    android:maxLines="1"
-                    android:ellipsize="end"
-                    android:text="@={vm.userBalance}"/>
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:ellipsize="end"
+                        android:maxLines="1"
+                        android:paddingLeft="10dp"
+                        android:paddingRight="10dp"
+                        android:text="@={vm.userBalance}"
+                        android:textColor="@color/white"
+                        android:textSize="15sp" />
+
+                    <TextView
+                        style="@style/DefaultShowTextStyle"
+                        android:layout_width="wrap_content"
+                        android:text="元" />
+                </LinearLayout>
+
 
             </LinearLayout>
 
@@ -143,21 +158,21 @@
 
                 <TextView
                     style="@style/DefaultShowTextStyle"
-                    android:layout_marginEnd="10dp"
                     android:layout_width="75dp"
+                    android:layout_marginEnd="10dp"
                     android:text="@string/meeting_no" />
 
                 <TextView
                     android:layout_width="275dp"
                     android:layout_height="wrap_content"
-                    android:textSize="19sp"
-                    android:textColor="@color/white"
+                    android:ellipsize="end"
+                    android:maxLines="1"
                     android:paddingLeft="10dp"
                     android:paddingRight="10dp"
-                    android:textStyle="bold"
-                    android:maxLines="1"
-                    android:ellipsize="end"
-                    android:text="@={vm.meetingNo}"/>
+                    android:text="@={vm.meetingNo}"
+                    android:textColor="@color/white"
+                    android:textSize="19sp"
+                    android:textStyle="bold" />
 
             </LinearLayout>
 
@@ -189,14 +204,15 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="30dp"
-                    android:visibility="gone"
-                    android:orientation="horizontal">
+                    android:orientation="horizontal"
+                    android:visibility="gone">
+
                     <LinearLayout
                         android:id="@+id/btnJoin"
                         style="@style/DefaultButtonStyle"
-                        android:layout_marginRight="15dp"
                         android:layout_width="186dp"
-                        android:layout_height="47dp">
+                        android:layout_height="47dp"
+                        android:layout_marginRight="15dp">
 
                         <ImageView
                             android:id="@+id/btnJoinImg"

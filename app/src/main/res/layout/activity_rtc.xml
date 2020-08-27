@@ -11,8 +11,8 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:clipChildren="false"
-        android:background="@color/rtc_main_bg">
+        android:background="@color/rtc_main_bg"
+        android:clipChildren="false">
 
 
         <com.tencent.rtmp.ui.TXCloudVideoView
@@ -37,16 +37,19 @@
 
 
         <LinearLayout
+            android:id="@+id/screenTop"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:background="@drawable/bg_gradient_title"
             android:gravity="center"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:paddingTop="20dp"
+            android:paddingBottom="20dp">
 
             <TextView
                 android:id="@+id/roomTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="30dp"
                 android:text="@={vm.mRoomName}"
                 android:textColor="@android:color/white"
                 android:textSize="18sp"
@@ -66,62 +69,66 @@
                     android:textColor="@android:color/white"
                     android:textSize="15sp"
                     android:textStyle="bold" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="6dp"
+                    android:text="|"
+                    android:textColor="@android:color/white"
+                    android:textSize="15sp"
+                    android:textStyle="bold" />
+                <TextView
+                    android:id="@+id/roomTime"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="6dp"
+                    android:text="@={vm.mTimeDownStr}"
+                    android:textColor="@android:color/white"
+                    android:textSize="15sp"
+                    android:textStyle="bold" />
 
             </LinearLayout>
 
         </LinearLayout>
 
-
-        <LinearLayout
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/screenRight"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
             android:layout_marginTop="30dp"
             android:layout_marginEnd="39dp"
-            android:orientation="vertical">
-            <com.tencent.rtmp.ui.TXCloudVideoView
-                android:id="@+id/trtcRemoteView1"
-                android:layout_width="208dp"
-                android:layout_height="117dp"/>
-            <com.tencent.rtmp.ui.TXCloudVideoView
-                android:id="@+id/trtcRemoteView2"
-                android:layout_width="208dp"
-                android:layout_height="117dp"
-                android:layout_marginTop="18dp" />
-            <com.tencent.rtmp.ui.TXCloudVideoView
-                android:id="@+id/trtcRemoteView3"
-                android:layout_width="208dp"
-                android:layout_height="117dp"
-                android:layout_marginTop="18dp" />
-        </LinearLayout>
+            android:layout_marginBottom="30dp"/>
 
         <com.android.hsdemo.custom.ClipLinearLayout
-            android:id="@+id/llController"
+            android:id="@+id/screenBottom"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
             android:layout_centerHorizontal="true"
             android:layout_marginBottom="35dp"
-            android:gravity="center_vertical"
             android:clipChildren="false"
+            android:gravity="center_vertical"
             android:orientation="horizontal">
+
             <View
                 android:id="@+id/btnMuteAudio"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
                 android:layout_gravity="center_horizontal"
+                android:layout_marginEnd="72dp"
                 android:background="@drawable/selector_slice"
                 android:focusable="true"
-                android:layout_marginEnd="72dp"
                 android:onClick="@{vm.onMuteAudioClick}" />
+
             <View
                 android:id="@+id/btnMuteVideo"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
                 android:layout_gravity="center_horizontal"
+                android:layout_marginEnd="72dp"
                 android:background="@drawable/selector_camera"
                 android:focusable="true"
-                android:layout_marginEnd="72dp"
                 android:onClick="@{vm.onMuteVideoClick}" />
 
             <View
@@ -129,20 +136,18 @@
                 android:layout_width="50dp"
                 android:layout_height="50dp"
                 android:layout_gravity="center_horizontal"
-                android:background="@drawable/selector_screen"
-                android:focusable="true"
                 android:layout_marginEnd="72dp"
-                android:onClick="@{vm.onScreenClick}" />
+                android:background="@drawable/selector_screen"
+                android:focusable="true" />
 
             <View
                 android:id="@+id/btnControl"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
                 android:layout_gravity="center_horizontal"
-                android:background="@drawable/selector_control"
-                android:focusable="true"
                 android:layout_marginEnd="72dp"
-                android:onClick="@{vm.onControlClick}" />
+                android:background="@drawable/selector_control"
+                android:focusable="true" />
 
             <View
                 android:id="@+id/btnExit"
@@ -150,8 +155,7 @@
                 android:layout_height="50dp"
                 android:layout_gravity="center_horizontal"
                 android:background="@drawable/selector_exit"
-                android:focusable="true"
-                android:onClick="@{vm.onExitClick}" />
+                android:focusable="true" />
 
         </com.android.hsdemo.custom.ClipLinearLayout>
 

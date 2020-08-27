@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/bg_gradient_body2"
+    android:gravity="center_horizontal"
+    android:orientation="vertical"
+    android:paddingStart="12dp"
+    android:paddingTop="19dp"
+    android:paddingEnd="12dp"
+    android:paddingBottom="19dp">
+
+    <TextView
+        android:id="@+id/title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="会议邀请"
+        android:textColor="@color/white"
+        android:textSize="19sp"
+        android:textStyle="bold" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="15dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:layout_width="6dp"
+            android:layout_height="6dp"
+            android:layout_marginEnd="10dp"
+            android:src="@drawable/circle_ffca28" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="选择联系人：当前已选中"
+            android:textColor="@color/white"
+            android:textSize="15sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/tvNum"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="0"
+            android:textColor="#FFC800"
+            android:textSize="19sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="人"
+            android:textColor="@color/white"
+            android:textSize="15sp"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+        <ProgressBar
+            android:id="@+id/progressBar"
+            style="?android:attr/progressBarStyleSmall"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_centerInParent="true"
+            android:layout_gravity="center_horizontal"
+            android:indeterminateDrawable="@drawable/anim_color_progressbar"
+            android:visibility="visible" />
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+    </RelativeLayout>
+
+    <com.android.hsdemo.custom.ClipLinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="40dp"
+        android:layout_marginBottom="10dp"
+        android:orientation="horizontal">
+
+        <LinearLayout
+            android:id="@+id/btnOK"
+            style="@style/DefaultButtonStyle"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="17dp">
+
+            <ImageView
+                android:id="@+id/btnOKImg"
+                style="@style/DefaultButtonInnerImageStyle"
+                android:src="@mipmap/icon_sure_0" />
+
+            <TextView
+                android:id="@+id/btnOKTv"
+                style="@style/DefaultButtonInnerTextStyle"
+                android:text="@string/sure" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/btnCancel"
+            style="@style/DefaultButtonStyle"
+            android:layout_marginEnd="10dp">
+
+            <ImageView
+                android:id="@+id/btnCancelImg"
+                style="@style/DefaultButtonInnerImageStyle"
+                android:src="@mipmap/icon_back_0" />
+
+            <TextView
+                android:id="@+id/btnCancelTv"
+                style="@style/DefaultButtonInnerTextStyle"
+                android:text="@string/back" />
+        </LinearLayout>
+
+    </com.android.hsdemo.custom.ClipLinearLayout>
+
+</LinearLayout>

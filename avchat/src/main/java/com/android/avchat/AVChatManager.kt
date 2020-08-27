@@ -103,8 +103,6 @@ object AVChatManager {
         mTRTCCloudListener: TRTCCloudListener
     ) {
         mRTCImpl.enterRoom(mUserId, mUserSig, mRoomId, isFrontCamera, localPreviewView,mTRTCCloudListener)
-        mRTCImpl.setBeautyParam(TXLiveConstants.BEAUTY_STYLE_NATURE,5,1)
-        mRTCImpl.setVideoEncoderParam(TRTCCloudDef.TRTC_VIDEO_RESOLUTION_640_360,15,550,TRTCCloudDef.TRTC_VIDEO_RESOLUTION_MODE_PORTRAIT)
     }
 
     /**

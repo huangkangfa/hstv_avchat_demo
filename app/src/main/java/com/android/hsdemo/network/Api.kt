@@ -55,6 +55,11 @@ const val API_MODIFYUSERINFO = "api/appPc/modifyUserInfo.api"
  */
 const val API_USERLIST = "api/appPc/userList.api"
 
+/**
+ * 根据accids获取对应用户信息
+ */
+const val API_USERLIST_BY_ACCIDS = "api/appPc/userInfoByAccids.api"
+
 
 
 

@@ -5,7 +5,7 @@ import android.widget.RelativeLayout
 import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.android.baselib.base.BaseFragment
-import com.android.baselib.recyleview.adapter.ListItem
+import com.android.baselib.custom.recyleview.adapter.ListItem
 import com.android.baselib.utils.Preferences
 import com.android.hsdemo.BR
 import com.android.hsdemo.KEY_ACCID
@@ -89,16 +89,18 @@ class FragmentJoinMeetingPart1 :
             itemOfData
         )
 
-        //第一个fragment 需要请求数据
         mViewModel.requestData(this)
-
     }
 
     override fun onHiddenChanged(hidden: Boolean) {
         super.onHiddenChanged(hidden)
         if (!hidden) {
-            controlFocusStatusOfView(recyclerView, true)
+            focusThis()
         }
+    }
+
+    private fun focusThis() {
+        controlFocusStatusOfView(recyclerView, true)
     }
 
 }

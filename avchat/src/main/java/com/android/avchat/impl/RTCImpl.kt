@@ -4,6 +4,7 @@ import com.android.avchat.AVChatManager
 import com.android.avchat.interfaces.IRTCInterface
 import com.android.baselib.global.AppGlobal.context
 import com.elvishew.xlog.XLog
+import com.tencent.rtmp.TXLiveConstants
 import com.tencent.rtmp.TXLiveConstants.BEAUTY_STYLE_NATURE
 import com.tencent.rtmp.ui.TXCloudVideoView
 import com.tencent.trtc.TRTCCloud
@@ -42,7 +43,12 @@ class RTCImpl : IRTCInterface {
         trtcParams.roomId = mRoomId
         trtcParams.userSig = mUserSig
         trtcParams.role = TRTCCloudDef.TRTCRoleAnchor
+
+        setBeautyParam(BEAUTY_STYLE_NATURE,5,1)
+        setVideoEncoderParam(TRTCCloudDef.TRTC_VIDEO_RESOLUTION_640_360,15,550,TRTCCloudDef.TRTC_VIDEO_RESOLUTION_MODE_LANDSCAPE)
+
         mTRTCCloud.enterRoom(trtcParams, TRTCCloudDef.TRTC_APP_SCENE_VIDEOCALL)
+
         startLocalVedioAndAudio(isFrontCamera, localPreviewView)
     }
 

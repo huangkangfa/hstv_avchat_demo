@@ -38,7 +38,8 @@
                     android:id="@+id/etMeetingNo"
                     style="@style/DefaultEditTextStyle"
                     android:hint="@string/input_meeting_no"
-                    android:inputType="number" />
+                    android:inputType="number"
+                    android:text="@={vm.meetingNo}" />
 
             </LinearLayout>
 
@@ -58,7 +59,8 @@
                     android:id="@+id/etPassword"
                     style="@style/DefaultEditTextStyle"
                     android:hint="@string/hint_meeting_pwd"
-                    android:inputType="numberPassword" />
+                    android:inputType="numberPassword"
+                    android:text="@={vm.meetingPassword}" />
 
             </LinearLayout>
         </LinearLayout>

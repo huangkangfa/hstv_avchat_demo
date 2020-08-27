@@ -2,11 +2,13 @@ package com.android.hsdemo.ui.main.vm
 
 import android.app.Application
 import android.text.TextUtils
-import android.view.View
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.MutableLiveData
+import com.android.baselib.utils.Preferences
+import com.android.hsdemo.KEY_USER_NICK_NAME
 import com.android.hsdemo.model.Meeting
+import com.android.hsdemo.model.MeetingDetail
 import com.android.hsdemo.network.HttpCallback
 import com.android.hsdemo.network.RemoteRepositoryImpl
 import com.rxjava.rxlife.life
@@ -31,7 +33,7 @@ class VMFCreateMeeting(application: Application) : AndroidViewModel(application)
     /**
      * 用户
      */
-    val userBalance = MutableLiveData<String>("0元")
+    val userBalance = MutableLiveData<String>("0")
 
     /**
      * 会议编号
@@ -39,18 +41,22 @@ class VMFCreateMeeting(application: Application) : AndroidViewModel(application)
     val meetingNo = MutableLiveData<String>("")
 
     /**
+     * 成员们id
+     */
+    val meetingMembersIds = MutableLiveData<String>("")
+
+    /**
      * 会议id
      */
     val meetingId = MutableLiveData<Long>()
 
     fun clearStatus() {
-        meetingName.value = ""
+        meetingName.value = "${Preferences.getString(KEY_USER_NICK_NAME)}的会议"
         meetingPeopleStr.value = ""
         meetingPassword.value = ""
         meetingNo.value = ""
         meetingId.value = 0
     }
-
 
     /**
      * 发起会议
@@ -63,7 +69,7 @@ class VMFCreateMeeting(application: Application) : AndroidViewModel(application)
         RemoteRepositoryImpl.createMeeting(
             meetingName.value.toString(),
             meetingPassword.value.toString(),
-            ""
+            meetingMembersIds.value.toString()
         )
             .life(owner)
             .subscribe(
@@ -79,6 +85,19 @@ class VMFCreateMeeting(application: Application) : AndroidViewModel(application)
             .life(owner)
             .subscribe(
                 { result: String -> callback.success(result) }
+            ) { throwable: Throwable? -> callback.failed(throwable?.message.toString()) }
+    }
+
+    /**
+     * 获取会议详情
+     */
+    fun getMeetingDetail(owner: LifecycleOwner, callback: HttpCallback<MeetingDetail>) {
+        RemoteRepositoryImpl.getMeetingDetail(meetingNo.value.toString())
+            .life(owner)
+            .subscribe(
+                { result: MeetingDetail ->
+                    callback.success(result)
+                }
             ) { throwable: Throwable? -> callback.failed(throwable?.message.toString()) }
     }
 

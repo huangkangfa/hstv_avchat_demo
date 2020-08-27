@@ -1,6 +1,6 @@
 package com.android.hsdemo.model
 
-import com.android.baselib.recyleview.adapter.ListItemI
+import com.android.baselib.custom.recyleview.adapter.ListItemI
 import com.android.hsdemo.R
 
 class ItemOfUser(var _data: User) : ListItemI {

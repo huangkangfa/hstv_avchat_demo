@@ -23,8 +23,6 @@ class ActivityWelcome : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-//        ActivityRTC.start(this@ActivityWelcome,"15168797927","1256732","demo房间")
-//        this@ActivityWelcome.finish()
         init()
     }
 
@@ -47,13 +45,7 @@ class ActivityWelcome : AppCompatActivity() {
     }
 
     private fun goMain(t: User) {
-        Preferences.saveValue(KEY_TOKEN, t.token.toString())
-        Preferences.saveValue(KEY_USERSIG, t.userSig.toString())
-        Preferences.saveValue(KEY_ACCID, t.accid.toString())
-        Preferences.saveValue(
-            KEY_MEETINGNOTICEACCOUNT,
-            t.meetingNoticeAccount.toString()
-        )
+        saveUser(t)
         //跳转主界面
         ActivityMain.start(this@ActivityWelcome)
         this@ActivityWelcome.finish()

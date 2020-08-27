@@ -11,8 +11,8 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:paddingTop="30dp"
-        android:gravity="center_horizontal">
+        android:gravity="center_horizontal"
+        android:paddingTop="30dp">
 
         <LinearLayout
             android:layout_width="580dp"
@@ -20,14 +20,113 @@
             android:background="@drawable/bg_gradient_body"
             android:gravity="center_horizontal"
             android:orientation="vertical">
-            <TextView
-                android:layout_width="wrap_content"
+
+            <ImageView
+                android:id="@+id/ivHead"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:layout_marginTop="15dp"
+                android:src="@mipmap/icon_default" />
+
+            <LinearLayout
+                android:layout_width="200dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="19dp"
-                android:text="@string/personal_center"
-                android:textColor="@color/white"
-                android:textSize="19sp"
-                android:textStyle="bold" />
+                android:layout_marginTop="12dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <TextView
+                    style="@style/DefaultShowTextStyle"
+                    android:layout_marginEnd="10dp"
+                    android:text="@string/user_name2" />
+
+                <androidx.appcompat.widget.AppCompatEditText
+                    android:id="@+id/etUserName"
+                    style="@style/DefaultEditTextStyle"
+                    android:layout_width="match_parent"
+                    android:ellipsize="end"
+                    android:hint="@string/input_user_nick"
+                    android:maxLines="1"
+                    android:text="@={vm.userNickName}" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="200dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <TextView
+                    style="@style/DefaultShowTextStyle"
+                    android:layout_marginEnd="10dp"
+                    android:text="@string/user_name" />
+
+                <TextView
+                    android:layout_width="275dp"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    android:paddingLeft="10dp"
+                    android:paddingRight="10dp"
+                    android:text="@={vm.userPhone}"
+                    android:textColor="@color/white"
+                    android:textSize="15sp" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="200dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <TextView
+                    style="@style/DefaultShowTextStyle"
+                    android:layout_marginEnd="10dp"
+                    android:text="@string/user_balance" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    android:paddingLeft="10dp"
+                    android:paddingRight="10dp"
+                    android:text="@={vm.userBalance}"
+                    android:textColor="@color/white"
+                    android:textSize="15sp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/rnb"
+                    android:textColor="@color/white"
+                    android:textSize="15sp" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/btnExit"
+                style="@style/DefaultButtonStyle"
+                android:layout_width="160dp"
+                android:layout_height="40dp"
+                android:layout_marginTop="25dp">
+
+                <ImageView
+                    android:id="@+id/btnExitImg"
+                    style="@style/DefaultButtonInnerImageStyle"
+                    android:src="@mipmap/icon_btn_exit_0" />
+
+                <TextView
+                    android:id="@+id/btnExitTv"
+                    style="@style/DefaultButtonInnerTextStyle"
+                    android:text="@string/logout" />
+
+            </LinearLayout>
+
         </LinearLayout>
 
     </RelativeLayout>

@@ -1,14 +1,11 @@
 package com.android.hsdemo.ui.main.fragments
 
-import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.fragment.app.Fragment
-import androidx.lifecycle.LifecycleOwner
 import androidx.recyclerview.widget.GridLayoutManager
 import com.android.baselib.base.BaseFragment
-import com.android.baselib.recyleview.SpaceItem
-import com.android.baselib.recyleview.adapter.ListItem
+import com.android.baselib.custom.recyleview.SpaceItem
+import com.android.baselib.custom.recyleview.adapter.ListItem
 import com.android.baselib.utils.dp2px
 import com.android.hsdemo.BR
 import com.android.hsdemo.R
@@ -16,14 +13,11 @@ import com.android.hsdemo.databinding.FragmentAddressBookBinding
 import com.android.hsdemo.model.ItemOfUser
 import com.android.hsdemo.ui.main.vm.VMFAddressBook
 import com.bumptech.glide.Glide
-import kotlinx.android.synthetic.main.fragment_address_book.*
 import kotlinx.android.synthetic.main.fragment_address_book.recyclerView
-import kotlinx.android.synthetic.main.fragment_join_meeting.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import me.jessyan.autosize.utils.ScreenUtils
 
 class FragmentAddressBook : BaseFragment<VMFAddressBook, FragmentAddressBookBinding>() {
 
@@ -31,9 +25,6 @@ class FragmentAddressBook : BaseFragment<VMFAddressBook, FragmentAddressBookBind
 
     override fun getVariableId(): Int = BR.vm
 
-    /**
-     * 快速加入会议号item
-     */
     private val itemOfUser = ListItem<ItemOfUser>(
         R.layout.item_adapter_user,
         { holder, item ->
@@ -54,7 +45,13 @@ class FragmentAddressBook : BaseFragment<VMFAddressBook, FragmentAddressBookBind
 
     override fun afterCreate() {
         //初始化RecycleView
-        recyclerView.addItemDecoration(SpaceItem(bottom = dp2px(5f)))
+        recyclerView.addItemDecoration(
+            SpaceItem(
+                left = dp2px(2f),
+                right = dp2px(2f),
+                bottom = dp2px(5f)
+            )
+        )
         mViewModel.initRecycleView(
             recyclerView,
             GridLayoutManager(context, 3, GridLayoutManager.VERTICAL, false),

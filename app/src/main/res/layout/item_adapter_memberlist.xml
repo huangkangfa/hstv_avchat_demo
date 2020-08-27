@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center_vertical"
+    android:orientation="horizontal"
+    android:focusable="true"
+    android:paddingStart="12dp"
+    android:paddingTop="6dp"
+    android:paddingEnd="12dp"
+    android:paddingBottom="6dp">
+
+    <ImageView
+        android:id="@+id/userAvatar"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:src="@mipmap/icon_default_circle" />
+
+    <TextView
+        android:id="@+id/userNickName"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:ellipsize="end"
+        android:maxWidth="88dp"
+        android:maxLines="1" />
+
+    <ImageView
+        android:id="@+id/userMute"
+        android:layout_width="25dp"
+        android:layout_height="25dp"
+        android:layout_marginStart="10dp"
+        android:background="@drawable/selector_button_focus"
+        android:focusable="true"
+        android:src="@mipmap/icon_people_mute_audio" />
+
+    <ImageView
+        android:id="@+id/userDel"
+        android:layout_width="25dp"
+        android:layout_height="25dp"
+        android:layout_marginStart="10dp"
+        android:background="@drawable/selector_button_focus"
+        android:focusable="true"
+        android:src="@mipmap/icon_del" />
+
+</LinearLayout>

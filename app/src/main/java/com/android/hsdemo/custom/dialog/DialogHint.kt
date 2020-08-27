@@ -56,6 +56,7 @@ class DialogHint @JvmOverloads constructor(activity: Activity, cancel: Boolean =
             R.mipmap.icon_back_0
         )
 
+        btnOK.setOnClickListener { dismiss() }
         btnCancel.setOnClickListener { dismiss() }
         controlFocusStatusOfView(btnCancel, true)
     }
@@ -71,14 +72,20 @@ class DialogHint @JvmOverloads constructor(activity: Activity, cancel: Boolean =
      * 确定按钮点击事件
      */
     fun setOnSureClickListener(listener: View.OnClickListener) {
-        btnOK.setOnClickListener(listener)
+        btnOK.setOnClickListener {
+            listener.onClick(it)
+            dismiss()
+        }
     }
 
     /**
      * 取消按钮点击事件
      */
     fun setOnCancleClickListener(listener: View.OnClickListener) {
-        btnCancel.setOnClickListener(listener)
+        btnCancel.setOnClickListener {
+            listener.onClick(it)
+            dismiss()
+        }
     }
 
     @RequiresApi(Build.VERSION_CODES.M)

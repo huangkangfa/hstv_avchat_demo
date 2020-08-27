@@ -5,19 +5,26 @@ import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.annotation.RequiresApi
+import androidx.lifecycle.Observer
 import com.android.baselib.ActivityManager
 import com.android.baselib.base.BaseFragment
+import com.android.baselib.custom.eventbus.EventBus
 import com.android.baselib.utils.Preferences
 import com.android.baselib.utils.showShortToast
 import com.android.hsdemo.*
+import com.android.hsdemo.custom.dialog.DialogSelectPeople
+import com.android.hsdemo.custom.dialog.DialogSelectPeople.OnStatusClickListener
 import com.android.hsdemo.databinding.FragmentCreateMeetingBinding
 import com.android.hsdemo.model.Meeting
+import com.android.hsdemo.model.MeetingDetail
 import com.android.hsdemo.model.StatusView
+import com.android.hsdemo.model.User
 import com.android.hsdemo.network.HttpCallback
 import com.android.hsdemo.ui.main.ActivityMain
 import com.android.hsdemo.ui.main.vm.VMFCreateMeeting
 import com.android.hsdemo.ui.rtc.ActivityRTC
 import com.android.hsdemo.util.controlFocusStatusOfView
+import com.elvishew.xlog.XLog
 import kotlinx.android.synthetic.main.fragment_create_meeting.*
 
 class FragmentCreateMeeting : BaseFragment<VMFCreateMeeting, FragmentCreateMeetingBinding>(),
@@ -32,8 +39,12 @@ class FragmentCreateMeeting : BaseFragment<VMFCreateMeeting, FragmentCreateMeeti
     private var imgs = arrayOfNulls<StatusView<ImageView>>(3)
     private lateinit var currentActivity: ActivityMain
 
+    private lateinit var dialogSelect: DialogSelectPeople
+
     override fun afterCreate() {
         currentActivity = requireActivity() as ActivityMain
+        dialogSelect = DialogSelectPeople(currentActivity)
+        mViewModel.userBalance.value = Preferences.getString(KEY_USER_BALANCE, "0.0")
 
         btns[0] = StatusView<View>(btnCreateMeeting, 0, BTN_BACKGROUNDS[0], BTN_BACKGROUNDS[1])
         btns[1] = StatusView<View>(btnJoin, 1, BTN_BACKGROUNDS[0], BTN_BACKGROUNDS[1])
@@ -72,6 +83,11 @@ class FragmentCreateMeeting : BaseFragment<VMFCreateMeeting, FragmentCreateMeeti
         btnJoin.onFocusChangeListener = this
         btnCancel.onFocusChangeListener = this
 
+        //离开视频会议，刷新此界面至发起部分
+        EventBus.with(EventKey.MEETING_STATUS_END, String::class.java).observe(this, Observer {
+            changeTypeUI(true)
+        })
+
         //发起会议
         btnCreateMeeting.setOnClickListener {
             currentActivity.showLoading()
@@ -93,10 +109,15 @@ class FragmentCreateMeeting : BaseFragment<VMFCreateMeeting, FragmentCreateMeeti
         //加入会议
         btnJoin.setOnClickListener {
             currentActivity.showLoading()
-            mViewModel.joinMeeting(this,object :HttpCallback<String>{
+            mViewModel.joinMeeting(this, object : HttpCallback<String> {
                 override fun success(t: String) {
                     currentActivity.dismissLoading()
-                    ActivityRTC.start(requireActivity(),Preferences.getString(KEY_ACCID),mViewModel.meetingNo.value.toString(),mViewModel.meetingName.value.toString())
+                    ActivityRTC.start(
+                        requireActivity(),
+                        Preferences.getString(KEY_ACCID),
+                        mViewModel.meetingNo.value.toString(),
+                        mViewModel.meetingName.value.toString()
+                    )
                 }
 
                 override fun failed(msg: String) {
@@ -110,6 +131,57 @@ class FragmentCreateMeeting : BaseFragment<VMFCreateMeeting, FragmentCreateMeeti
         //返回
         btnCancel.setOnClickListener {
             changeTypeUI(true)
+        }
+
+        //选人
+        btnSelectPeople.setOnClickListener {
+            dialogSelect.show()
+        }
+
+        //选人结果返回处理
+        dialogSelect.listener = object : OnStatusClickListener {
+            override fun onSureClick(data: HashMap<String, User>) {
+
+                //设置UI显示
+                var str = ""
+                var count = 0
+                val maxCount = 2
+                for (item in data) {
+                    str += item.value.nickName.toString()
+                    if (count >= maxCount - 1) {
+                        break
+                    }
+                    if (count in 0 until maxCount) {
+                        if (count == 0 && data.size == 1) {
+                            break
+                        }
+                        str += "、"
+                    }
+                    count++
+                }
+                mViewModel.meetingPeopleStr.value = str
+                if (data.size > maxCount) {
+                    mViewModel.meetingPeopleStr.value += "等${data.size}人"
+                }
+
+                //设置实际数据
+                mViewModel.meetingMembersIds.value = ""
+                count = 0
+                str = ""
+                for (item in data) {
+                    str += item.value.id
+                    if (count in 0 until data.size - 1) {
+                        str += ","
+                    }
+                    count++
+                }
+                mViewModel.meetingMembersIds.value = str
+                dialogSelect.clear()
+            }
+
+            override fun onCancleClick() {
+                dialogSelect.clear()
+            }
         }
 
     }
@@ -193,7 +265,7 @@ class FragmentCreateMeeting : BaseFragment<VMFCreateMeeting, FragmentCreateMeeti
             btnSelectPeople.visibility = View.INVISIBLE
             llJoin.visibility = View.VISIBLE
             llMeetingNo.visibility = View.VISIBLE
-            controlFocusStatusOfView(btnJoin,true)
+            controlFocusStatusOfView(btnJoin, true)
         }
     }
 

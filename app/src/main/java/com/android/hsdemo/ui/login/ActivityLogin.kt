@@ -45,7 +45,7 @@ class ActivityLogin : BaseFragmentActivity() {
             fragmentLogin,
             "login",
             false
-        ).commit()
+        ).commitAllowingStateLoss()
     }
 
     private fun initDialog() {
@@ -97,7 +97,7 @@ class ActivityLogin : BaseFragmentActivity() {
                                     fragmentLogin,
                                     "login",
                                     false
-                                ).commit()
+                                ).commitAllowingStateLoss()
                             }
 
                             override fun failed(msg: String) {
@@ -120,7 +120,7 @@ class ActivityLogin : BaseFragmentActivity() {
             fragmentRegister,
             "register",
             true
-        ).commit()
+        ).commitAllowingStateLoss()
     }
 
     /**
@@ -150,7 +150,7 @@ class ActivityLogin : BaseFragmentActivity() {
             fragmentForget,
             "forget",
             true
-        ).commit()
+        ).commitAllowingStateLoss()
     }
 
     /**
@@ -165,15 +165,8 @@ class ActivityLogin : BaseFragmentActivity() {
      */
     fun goMain(t: User, pwd: String) {
         //存储关键信息
-        Preferences.saveValue(KEY_USER_NAME, t.userName.toString())
         Preferences.saveValue(KEY_USER_PASSWORD, pwd)
-        Preferences.saveValue(KEY_TOKEN, t.token.toString())
-        Preferences.saveValue(KEY_USERSIG, t.userSig.toString())
-        Preferences.saveValue(KEY_ACCID, t.accid.toString())
-        Preferences.saveValue(
-            KEY_MEETINGNOTICEACCOUNT,
-            t.meetingNoticeAccount.toString()
-        )
+        saveUser(t)
         //跳转主界面
         ActivityMain.start(this@ActivityLogin)
         this@ActivityLogin.finish()

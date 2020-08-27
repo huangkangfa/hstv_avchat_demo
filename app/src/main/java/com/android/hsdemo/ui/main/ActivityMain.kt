@@ -16,10 +16,7 @@ import com.android.hsdemo.R
 import com.android.hsdemo.custom.dialog.DialogHint
 import com.android.hsdemo.custom.dialog.DialogWait
 import com.android.hsdemo.model.StatusView
-import com.android.hsdemo.ui.main.fragments.FragmentAddressBook
-import com.android.hsdemo.ui.main.fragments.FragmentCreateMeeting
-import com.android.hsdemo.ui.main.fragments.FragmentJoinMeeting
-import com.android.hsdemo.ui.main.fragments.FragmentPersionCenter
+import com.android.hsdemo.ui.main.fragments.*
 import com.android.hsdemo.util.*
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.coroutines.*
@@ -162,6 +159,14 @@ class ActivityMain : BaseFragmentActivity(), View.OnFocusChangeListener {
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+        val currentFragment = getVisibleFragment()
+        if (currentFragment == fragmentJoinMeeting && fragmentJoinMeeting.fType) {
+            (fragmentJoinMeeting.fragments[0] as FragmentJoinMeetingPart1).mViewModel.requestData(this)
+        }
+    }
+
     override fun onKeyDown(keyCode: Int, event: KeyEvent): Boolean {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
             val currentFragment = getVisibleFragment()
@@ -206,25 +211,25 @@ class ActivityMain : BaseFragmentActivity(), View.OnFocusChangeListener {
             fragmentCreateMeeting,
             "createMeeting",
             false
-        ).hide(fragmentCreateMeeting).commit()
+        ).hide(fragmentCreateMeeting).commitAllowingStateLoss()
         addFragment(
             R.id.flMain,
             fragmentAddressBook,
             "addressBook",
             false
-        ).hide(fragmentAddressBook).commit()
+        ).hide(fragmentAddressBook).commitAllowingStateLoss()
         addFragment(
             R.id.flMain,
             fragmentPersionCenter,
             "persionCenter",
             false
-        ).hide(fragmentPersionCenter).commit()
+        ).hide(fragmentPersionCenter).commitAllowingStateLoss()
         addFragment(
             R.id.flMain,
             fragmentJoinMeeting,
             "joinMeeting",
             false
-        ).show(fragmentJoinMeeting).commit()
+        ).show(fragmentJoinMeeting).commitAllowingStateLoss()
     }
 
     private fun showFragment(fragment: Fragment) {
@@ -233,7 +238,7 @@ class ActivityMain : BaseFragmentActivity(), View.OnFocusChangeListener {
         val transaction = supportFragmentManager.beginTransaction()
         transaction.hide(currentFragment)
         currentFragment = fragment
-        transaction.show(fragment).commit()
+        transaction.show(fragment).commitAllowingStateLoss()
     }
 
 }

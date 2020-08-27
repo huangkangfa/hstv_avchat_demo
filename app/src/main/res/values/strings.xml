@@ -8,6 +8,8 @@
 
     <string name="create_meeting_new">新建会议</string>
     <string name="initiate">发起</string>
+    <string name="mute_audio_all">全员静音</string>
+    <string name="cancel_mute_audio_all">取消全员静音</string>
 
     <string name="rtc_room_input_error_tip">"房间号和用户名不能为空"</string>
     <string name="rtc_permisson_error_tip">"用户没有允许需要的权限，加入通话失败"</string>
@@ -15,6 +17,7 @@
 
     <string name="registered">注册</string>
     <string name="login">登录</string>
+    <string name="logout">退出登录</string>
     <string name="forget_password">忘记密码</string>
     <string name="sure">确定</string>
     <string name="back">返回</string>
@@ -29,6 +32,7 @@
     <string name="repeat_new_password">重复新密码 : </string>
 
     <string name="input_user">请输入账号</string>
+    <string name="input_user_nick">请输入昵称</string>
     <string name="input_verification_code">请输入验证码</string>
     <string name="input_password">请输入密码</string>
     <string name="send_verify_code">发送验证码</string>
@@ -46,5 +50,6 @@
 
     <string name="user_name_">账号:</string>
     <string name="user_name2_">昵称:</string>
+    <string name="rnb">元</string>
 
 </resources>
