@@ -44,7 +44,10 @@ class FragmentCreateMeeting : BaseFragment<VMFCreateMeeting, FragmentCreateMeeti
     override fun afterCreate() {
         currentActivity = requireActivity() as ActivityMain
         dialogSelect = DialogSelectPeople(currentActivity)
-        mViewModel.userBalance.value = Preferences.getString(KEY_USER_BALANCE, "0.0")
+        mViewModel.userBalance.value = Preferences.getString(KEY_USER_BALANCE, "0")
+        if (mViewModel.userBalance.value == null) {
+            mViewModel.userBalance.value = "0"
+        }
 
         btns[0] = StatusView<View>(btnCreateMeeting, 0, BTN_BACKGROUNDS[0], BTN_BACKGROUNDS[1])
         btns[1] = StatusView<View>(btnJoin, 1, BTN_BACKGROUNDS[0], BTN_BACKGROUNDS[1])

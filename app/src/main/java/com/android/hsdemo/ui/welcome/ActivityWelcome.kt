@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.text.TextUtils
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.LifecycleOwner
+import com.android.avchat.AVChatManager
 import com.android.baselib.utils.Preferences
 import com.android.baselib.utils.showShortToast
 import com.android.hsdemo.*
@@ -14,6 +15,7 @@ import com.android.hsdemo.ui.login.ActivityLogin
 import com.android.hsdemo.ui.main.ActivityMain
 import com.android.hsdemo.ui.rtc.ActivityRTC
 import com.rxjava.rxlife.life
+import com.tencent.imsdk.v2.V2TIMCallback
 import kotlinx.coroutines.*
 
 class ActivityWelcome : AppCompatActivity() {
@@ -73,7 +75,18 @@ class ActivityWelcome : AppCompatActivity() {
         RemoteRepositoryImpl.login(userName, userPassword)
             .life(owner)
             .subscribe(
-                { user: User -> callback.success(user) }
+                { user: User ->
+                    AVChatManager.login(user.accid.toString(),user.userSig.toString(),object :
+                        V2TIMCallback {
+                        override fun onError(p0: Int, p1: String?) {
+                            callback.failed("登录失败 IM ERROR $p0 $p1")
+                        }
+
+                        override fun onSuccess() {
+                            callback.success(user)
+                        }
+                    })
+                }
             ) { throwable: Throwable? -> callback.failed(throwable?.message.toString()) }
     }
 

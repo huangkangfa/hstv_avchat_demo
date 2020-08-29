@@ -45,7 +45,7 @@ class RTCImpl : IRTCInterface {
         trtcParams.role = TRTCCloudDef.TRTCRoleAnchor
 
         setBeautyParam(BEAUTY_STYLE_NATURE,5,1)
-        setVideoEncoderParam(TRTCCloudDef.TRTC_VIDEO_RESOLUTION_640_360,15,550,TRTCCloudDef.TRTC_VIDEO_RESOLUTION_MODE_LANDSCAPE)
+        setVideoEncoderParam(TRTCCloudDef.TRTC_VIDEO_RESOLUTION_640_360,15,550,TRTCCloudDef.TRTC_VIDEO_RESOLUTION_MODE_PORTRAIT)
 
         mTRTCCloud.enterRoom(trtcParams, TRTCCloudDef.TRTC_APP_SCENE_VIDEOCALL)
 
@@ -69,6 +69,8 @@ class RTCImpl : IRTCInterface {
         isFront: Boolean,
         localPreviewView: TXCloudVideoView
     ) {
+        // 开启音量回调
+        mTRTCCloud.enableAudioVolumeEvaluation(300)
         // 开启本地声音采集并上行
         mTRTCCloud.startLocalAudio()
         // 开启本地画面采集并上行

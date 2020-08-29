@@ -9,15 +9,22 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
+import com.android.avchat.AVChatManager
 import com.android.baselib.base.BaseFragmentActivity
+import com.android.baselib.utils.Preferences
 import com.android.hsdemo.BTN_MAIN_BACKGROUNDS
 import com.android.hsdemo.BTN_TEXT_COLORS
+import com.android.hsdemo.KEY_ACCID
 import com.android.hsdemo.R
 import com.android.hsdemo.custom.dialog.DialogHint
 import com.android.hsdemo.custom.dialog.DialogWait
+import com.android.hsdemo.model.IMCmd
 import com.android.hsdemo.model.StatusView
 import com.android.hsdemo.ui.main.fragments.*
 import com.android.hsdemo.util.*
+import com.elvishew.xlog.XLog
+import com.google.gson.Gson
+import com.tencent.imsdk.v2.*
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.coroutines.*
 import kotlin.system.exitProcess
@@ -163,7 +170,9 @@ class ActivityMain : BaseFragmentActivity(), View.OnFocusChangeListener {
         super.onResume()
         val currentFragment = getVisibleFragment()
         if (currentFragment == fragmentJoinMeeting && fragmentJoinMeeting.fType) {
-            (fragmentJoinMeeting.fragments[0] as FragmentJoinMeetingPart1).mViewModel.requestData(this)
+            (fragmentJoinMeeting.fragments[0] as FragmentJoinMeetingPart1).mViewModel.requestData(
+                this
+            )
         }
     }
 

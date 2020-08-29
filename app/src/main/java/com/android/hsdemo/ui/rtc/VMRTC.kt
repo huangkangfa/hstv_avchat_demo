@@ -19,24 +19,22 @@ import com.android.baselib.custom.recyleview.adapter.ListItem
 import com.android.baselib.custom.recyleview.adapter.setUP
 import com.android.baselib.utils.Preferences
 import com.android.baselib.utils.showShortToast
-import com.android.hsdemo.EventKey
-import com.android.hsdemo.KEY_USERSIG
-import com.android.hsdemo.MeetingCmd
-import com.android.hsdemo.model.ItemOfMemberInfo
-import com.android.hsdemo.model.MeetingDetail
-import com.android.hsdemo.model.MemberInfo
-import com.android.hsdemo.model.User
+import com.android.hsdemo.*
+import com.android.hsdemo.EventKey.MEETING_USER_VOICE_VOLUME
+import com.android.hsdemo.model.*
 import com.android.hsdemo.network.HttpCallback
 import com.android.hsdemo.network.RemoteRepositoryImpl
-import com.android.hsdemo.util.TimeUtil.getTimeString
 import com.android.hsdemo.util.TimeUtil.secToTime
 import com.elvishew.xlog.XLog
 import com.rxjava.rxlife.life
 import com.tencent.liteav.TXLiteAVCode
 import com.tencent.rtmp.ui.TXCloudVideoView
+import com.tencent.trtc.TRTCCloudDef
 import com.tencent.trtc.TRTCCloudListener
+import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 class VMRTC(application: Application) : AndroidViewModel(application) {
@@ -47,19 +45,70 @@ class VMRTC(application: Application) : AndroidViewModel(application) {
 
     val mRoomName: MutableLiveData<String> = MutableLiveData("") // 房间名称
     val mRoomId: MutableLiveData<String> = MutableLiveData() // 房间Id
-    val mUserId: MutableLiveData<String> = MutableLiveData() // 用户Id
+    val mUserId: MutableLiveData<String> = MutableLiveData() // 我的Id
     val mTimeDownStr: MutableLiveData<String> = MutableLiveData("00:00:00") // 倒计时
     var time: Long = 0L
 
-    private val mMeetingDetail: MutableLiveData<MeetingDetail> = MutableLiveData() // 会议详情
+    val mMeetingDetail: MutableLiveData<MeetingDetail> = MutableLiveData() // 会议详情
 
-    var mLocalPreviewView: MutableLiveData<TXCloudVideoView> = MutableLiveData()
+    lateinit var mLocalPreviewView: TXCloudVideoView
 
-    var ids: ArrayList<String> = ArrayList() // 远端用户id数据
-    var data: ArrayList<ItemOfMemberInfo> = ArrayList() // 远端用户详情数据
+    var ids: ArrayList<String> = ArrayList() // 视频用户id数据
+    var data: ArrayList<ItemOfMemberInfo> = ArrayList() // 视频用户详情数据
+
     private lateinit var adapter: AbstractAdapter<ItemOfMemberInfo>
 
     var isScreen: Boolean = false //是否是全屏状态
+
+    var myself: ItemOfMemberInfo
+    var screenMember: ItemOfMemberInfo
+
+    init {
+        val self = MemberInfo()
+        self.account = Preferences.getString(KEY_ACCID)
+        self.avatar = Preferences.getString(KEY_AVATAR)
+        self.hostMute = "0"
+        self.mute = "0"
+        self.nickName = Preferences.getString(KEY_USER_NICK_NAME)
+        self.userName = Preferences.getString(KEY_USER_NAME)
+        self.videoOpen = true
+        self.state = "1"
+        myself = ItemOfMemberInfo(0, self)
+        screenMember = myself
+    }
+
+    /**
+     * 主屏用户交换
+     */
+    fun changeScreenMember(temp: ItemOfMemberInfo) {
+        val lastScreenAccid = screenMember._data.account
+        val lastScreenType = screenMember._type
+        val position = data.indexOf(temp)
+        if (position != -1) {
+            data.remove(temp)
+            data.add(position, screenMember)
+            screenMember = temp
+            if (screenMember._type == 0) {
+                getTRTCClient().stopLocalPreview()
+                XLog.i("【视频会议】停止主屏预览视频")
+                getTRTCClient().startLocalPreview(true, mLocalPreviewView)
+                XLog.i("【视频会议】主屏播放我自己的预览视频 ${screenMember._data.account}")
+            } else {
+                if (lastScreenType == 0) {
+                    getTRTCClient().stopLocalPreview()
+                    XLog.i("【视频会议】停止主屏预览视频")
+                }
+                getTRTCClient().startRemoteView(screenMember._data.account, mLocalPreviewView)
+                XLog.i("【视频会议】主屏播放远程用户的预览视频 ${screenMember._data.account}")
+            }
+            adapter.notifyItemRangeChanged(position, 1)
+            GlobalScope.launch(IO) {
+                delay(20)
+                XLog.i("【视频会议】发送Event lastScreenAccid = $lastScreenAccid")
+                EventBus.with("${EventKey.VIDEO_CONTROL}_${lastScreenAccid}").postValue(true)
+            }
+        }
+    }
 
     /**
      * 初始化RecycleView列表
@@ -74,6 +123,17 @@ class VMRTC(application: Application) : AndroidViewModel(application) {
             itemOfData,
             manager = manager
         )
+    }
+
+    /**
+     * 获取参会人员
+     */
+    fun getPeopleList(): ArrayList<ItemOfPeople> {
+        val result = ArrayList<ItemOfPeople>()
+        for (item in data) {
+            result.add(ItemOfPeople(item._data))
+        }
+        return result
     }
 
     /**
@@ -106,7 +166,6 @@ class VMRTC(application: Application) : AndroidViewModel(application) {
     @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
     fun onMuteVideoClick(v: View) {
         if (!v.isSelected) {
-            getTRTCClient().stopLocalPreview()
             visibilityOfMuteVideoDefault.value = View.VISIBLE
             //上报自己关闭摄像头
             RemoteRepositoryImpl.opReport(
@@ -115,8 +174,13 @@ class VMRTC(application: Application) : AndroidViewModel(application) {
                 null,
                 null
             ).subscribe()
+            if (screenMember._type == 0) {
+                getTRTCClient().stopLocalPreview()
+            } else {
+                EventBus.with("${EventKey.VIDEO_CONTROL}_${mUserId.value.toString()}")
+                    .postValue(false)
+            }
         } else {
-            getTRTCClient().startLocalPreview(mIsFrontCamera.value ?: true, mLocalPreviewView.value)
             visibilityOfMuteVideoDefault.value = View.GONE
             //上报自己打开摄像头
             RemoteRepositoryImpl.opReport(
@@ -125,6 +189,12 @@ class VMRTC(application: Application) : AndroidViewModel(application) {
                 null,
                 null
             ).subscribe()
+            if (screenMember._type == 0) {
+                getTRTCClient().startLocalPreview(mIsFrontCamera.value ?: true, mLocalPreviewView)
+            } else {
+                EventBus.with("${EventKey.VIDEO_CONTROL}_${mUserId.value.toString()}")
+                    .postValue(true)
+            }
         }
         v.isSelected = !v.isSelected
     }
@@ -134,21 +204,36 @@ class VMRTC(application: Application) : AndroidViewModel(application) {
      */
     @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
     fun onMuteAudioClick(v: View) {
+        if (!TextUtils.equals(
+                mMeetingDetail.value?.masterId.toString(),
+                mUserId.value.toString()
+            )
+        ) {
+            //观众身份
+            if (TextUtils.equals(myself._data.hostMute, "1")) {
+                showShortToast("主持人已经强制静音，不可操作")
+                return
+            }
+        }
         if (!v.isSelected) {
             getTRTCClient().stopLocalAudio()
             //上报自己静音
             RemoteRepositoryImpl.opReport(
                 mMeetingDetail.value?.id.toString(),
-                MeetingCmd.SET_AUDIO_MUTE_SELF_CANCLE,
+                MeetingCmd.SET_AUDIO_MUTE_SELF,
                 null,
                 null
             ).subscribe()
+            EventBus.with(
+                "${MEETING_USER_VOICE_VOLUME}_${mUserId.value.toString()}",
+                Int::class.java
+            ).postValue(0)
         } else {
             getTRTCClient().startLocalAudio()
             //上报自己取消静音
             RemoteRepositoryImpl.opReport(
                 mMeetingDetail.value?.id.toString(),
-                MeetingCmd.SET_AUDIO_MUTE_SELF,
+                MeetingCmd.SET_AUDIO_MUTE_SELF_CANCLE,
                 null,
                 null
             ).subscribe()
@@ -178,32 +263,42 @@ class VMRTC(application: Application) : AndroidViewModel(application) {
             Preferences.getString(KEY_USERSIG, ""),
             mRoomId.value.toString().toInt(),
             mIsFrontCamera.value ?: true,
-            mLocalPreviewView.value!!,
+            mLocalPreviewView,
             object : TRTCCloudListener() {
 
-//                override fun onRemoteUserEnterRoom(userId: String) {
-//                    super.onRemoteUserEnterRoom(userId)
-//                    XLog.i("【视频会议】加入成员 $userId")
-//                    addUserById(userId)
-//                }
-//
-//                override fun onRemoteUserLeaveRoom(userId: String, p1: Int) {
-//                    super.onRemoteUserLeaveRoom(userId, p1)
-//                    XLog.i("【视频会议】离开成员 $userId")
-//                    EventBus.with("${EventKey.VIDEO_CONTROL}_${userId}").postValue(false)
-//                    removeUserById(userId)
-//                }
+                override fun onUserVoiceVolume(
+                    userVolumes: ArrayList<TRTCCloudDef.TRTCVolumeInfo>?,
+                    totalVolume: Int
+                ) {
+                    super.onUserVoiceVolume(userVolumes, totalVolume)
+                    if (userVolumes != null && userVolumes.size > 0) {
+                        userVolumes.forEach {
+                            XLog.i("【视频会议】音量变化 userId=${it.userId} volume=${it.volume}")
+                            EventBus.with(
+                                "${MEETING_USER_VOICE_VOLUME}_${it.userId}",
+                                Int::class.java
+                            ).postValue(it.volume)
+                        }
+                    }
+                }
+
+                override fun onRemoteUserEnterRoom(userId: String) {
+                    super.onRemoteUserEnterRoom(userId)
+                    XLog.i("【视频会议】加入成员 $userId")
+                    addUserById(userId)
+                }
+
+                //
+                override fun onRemoteUserLeaveRoom(userId: String, p1: Int) {
+                    super.onRemoteUserLeaveRoom(userId, p1)
+                    XLog.i("【视频会议】离开成员 $userId")
+                    removeUserById(userId)
+                }
 
                 override fun onUserVideoAvailable(userId: String, available: Boolean) {
                     super.onUserVideoAvailable(userId, available)
                     XLog.i("【视频会议】成员$userId 视频流状态 $available")
-                    if(available){
-                        addUserById(userId)
-                        EventBus.with("${EventKey.VIDEO_CONTROL}_${userId}").postValue(true)
-                    }else{
-                        EventBus.with("${EventKey.VIDEO_CONTROL}_${userId}").postValue(false)
-                        removeUserById(userId)
-                    }
+                    EventBus.with("${EventKey.VIDEO_CONTROL}_${userId}").postValue(available)
                 }
 
                 override fun onError(errCode: Int, errMsg: String, extraInfo: Bundle) {
@@ -234,9 +329,9 @@ class VMRTC(application: Application) : AndroidViewModel(application) {
                             mMemberInfo.nickName = list[0].nickName.toString()
                             mMemberInfo.avatar = list[0].userAvatar.toString()
                             mMemberInfo.userName = list[0].userName.toString()
-                            data.add(ItemOfMemberInfo(mMemberInfo))
+                            data.add(ItemOfMemberInfo(1, mMemberInfo))
                             ids.add(userId)
-                            adapter.notifyDataSetChanged()
+                            adapter.notifyItemChanged(data.size - 1)
                             EventBus.with(EventKey.MEETING_USER_CHANGE, String::class.java)
                                 .postValue("1")
                         }
@@ -245,15 +340,17 @@ class VMRTC(application: Application) : AndroidViewModel(application) {
                     XLog.e("【视频会议】getUserListByAccids error = ${throwable?.message.toString()}")
                 }
         }
-
     }
 
     /**
      * 移除用户
      */
     private fun removeUserById(userId: String) {
+        //移除的时候  如果移除用户是主屏的话，还要额外处理
+        var isScreenUserBeRemoved = true
         for (item in data) {
             if (TextUtils.equals(item._data.account, userId)) {
+                isScreenUserBeRemoved = false
                 data.remove(item)
                 ids.remove(userId)
                 adapter.notifyDataSetChanged()
@@ -261,10 +358,39 @@ class VMRTC(application: Application) : AndroidViewModel(application) {
                 return
             }
         }
+        if (isScreenUserBeRemoved && TextUtils.equals(screenMember._data.account, userId)) {
+            val index = data.indexOf(myself)
+            if (index != -1) {
+                screenMember = myself
+                data.removeAt(index)
+                ids.remove(userId)
+                adapter.notifyDataSetChanged()
+                EventBus.with("${EventKey.VIDEO_CONTROL}_${userId}")
+                    .postValue(myself._data.videoOpen)
+            }
+        }
     }
 
+    /**
+     * 退出房间
+     */
     fun exitRoom() {
         AVChatManager.exitRoom()
+    }
+
+    /**
+     * 数据变化更新视图
+     */
+    fun changeUI(member: ItemOfMemberInfo? = null) {
+        //更新副屏
+        if (member == null) {
+            adapter.notifyDataSetChanged()
+        } else {
+            val index = data.indexOf(member)
+            if (index != -1) {
+                adapter.notifyItemRangeChanged(index, 1)
+            }
+        }
     }
 
 }

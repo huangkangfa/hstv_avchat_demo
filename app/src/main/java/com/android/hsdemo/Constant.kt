@@ -22,6 +22,7 @@ const val KEY_MEETINGNOTICEACCOUNT = "meeting_notice_account"
  * 事件Key
  */
 object EventKey {
+    const val MEETING_USER_VOICE_VOLUME = "MEETING_USER_VOICE_VOLUME"
     const val MEETING_USER_CHANGE = "MEETING_USER_CHANGE"
     const val VIDEO_CONTROL = "VIDEO_CONTROL"
     const val MEETING_STATUS_END = "MEETING_STATUS_END"

@@ -69,14 +69,16 @@
                     android:textColor="@android:color/white"
                     android:textSize="15sp"
                     android:textStyle="bold" />
+
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="6dp"
-                    android:text="|"
+                    android:text=" | "
                     android:textColor="@android:color/white"
                     android:textSize="15sp"
                     android:textStyle="bold" />
+
                 <TextView
                     android:id="@+id/roomTime"
                     android:layout_width="wrap_content"
@@ -94,11 +96,11 @@
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/screenRight"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="400dp"
             android:layout_alignParentEnd="true"
             android:layout_marginTop="30dp"
             android:layout_marginEnd="39dp"
-            android:layout_marginBottom="30dp"/>
+            android:layout_marginBottom="30dp" />
 
         <com.android.hsdemo.custom.ClipLinearLayout
             android:id="@+id/screenBottom"
@@ -158,6 +160,31 @@
                 android:focusable="true" />
 
         </com.android.hsdemo.custom.ClipLinearLayout>
+
+        <RelativeLayout
+            android:id="@+id/llVoice"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="100dp"
+            android:gravity="center_horizontal"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <ImageView
+                android:id="@+id/gifVoice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <ImageView
+                android:layout_width="10dp"
+                android:layout_height="10dp"
+                android:layout_alignBottom="@+id/gifVoice"
+                android:layout_centerHorizontal="true"
+                android:layout_marginBottom="8dp"
+                android:src="@mipmap/icon_voice_promit" />
+        </RelativeLayout>
 
     </RelativeLayout>
 </layout>

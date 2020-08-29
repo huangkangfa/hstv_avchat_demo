@@ -2,6 +2,7 @@ package com.android.hsdemo
 
 import com.android.avchat.AVchatApplication
 import com.android.hsdemo.network.http.NetConfig
+import com.elvishew.xlog.XLog
 import com.tencent.imsdk.v2.V2TIMSDKConfig
 import com.tencent.imsdk.v2.V2TIMSDKListener
 import com.tencent.imsdk.v2.V2TIMUserFullInfo
@@ -24,31 +25,37 @@ class HSApplication : AVchatApplication() {
         override fun onConnecting() {
             super.onConnecting()
             // 正在连接到腾讯云服务器
+            XLog.i("【IM】正在连接到腾讯云服务器")
         }
 
         override fun onConnectSuccess() {
             super.onConnectSuccess()
             // 已经成功连接到腾讯云服务器
+            XLog.i("【IM】已经成功连接到腾讯云服务器")
         }
 
         override fun onConnectFailed(code: Int, error: String) {
             super.onConnectFailed(code, error)
             // 连接腾讯云服务器失败
+            XLog.i("【IM】连接腾讯云服务器失败 error = $code , $error")
         }
 
         override fun onKickedOffline() {
             super.onKickedOffline()
             // 当前用户被踢下线
+            XLog.i("【IM】当前用户被踢下线")
         }
 
         override fun onUserSigExpired() {
             super.onUserSigExpired()
             // 登录票据已经过期
+            XLog.i("【IM】登录票据已经过期")
         }
 
         override fun onSelfInfoUpdated(info: V2TIMUserFullInfo?) {
             super.onSelfInfoUpdated(info)
             // 当前用户的资料发生了更新
+            XLog.i("【IM】当前用户的资料发生了更新 ${info.toString()}")
         }
 
     }

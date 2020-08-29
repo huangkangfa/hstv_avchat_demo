@@ -2,6 +2,7 @@ package com.android.hsdemo.custom.dialog
 
 import android.app.Activity
 import android.os.Build
+import android.text.TextUtils
 import android.view.Gravity
 import android.view.View
 import android.widget.ImageView
@@ -13,11 +14,15 @@ import com.android.baselib.custom.recyleview.adapter.AbstractAdapter
 import com.android.baselib.custom.recyleview.adapter.ListItem
 import com.android.baselib.custom.recyleview.adapter.setUP
 import com.android.baselib.utils.dp2px
+import com.android.baselib.utils.showShortToast
 import com.android.hsdemo.BTN_BACKGROUNDS
 import com.android.hsdemo.BTN_TEXT_COLORS
+import com.android.hsdemo.MeetingCmd
 import com.android.hsdemo.R
-import com.android.hsdemo.model.ItemOfMemberInfo
+import com.android.hsdemo.model.ItemOfPeople
+import com.android.hsdemo.model.MeetingDetail
 import com.android.hsdemo.model.StatusView
+import com.android.hsdemo.network.RemoteRepositoryImpl
 import com.bumptech.glide.Glide
 import com.elvishew.xlog.XLog
 import kotlinx.android.synthetic.main.dialog_select_people.*
@@ -29,43 +34,104 @@ class DialogPeopleList(mActivity: Activity) : BaseDialog(mActivity), View.OnFocu
     private var tvs = arrayOfNulls<StatusView<TextView>>(1)
     private var imgs = arrayOfNulls<StatusView<ImageView>>(1)
 
-    val adapter: AbstractAdapter<ItemOfMemberInfo>
-    var data = arrayListOf<ItemOfMemberInfo>()
+    var adapter: AbstractAdapter<ItemOfPeople>? = null
+    var data = arrayListOf<ItemOfPeople>()
     var isMaster: Boolean = false
+    var meetingDetail: MeetingDetail? = null
+    var dialogWait: DialogWait = DialogWait(mActivity)
 
     /**
      * 列表子项
      */
-    private val itemOfData = ListItem<ItemOfMemberInfo>(
+    private val itemOfData = ListItem<ItemOfPeople>(
         R.layout.item_adapter_memberlist,
         { holder, item ->
-
             val userAvatar = holder.getView<ImageView>(R.id.userAvatar)
             val userNickName = holder.getView<TextView>(R.id.userNickName)
             val userMute = holder.getView<ImageView>(R.id.userMute)
             val userDel = holder.getView<ImageView>(R.id.userDel)
 
-            Glide.with(context).load(item._data.avatar)
+            Glide.with(context).load(item._data.avatar.toString())
                 .placeholder(R.mipmap.icon_default_circle)
                 .error(R.mipmap.icon_default_circle).into(userAvatar)
-            userNickName.text = item._data.nickName
 
-            if(isMaster){
-                userNickName.visibility = View.VISIBLE
+            userNickName.text = item._data.nickName.toString()
+
+            if (isMaster) {
+                userMute.visibility = View.VISIBLE
                 userDel.visibility = View.VISIBLE
-            }else{
-                userNickName.visibility = View.GONE
+            } else {
+                userMute.visibility = View.GONE
                 userDel.visibility = View.GONE
+            }
+
+            if (TextUtils.equals(item._data.hostMute, "1")) {
+                Glide.with(context).load(R.mipmap.icon_people_mute_audio).into(userMute)
+            } else {
+                Glide.with(context).load(R.mipmap.icon_people_mute_audio_cancle).into(userMute)
             }
 
             userMute.setOnClickListener {
                 //静音与否操作
-
+                if (TextUtils.equals(item._data.hostMute, "1")) {
+                    dialogWait.show()
+                    //取消静音
+                    RemoteRepositoryImpl.opReport(
+                        meetingDetail?.id.toString(),
+                        MeetingCmd.SET_AUDIO_MUTE_OTHERS_CANCLE,
+                        item._data.account,
+                        null
+                    ).subscribe(
+                        {
+                            dialogWait.dismiss()
+                            item._data.hostMute = "0"
+                            Glide.with(context).load(R.mipmap.icon_people_mute_audio_cancle).into(userMute)
+                        }
+                    ) { throwable: Throwable? ->
+                        dialogWait.dismiss()
+                        showShortToast("操作失败:${throwable?.message.toString()}")
+                    }
+                }
+                if (item._data.hostMute == null || TextUtils.equals(item._data.hostMute, "0")) {
+                    dialogWait.show()
+                    //静音
+                    RemoteRepositoryImpl.opReport(
+                        meetingDetail?.id.toString(),
+                        MeetingCmd.SET_AUDIO_MUTE_OTHERS,
+                        item._data.account,
+                        null
+                    ).subscribe(
+                        {
+                            dialogWait.dismiss()
+                            item._data.hostMute = "1"
+                            Glide.with(context).load(R.mipmap.icon_people_mute_audio)
+                                .into(userMute)
+                        }
+                    ) { throwable: Throwable? ->
+                        dialogWait.dismiss()
+                        showShortToast("操作失败:${throwable?.message.toString()}")
+                    }
+                }
             }
 
             userDel.setOnClickListener {
+                dialogWait.show()
                 //踢人操作
-
+                RemoteRepositoryImpl.opReport(
+                    meetingDetail?.id.toString(),
+                    MeetingCmd.KICK_OTHERS,
+                    item._data.account,
+                    null
+                ).subscribe(
+                    {
+                        dialogWait.dismiss()
+                        data.remove(item)
+                        adapter?.notifyDataSetChanged()
+                    }
+                ) { throwable: Throwable? ->
+                    dialogWait.dismiss()
+                    showShortToast("操作失败:${throwable?.message.toString()}")
+                }
             }
 
         }, {
@@ -89,12 +155,7 @@ class DialogPeopleList(mActivity: Activity) : BaseDialog(mActivity), View.OnFocu
             R.mipmap.icon_audio_mute_all_1,
             R.mipmap.icon_audio_mute_all_0
         )
-        progressBar.visibility = View.VISIBLE
-        adapter = recyclerView.setUP(
-            data,
-            itemOfData,
-            manager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
-        )
+
         progressBar.visibility = View.GONE
     }
 
@@ -126,22 +187,55 @@ class DialogPeopleList(mActivity: Activity) : BaseDialog(mActivity), View.OnFocu
     override fun onClick(view: View) {
         if (!view.isSelected) {
             //全员静音操作
-
-            btnMuteAllTv.text = "取消全员静音"
+            dialogWait.show()
+            RemoteRepositoryImpl.opReport(
+                meetingDetail?.id.toString(),
+                MeetingCmd.AUDIO_MUTE_ALL,
+                null,
+                null
+            ).subscribe(
+                {
+                    dialogWait.dismiss()
+                    btnMuteAllTv.text = "取消全员静音"
+                    view.isSelected = !view.isSelected
+                }
+            ) { throwable: Throwable? ->
+                dialogWait.dismiss()
+                showShortToast("操作失败:${throwable?.message.toString()}")
+            }
         } else {
             //取消全员静音操作
-
-            btnMuteAllTv.text = "全员静音"
+            dialogWait.show()
+            RemoteRepositoryImpl.opReport(
+                meetingDetail?.id.toString(),
+                MeetingCmd.AUDIO_MUTE_ALL_CANCLE,
+                null,
+                null
+            ).subscribe(
+                {
+                    dialogWait.dismiss()
+                    btnMuteAllTv.text = "全员静音"
+                    view.isSelected = !view.isSelected
+                }
+            ) { throwable: Throwable? ->
+                dialogWait.dismiss()
+                showShortToast("操作失败:${throwable?.message.toString()}")
+            }
         }
-        view.isSelected = !view.isSelected
     }
 
     fun changeUI() {
-        progressBar.visibility = View.VISIBLE
-        XLog.i("【视频会议】人员列表视图更新 size=${data.size}")
+        dialogRecyclerView.setUP(
+            data,
+            itemOfData,
+            manager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
+        )
         title.text = "参会人员列表(${data.size})"
-        adapter.notifyDataSetChanged()
-        progressBar.visibility = View.GONE
+        if (isMaster) {
+            btnMuteAll.visibility = View.VISIBLE
+        } else {
+            btnMuteAll.visibility = View.GONE
+        }
     }
 
 }

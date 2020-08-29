@@ -2,6 +2,7 @@ package com.android.hsdemo.util
 
 import android.content.Context
 import android.os.Build
+import android.text.TextUtils
 import android.view.View
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
@@ -9,9 +10,15 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.annotation.RequiresApi
 import com.android.baselib.global.AppGlobal.context
+import com.android.baselib.utils.Preferences
+import com.android.hsdemo.KEY_ACCID
 import com.android.hsdemo.R
+import com.android.hsdemo.model.IMCmd
 import com.android.hsdemo.model.StatusView
 import com.elvishew.xlog.XLog
+import com.google.gson.Gson
+import com.tencent.imsdk.v2.V2TIMManager
+import com.tencent.imsdk.v2.V2TIMMessage
 
 /**
  * 控制控件的聚焦状态

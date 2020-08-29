@@ -80,7 +80,10 @@ class FragmentPersionCenter : BaseFragment<VMFPersionCenter, FragmentPersionCent
         mViewModel.userNickName.value = Preferences.getString(KEY_USER_NICK_NAME)
         mViewModel.userPhone.value = Preferences.getString(KEY_USER_NAME)
         mViewModel.userAvatar.value = Preferences.getString(KEY_AVATAR)
-        mViewModel.userBalance.value = Preferences.getString(KEY_USER_BALANCE,"0.0")
+        mViewModel.userBalance.value = Preferences.getString(KEY_USER_BALANCE)
+        if (mViewModel.userBalance.value == null) {
+            mViewModel.userBalance.value = "0"
+        }
         lastNickName = mViewModel.userNickName.value.toString()
     }
 

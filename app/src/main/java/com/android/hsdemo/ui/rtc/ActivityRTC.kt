@@ -7,6 +7,7 @@ import android.os.Build
 import android.text.TextUtils
 import android.view.KeyEvent
 import android.view.View
+import android.view.WindowManager
 import android.view.animation.Animation
 import android.widget.ImageView
 import android.widget.TextView
@@ -18,25 +19,28 @@ import com.android.baselib.base.BaseActivity
 import com.android.baselib.custom.eventbus.EventBus
 import com.android.baselib.custom.recyleview.SpaceItem
 import com.android.baselib.custom.recyleview.adapter.ListItem
+import com.android.baselib.utils.Preferences
 import com.android.baselib.utils.dp2px
 import com.android.baselib.utils.showShortToast
 import com.android.hsdemo.*
 import com.android.hsdemo.EventKey.MEETING_USER_CHANGE
-import com.android.hsdemo.KEY_ROOM_ID
-import com.android.hsdemo.custom.TextureVideoViewOutlineProvider
 import com.android.hsdemo.custom.dialog.DialogHint
 import com.android.hsdemo.custom.dialog.DialogPeopleList
 import com.android.hsdemo.databinding.ActivityRtcBinding
+import com.android.hsdemo.model.IMCmd
 import com.android.hsdemo.model.ItemOfMemberInfo
 import com.android.hsdemo.model.MeetingDetail
 import com.android.hsdemo.network.HttpCallback
 import com.android.hsdemo.util.getAnimation
+import com.bumptech.glide.Glide
 import com.elvishew.xlog.XLog
+import com.google.gson.Gson
 import com.tbruyelle.rxpermissions2.RxPermissions
+import com.tencent.imsdk.v2.*
 import com.tencent.rtmp.ui.TXCloudVideoView
 import com.uber.autodispose.android.lifecycle.autoDispose
 import kotlinx.android.synthetic.main.activity_rtc.*
-import kotlinx.android.synthetic.main.fragment_address_book.*
+import okio.ByteString.Companion.toByteString
 import java.util.*
 import kotlin.concurrent.fixedRateTimer
 
@@ -78,41 +82,108 @@ class ActivityRTC : BaseActivity<VMRTC, ActivityRtcBinding>(), View.OnFocusChang
             val tv = holder.getView<TextView>(R.id.mNickName)
             val iv = holder.getView<ImageView>(R.id.mIcon)
 
+            /**
+             * 控制摄像头显示
+             */
+            if (item._data.videoOpen == true) {
+                vv.visibility = View.VISIBLE
+            } else {
+                vv.visibility = View.GONE
+            }
+
+            /**
+             * 判断当前item是否是自己
+             */
+            val isMySelf = TextUtils.equals(
+                item._data.account.toString(),
+                Preferences.getString(KEY_ACCID)
+            )
+
+            /**
+             * 因为要用户确定开启流的时候再订阅流，所以以事件形式来处理播放与关闭
+             */
             EventBus.with("${EventKey.VIDEO_CONTROL}_${item._data.account}", Boolean::class.java)
                 .observe(this, Observer<Boolean> {
-                    XLog.i("【视频会议】EventBus ${item._data.account} 接收 $it")
+                    XLog.i("【视频会议】EventBus isMySelf=$isMySelf ${item._data.account} 接收 $it")
                     if (it) {
-                        AVChatManager.getTRTCClient().startRemoteView(item._data.account, vv)
+                        if (isMySelf) {
+                            XLog.i("【视频会议】小窗口播放我自己的预览视频 ${mViewModel.mUserId.value}")
+                            AVChatManager.getTRTCClient().startLocalPreview(true, vv)
+                        } else {
+                            XLog.i("【视频会议】小窗口播放item的远程视频 ${item._data.account}")
+                            AVChatManager.getTRTCClient()
+                                .startRemoteView(item._data.account, vv)
+                        }
                     } else {
-                        AVChatManager.getTRTCClient().stopRemoteView(item._data.account)
+                        if (isMySelf) {
+                            XLog.i("【视频会议】小窗口停止我自己的预览视频 ${mViewModel.mUserId.value}")
+                            AVChatManager.getTRTCClient().stopLocalPreview()
+                        } else {
+                            XLog.i("【视频会议】小窗口停止item的远程视频  ${item._data.account}")
+                            AVChatManager.getTRTCClient().stopRemoteView(item._data.account)
+                        }
                     }
                 })
 
-            // 开始显示用户userId的视频画面
-            AVChatManager.getTRTCClient().startRemoteView(item._data.account, vv)
+            /**
+             * 声音变化
+             */
+            EventBus.with(
+                "${EventKey.MEETING_USER_VOICE_VOLUME}_${item._data.account}",
+                Int::class.java
+            ).observe(this,
+                Observer {
+                    if (TextUtils.equals(item._data.hostMute.toString(), "1")
+                        || TextUtils.equals(item._data.mute.toString(), "1")
+                    ) {
+                        iv.visibility = View.VISIBLE
+                        iv.setImageResource(R.mipmap.icon_remote_mute)
+                    } else {
+                        iv.setImageResource(R.mipmap.icon_remote_voice)
+                        if (it > 10) {
+                            iv.visibility = View.VISIBLE
+                        } else {
+                            iv.visibility = View.GONE
+                        }
+                    }
+                })
 
-            tv.text = item._data.nickName
-            if (TextUtils.equals(
-                    item._data.hostMute.toString(),
-                    "1"
-                ) || TextUtils.equals(item._data.mute.toString(), "1")
+            if (TextUtils.equals(item._data.hostMute.toString(), "1")
+                || TextUtils.equals(item._data.mute.toString(), "1")
             ) {
+                iv.visibility = View.VISIBLE
                 iv.setImageResource(R.mipmap.icon_remote_mute)
             } else {
                 iv.setImageResource(R.mipmap.icon_remote_voice)
+                iv.visibility = View.GONE
+            }
+
+            /**
+             * 1.如果类型是0，展示本地预览
+             * 2.如果类型是1，展示远程视频
+             * 3.点击事件
+             *  1>判断当前是否是自己的item，如果是自己，就把当前item跟主屏幕item交换，切换播放流，刷新对应UI
+             *  2>如果不是自己的item，也同上操作
+             */
+            if (item._type == 0) {
+                AVChatManager.getTRTCClient().startLocalPreview(true, vv)
+                tv.text = "我自己"
+            } else {
+                AVChatManager.getTRTCClient().startRemoteView(item._data.account, vv)
+                tv.text = item._data.nickName
             }
 
         }, {
             //切换视频源
-
+            mViewModel.changeScreenMember(it)
         }
     )
 
     override fun afterCreate() {
+        dismissKeyguard()
         initAnimotion()
         handleIntent()
         initDefault()
-
         //设置放大动画
 //        btnMuteAudio.onFocusChangeListener = this
 //        btnMuteVideo.onFocusChangeListener = this
@@ -121,6 +192,16 @@ class ActivityRTC : BaseActivity<VMRTC, ActivityRtcBinding>(), View.OnFocusChang
 //        btnExit.onFocusChangeListener = this
 
         requestPermissions()
+    }
+
+    // 设置窗口flag，亮屏并且解锁/覆盖在锁屏界面上
+    private fun dismissKeyguard() {
+        window.addFlags(
+            WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED
+                    or WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD
+                    or WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
+                    or WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON
+        )
     }
 
     /**
@@ -205,14 +286,16 @@ class ActivityRTC : BaseActivity<VMRTC, ActivityRtcBinding>(), View.OnFocusChang
      * 默认设置初始化
      */
     private fun initDefault() {
-        mViewModel.mLocalPreviewView.value = vTRTCMain
+        mViewModel.mLocalPreviewView = vTRTCMain
         dialogExit = DialogHint(this)
         dialogPeopleList = DialogPeopleList(this)
-        dialogPeopleList.data = mViewModel.data
+        dialogPeopleList.data = mViewModel.getPeopleList()
         initDialog(false)
         btnExit.setOnClickListener(this)
         btnScreen.setOnClickListener(this)
         btnControl.setOnClickListener(this)
+
+        Glide.with(this).load(R.drawable.gif_meeting_voice).into(gifVoice)
 
         screenRight.addItemDecoration(
             SpaceItem(
@@ -225,10 +308,212 @@ class ActivityRTC : BaseActivity<VMRTC, ActivityRtcBinding>(), View.OnFocusChang
             itemOfData
         )
 
+        /**
+         * 参会人员变动
+         */
         EventBus.with(MEETING_USER_CHANGE, String::class.java).observe(this, Observer {
-            dialogPeopleList.data = mViewModel.data
+            dialogPeopleList.data = mViewModel.getPeopleList()
             dialogPeopleList.changeUI()
         })
+
+        /**
+         * 自己的音量发生变动
+         */
+        EventBus.with(
+            "${EventKey.MEETING_USER_VOICE_VOLUME}_${Preferences.getString(KEY_ACCID)}",
+            Int::class.java
+        ).observe(this,
+            Observer {
+                if (it > 10) {
+                    llVoice.visibility = View.VISIBLE
+                } else {
+                    llVoice.visibility = View.GONE
+                }
+            })
+
+        V2TIMManager.getMessageManager()
+            .addAdvancedMsgListener(object : V2TIMAdvancedMsgListener() {
+                override fun onRecvNewMessage(msg: V2TIMMessage?) {
+                    super.onRecvNewMessage(msg)
+                    val data = msg?.customElem?.data
+                    if (data != null) {
+                        val result = Gson().fromJson(String(data), IMCmd::class.java)
+                        if (result != null)
+                            doWithCmd(result)
+                        XLog.i("【IM】onRecvNewMessage ${String(data)}")
+                    }
+                }
+            })
+    }
+
+    private fun doWithCmd(cmd: IMCmd) {
+        //确定是该房间的指令
+        if (TextUtils.equals(cmd.r.toString(), mViewModel.mRoomId.value.toString())) {
+            val isMe = TextUtils.equals(cmd.a, mViewModel.mUserId.value.toString())
+            val isMaster = TextUtils.equals(
+                mViewModel.mUserId.value.toString(),
+                mViewModel.mMeetingDetail.value?.masterId
+            )
+            when (cmd.t) {
+                1 -> {
+                    // （主持人）全员静音
+                    for (item in mViewModel.data) {
+                        if (item._type == 1 || !isMaster) {
+                            item._data.hostMute = "1"
+                            //更新小窗口
+                            mViewModel.changeUI(item)
+                        }
+                    }
+                    if (mViewModel.screenMember._type == 1 || !isMaster) {
+                        mViewModel.screenMember._data.hostMute = "1"
+                        //更新主屏
+                        updateUI()
+                    }
+
+                }
+                2 -> {
+                    // （主持人）取消全员静音
+                    for (item in mViewModel.data) {
+                        if (item._type == 1 || !isMaster) {
+                            item._data.hostMute = "0"
+                            //更新小窗口
+                            mViewModel.changeUI(item)
+                        }
+                    }
+                    if (mViewModel.screenMember._type == 1 || !isMaster) {
+                        mViewModel.screenMember._data.hostMute = "0"
+                        //更新主屏
+                        updateUI()
+                    }
+                }
+                3 -> {
+                    // （主持人）设置他人静音
+                    for (item in mViewModel.data) {
+                        if (TextUtils.equals(item._data.account.toString(), cmd.a.toString())) {
+                            item._data.hostMute = "1"
+                            mViewModel.changeUI(item)
+                        }
+                    }
+                    if (TextUtils.equals(
+                            mViewModel.screenMember._data.account.toString(),
+                            cmd.a.toString()
+                        )
+                    ) {
+                        mViewModel.screenMember._data.hostMute = "1"
+                        //更新主屏
+                        updateUI()
+                    }
+                }
+                4 -> {
+                    // （主持人）取消他人静音
+                    for (item in mViewModel.data) {
+                        if (TextUtils.equals(item._data.account.toString(), cmd.a.toString())) {
+                            item._data.hostMute = "0"
+                            mViewModel.changeUI(item)
+                        }
+                    }
+                    if (TextUtils.equals(
+                            mViewModel.screenMember._data.account.toString(),
+                            cmd.a.toString()
+                        )
+                    ) {
+                        mViewModel.screenMember._data.hostMute = "0"
+                        //更新主屏
+                        updateUI()
+                    }
+                }
+                5 -> {
+                    // 设置自己静音
+                    if (!isMe) {
+                        for (item in mViewModel.data) {
+                            if (TextUtils.equals(item._data.account.toString(), cmd.a.toString())) {
+                                item._data.mute = "1"
+                                mViewModel.changeUI(item)
+                            }
+                        }
+                        if (TextUtils.equals(
+                                mViewModel.screenMember._data.account.toString(),
+                                cmd.a.toString()
+                            )
+                        ) {
+                            mViewModel.screenMember._data.mute = "1"
+                            //更新主屏
+                            updateUI()
+                        }
+                    }
+                }
+                6 -> {
+                    // 取消自己静音
+                    if (!isMe) {
+                        for (item in mViewModel.data) {
+                            if (TextUtils.equals(item._data.account.toString(), cmd.a.toString())) {
+                                item._data.mute = "0"
+                                mViewModel.changeUI(item)
+                            }
+                        }
+                        if (TextUtils.equals(
+                                mViewModel.screenMember._data.account.toString(),
+                                cmd.a.toString()
+                            )
+                        ) {
+                            mViewModel.screenMember._data.mute = "0"
+                            //更新主屏
+                            updateUI()
+                        }
+                    }
+                }
+                7 -> {
+                    // 踢人
+                    if (isMe) {
+                        exit(isMaster)
+                    }
+                }
+                8 -> {
+                    // 结束会议
+                    exit(isMaster)
+                }
+                9 -> {
+                    // 自己摄像头打开
+                    if (!isMe) {
+                        for (item in mViewModel.data) {
+                            if (TextUtils.equals(item._data.account.toString(), cmd.a.toString())) {
+                                item._data.videoOpen = true
+                                mViewModel.changeUI(item)
+                            }
+                        }
+                        if (TextUtils.equals(
+                                mViewModel.screenMember._data.account.toString(),
+                                cmd.a.toString()
+                            )
+                        ) {
+                            mViewModel.screenMember._data.videoOpen = true
+                            //更新主屏
+                            updateUI()
+                        }
+                    }
+                }
+                10 -> {
+                    // 自己摄像头关闭
+                    if (!isMe) {
+                        for (item in mViewModel.data) {
+                            if (TextUtils.equals(item._data.account.toString(), cmd.a.toString())) {
+                                item._data.videoOpen = false
+                                mViewModel.changeUI(item)
+                            }
+                        }
+                        if (TextUtils.equals(
+                                mViewModel.screenMember._data.account.toString(),
+                                cmd.a.toString()
+                            )
+                        ) {
+                            mViewModel.screenMember._data.videoOpen = false
+                            //更新主屏
+                            updateUI()
+                        }
+                    }
+                }
+            }
+        }
     }
 
     /**
@@ -286,7 +571,9 @@ class ActivityRTC : BaseActivity<VMRTC, ActivityRtcBinding>(), View.OnFocusChang
                     initDialog(true)
                 }
                 //同步会议信息
-
+                dialogPeopleList.meetingDetail = mViewModel.mMeetingDetail.value
+                //更新主屏视图
+                updateUI()
             }
 
             override fun failed(msg: String) {
@@ -330,13 +617,16 @@ class ActivityRTC : BaseActivity<VMRTC, ActivityRtcBinding>(), View.OnFocusChang
     }
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent): Boolean {
-        if (keyCode == KeyEvent.KEYCODE_BACK) {
-            if (mViewModel.isScreen) {
-                changeScreen(false)
+        when (keyCode) {
+            KeyEvent.KEYCODE_BACK -> {
+                if (mViewModel.isScreen) {
+                    changeScreen(false)
+                    return true
+                }
+                dialogExit.show()
                 return true
             }
-            dialogExit.show()
-            return true
+//            KeyEvent.KEYCODE_UP
         }
         return super.onKeyDown(keyCode, event)
     }
@@ -349,6 +639,17 @@ class ActivityRTC : BaseActivity<VMRTC, ActivityRtcBinding>(), View.OnFocusChang
             mViewModel.setMeetingEnd()
         }
         this@ActivityRTC.finish()
+    }
+
+    /**
+     * 更新主屏幕
+     */
+    private fun updateUI() {
+        //更新摄像头
+        btnMuteVideo.isSelected = mViewModel.myself._data.videoOpen != true
+        //更新静音
+        btnMuteAudio.isSelected =
+            mViewModel.myself._data.hostMute == "1" || mViewModel.myself._data.mute == "1"
     }
 
     override fun onClick(view: View) {

@@ -13,6 +13,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textColor="@color/white"
+        android:text="参会人员列表(0)"
         android:textSize="15sp"
         android:textStyle="bold" />
 
@@ -30,7 +31,7 @@
             android:indeterminateDrawable="@drawable/anim_color_progressbar"
             android:visibility="visible" />
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recyclerView"
+            android:id="@+id/dialogRecyclerView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"/>
     </RelativeLayout>
@@ -38,6 +39,7 @@
     <LinearLayout
         android:id="@+id/btnMuteAll"
         style="@style/DefaultButtonStyle"
+        android:visibility="gone"
         android:layout_marginBottom="30dp"
         android:layout_marginTop="15dp"
         android:layout_width="wrap_content"

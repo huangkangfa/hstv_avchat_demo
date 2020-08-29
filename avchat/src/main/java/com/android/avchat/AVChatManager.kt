@@ -5,10 +5,7 @@ import com.android.avchat.impl.RTCImpl
 import com.android.avchat.interfaces.IIMInterface
 import com.android.avchat.interfaces.IRTCInterface
 import com.elvishew.xlog.XLog
-import com.tencent.imsdk.v2.V2TIMCallback
-import com.tencent.imsdk.v2.V2TIMManager
-import com.tencent.imsdk.v2.V2TIMSDKConfig
-import com.tencent.imsdk.v2.V2TIMSDKListener
+import com.tencent.imsdk.v2.*
 import com.tencent.rtmp.TXLiveConstants
 import com.tencent.rtmp.ui.TXCloudVideoView
 import com.tencent.trtc.TRTCCloud
@@ -102,7 +99,14 @@ object AVChatManager {
         localPreviewView: TXCloudVideoView,
         mTRTCCloudListener: TRTCCloudListener
     ) {
-        mRTCImpl.enterRoom(mUserId, mUserSig, mRoomId, isFrontCamera, localPreviewView,mTRTCCloudListener)
+        mRTCImpl.enterRoom(
+            mUserId,
+            mUserSig,
+            mRoomId,
+            isFrontCamera,
+            localPreviewView,
+            mTRTCCloudListener
+        )
     }
 
     /**
