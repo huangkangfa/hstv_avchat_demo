@@ -104,7 +104,7 @@ class VMRTC(application: Application) : AndroidViewModel(application) {
             adapter.notifyItemRangeChanged(position, 1)
             GlobalScope.launch(IO) {
                 delay(20)
-                XLog.i("【视频会议】发送Event lastScreenAccid = $lastScreenAccid")
+                XLog.i("【视频会议】更新切换窗口后的视频流数据 发送Event lastScreenAccid = $lastScreenAccid")
                 EventBus.with("${EventKey.VIDEO_CONTROL}_${lastScreenAccid}").postValue(true)
             }
         }
@@ -166,7 +166,6 @@ class VMRTC(application: Application) : AndroidViewModel(application) {
     @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
     fun onMuteVideoClick(v: View) {
         if (!v.isSelected) {
-            visibilityOfMuteVideoDefault.value = View.VISIBLE
             //上报自己关闭摄像头
             RemoteRepositoryImpl.opReport(
                 mMeetingDetail.value?.id.toString(),
@@ -175,13 +174,15 @@ class VMRTC(application: Application) : AndroidViewModel(application) {
                 null
             ).subscribe()
             if (screenMember._type == 0) {
+                XLog.i("【视频会议】自己是主屏 直接关闭自己的摄像头")
                 getTRTCClient().stopLocalPreview()
+                myself._data.videoOpen = false
             } else {
+                XLog.i("【视频会议】自己是附屏 关闭${mUserId.value.toString()}的摄像头")
                 EventBus.with("${EventKey.VIDEO_CONTROL}_${mUserId.value.toString()}")
                     .postValue(false)
             }
         } else {
-            visibilityOfMuteVideoDefault.value = View.GONE
             //上报自己打开摄像头
             RemoteRepositoryImpl.opReport(
                 mMeetingDetail.value?.id.toString(),
@@ -190,13 +191,28 @@ class VMRTC(application: Application) : AndroidViewModel(application) {
                 null
             ).subscribe()
             if (screenMember._type == 0) {
+                XLog.i("【视频会议】自己是主屏 直接打开自己的摄像头")
                 getTRTCClient().startLocalPreview(mIsFrontCamera.value ?: true, mLocalPreviewView)
+                myself._data.videoOpen = true
             } else {
+                XLog.i("【视频会议】自己是附屏 打开${mUserId.value.toString()}的摄像头")
                 EventBus.with("${EventKey.VIDEO_CONTROL}_${mUserId.value.toString()}")
                     .postValue(true)
             }
         }
+        changeScreenDefaultUI()
         v.isSelected = !v.isSelected
+    }
+
+    /**
+     * 更新主屏的屏幕开关状态
+     */
+    private fun changeScreenDefaultUI(){
+        if(screenMember._data.videoOpen == true){
+            visibilityOfMuteVideoDefault.value = View.VISIBLE
+        }else{
+            visibilityOfMuteVideoDefault.value = View.GONE
+        }
     }
 
     /**
@@ -273,7 +289,7 @@ class VMRTC(application: Application) : AndroidViewModel(application) {
                     super.onUserVoiceVolume(userVolumes, totalVolume)
                     if (userVolumes != null && userVolumes.size > 0) {
                         userVolumes.forEach {
-                            XLog.i("【视频会议】音量变化 userId=${it.userId} volume=${it.volume}")
+//                            XLog.i("【视频会议】音量变化 userId=${it.userId} volume=${it.volume}")
                             EventBus.with(
                                 "${MEETING_USER_VOICE_VOLUME}_${it.userId}",
                                 Int::class.java

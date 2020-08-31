@@ -104,15 +104,13 @@ class ActivityRTC : BaseActivity<VMRTC, ActivityRtcBinding>(), View.OnFocusChang
              */
             EventBus.with("${EventKey.VIDEO_CONTROL}_${item._data.account}", Boolean::class.java)
                 .observe(this, Observer<Boolean> {
-                    XLog.i("【视频会议】EventBus isMySelf=$isMySelf ${item._data.account} 接收 $it")
                     if (it) {
                         if (isMySelf) {
                             XLog.i("【视频会议】小窗口播放我自己的预览视频 ${mViewModel.mUserId.value}")
                             AVChatManager.getTRTCClient().startLocalPreview(true, vv)
                         } else {
                             XLog.i("【视频会议】小窗口播放item的远程视频 ${item._data.account}")
-                            AVChatManager.getTRTCClient()
-                                .startRemoteView(item._data.account, vv)
+                            AVChatManager.getTRTCClient().startRemoteView(item._data.account, vv)
                         }
                     } else {
                         if (isMySelf) {
@@ -166,10 +164,12 @@ class ActivityRTC : BaseActivity<VMRTC, ActivityRtcBinding>(), View.OnFocusChang
              *  2>如果不是自己的item，也同上操作
              */
             if (item._type == 0) {
-                AVChatManager.getTRTCClient().startLocalPreview(true, vv)
+                XLog.i("【视频会议】尝试开启小窗口本地预览视频 ${item._data.account.toString()}")
+//                AVChatManager.getTRTCClient().startLocalPreview(true, vv)
                 tv.text = "我自己"
             } else {
-                AVChatManager.getTRTCClient().startRemoteView(item._data.account, vv)
+                XLog.i("【视频会议】尝试开启小窗口远端用户视频 ${item._data.account.toString()}")
+//                AVChatManager.getTRTCClient().startRemoteView(item._data.account, vv)
                 tv.text = item._data.nickName
             }
 
@@ -202,84 +202,6 @@ class ActivityRTC : BaseActivity<VMRTC, ActivityRtcBinding>(), View.OnFocusChang
                     or WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
                     or WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON
         )
-    }
-
-    /**
-     * 初始化动画
-     */
-    private fun initAnimotion() {
-        animScreenTopGone =
-            getAnimation(this@ActivityRTC, R.anim.top_out, object : Animation.AnimationListener {
-                override fun onAnimationStart(p0: Animation?) {
-                }
-
-                override fun onAnimationEnd(p0: Animation?) {
-                    screenTop.visibility = View.GONE
-                }
-
-                override fun onAnimationRepeat(p0: Animation?) {
-                }
-            })
-        animScreenRightGone =
-            getAnimation(this@ActivityRTC, R.anim.right_out, object : Animation.AnimationListener {
-                override fun onAnimationStart(p0: Animation?) {
-                }
-
-                override fun onAnimationEnd(p0: Animation?) {
-                    screenRight.visibility = View.GONE
-                }
-
-                override fun onAnimationRepeat(p0: Animation?) {
-                }
-            })
-        animScreenBottomGone =
-            getAnimation(this@ActivityRTC, R.anim.bottom_out, object : Animation.AnimationListener {
-                override fun onAnimationStart(p0: Animation?) {
-                }
-
-                override fun onAnimationEnd(p0: Animation?) {
-                    screenBottom.visibility = View.GONE
-                }
-
-                override fun onAnimationRepeat(p0: Animation?) {
-                }
-            })
-        animScreenTopVisible =
-            getAnimation(this@ActivityRTC, R.anim.top_in, object : Animation.AnimationListener {
-                override fun onAnimationStart(p0: Animation?) {
-                    screenTop.visibility = View.VISIBLE
-                }
-
-                override fun onAnimationEnd(p0: Animation?) {
-                }
-
-                override fun onAnimationRepeat(p0: Animation?) {
-                }
-            })
-        animScreenRightVisible =
-            getAnimation(this@ActivityRTC, R.anim.right_in, object : Animation.AnimationListener {
-                override fun onAnimationStart(p0: Animation?) {
-                    screenRight.visibility = View.VISIBLE
-                }
-
-                override fun onAnimationEnd(p0: Animation?) {
-                }
-
-                override fun onAnimationRepeat(p0: Animation?) {
-                }
-            })
-        animScreenBottomVisible =
-            getAnimation(this@ActivityRTC, R.anim.bottom_in, object : Animation.AnimationListener {
-                override fun onAnimationStart(p0: Animation?) {
-                    screenBottom.visibility = View.VISIBLE
-                }
-
-                override fun onAnimationEnd(p0: Animation?) {
-                }
-
-                override fun onAnimationRepeat(p0: Animation?) {
-                }
-            })
     }
 
     /**
@@ -571,9 +493,7 @@ class ActivityRTC : BaseActivity<VMRTC, ActivityRtcBinding>(), View.OnFocusChang
                     initDialog(true)
                 }
                 //同步会议信息
-                dialogPeopleList.meetingDetail = mViewModel.mMeetingDetail.value
-                //更新主屏视图
-                updateUI()
+                updateMeetingDetail()
             }
 
             override fun failed(msg: String) {
@@ -583,6 +503,23 @@ class ActivityRTC : BaseActivity<VMRTC, ActivityRtcBinding>(), View.OnFocusChang
         })
     }
 
+    private fun updateMeetingDetail() {
+        //参与成员弹框数据赋值
+        dialogPeopleList.meetingDetail = mViewModel.mMeetingDetail.value
+
+        //更新自己的声音变化
+        if (mViewModel.myself._data.hostMute == "1" || mViewModel.myself._data.mute == "1") {
+            llVoice.visibility = View.GONE
+        } else {
+            llVoice.visibility = View.VISIBLE
+        }
+        //更新主屏视图
+        updateUI()
+    }
+
+    /**
+     * intent数据处理
+     */
     private fun handleIntent() {
         val intent = intent
         if (null != intent) {
@@ -626,7 +563,14 @@ class ActivityRTC : BaseActivity<VMRTC, ActivityRtcBinding>(), View.OnFocusChang
                 dialogExit.show()
                 return true
             }
-//            KeyEvent.KEYCODE_UP
+        }
+        if (mViewModel.isScreen
+            && (keyCode == KeyEvent.KEYCODE_DPAD_LEFT
+                    || keyCode == KeyEvent.KEYCODE_DPAD_RIGHT
+                    || keyCode == KeyEvent.KEYCODE_DPAD_UP
+                    || keyCode == KeyEvent.KEYCODE_DPAD_DOWN)
+        ) {
+            return true
         }
         return super.onKeyDown(keyCode, event)
     }
@@ -692,5 +636,82 @@ class ActivityRTC : BaseActivity<VMRTC, ActivityRtcBinding>(), View.OnFocusChang
         timer.cancel()
     }
 
+    /**
+     * 初始化动画
+     */
+    private fun initAnimotion() {
+        animScreenTopGone =
+            getAnimation(this@ActivityRTC, R.anim.top_out, object : Animation.AnimationListener {
+                override fun onAnimationStart(p0: Animation?) {
+                }
+
+                override fun onAnimationEnd(p0: Animation?) {
+                    screenTop.visibility = View.GONE
+                }
+
+                override fun onAnimationRepeat(p0: Animation?) {
+                }
+            })
+        animScreenRightGone =
+            getAnimation(this@ActivityRTC, R.anim.right_out, object : Animation.AnimationListener {
+                override fun onAnimationStart(p0: Animation?) {
+                }
+
+                override fun onAnimationEnd(p0: Animation?) {
+                    screenRight.visibility = View.GONE
+                }
+
+                override fun onAnimationRepeat(p0: Animation?) {
+                }
+            })
+        animScreenBottomGone =
+            getAnimation(this@ActivityRTC, R.anim.bottom_out, object : Animation.AnimationListener {
+                override fun onAnimationStart(p0: Animation?) {
+                }
+
+                override fun onAnimationEnd(p0: Animation?) {
+                    screenBottom.visibility = View.GONE
+                }
+
+                override fun onAnimationRepeat(p0: Animation?) {
+                }
+            })
+        animScreenTopVisible =
+            getAnimation(this@ActivityRTC, R.anim.top_in, object : Animation.AnimationListener {
+                override fun onAnimationStart(p0: Animation?) {
+                    screenTop.visibility = View.VISIBLE
+                }
+
+                override fun onAnimationEnd(p0: Animation?) {
+                }
+
+                override fun onAnimationRepeat(p0: Animation?) {
+                }
+            })
+        animScreenRightVisible =
+            getAnimation(this@ActivityRTC, R.anim.right_in, object : Animation.AnimationListener {
+                override fun onAnimationStart(p0: Animation?) {
+                    screenRight.visibility = View.VISIBLE
+                }
+
+                override fun onAnimationEnd(p0: Animation?) {
+                }
+
+                override fun onAnimationRepeat(p0: Animation?) {
+                }
+            })
+        animScreenBottomVisible =
+            getAnimation(this@ActivityRTC, R.anim.bottom_in, object : Animation.AnimationListener {
+                override fun onAnimationStart(p0: Animation?) {
+                    screenBottom.visibility = View.VISIBLE
+                }
+
+                override fun onAnimationEnd(p0: Animation?) {
+                }
+
+                override fun onAnimationRepeat(p0: Animation?) {
+                }
+            })
+    }
 
 }
