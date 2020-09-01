@@ -80,8 +80,6 @@ class ActivityRTC : BaseActivity<VMRTC, ActivityRtcBinding>(),
         R.layout.item_adapter_video_view,
         { holder, item ->
 
-            holder.itemView.tag = item._data.account.toString()
-
             val vv = holder.getView<TXCloudVideoView>(R.id.mTXCloudVideoView)
             val tv = holder.getView<TextView>(R.id.mNickName)
             val iv = holder.getView<ImageView>(R.id.mIcon)
@@ -162,23 +160,25 @@ class ActivityRTC : BaseActivity<VMRTC, ActivityRtcBinding>(),
                     XLog.i("【视频会议】${holder.itemView.tag} 中接收视频状态 $it")
                     if (it) {
                         if (isMySelf) {
-                            AVChatManager.getTRTCClient().stopLocalPreview()
                             XLog.i("【视频会议】小窗口播放我自己的预览视频 ${mViewModel.mUserId.value}")
                             AVChatManager.getTRTCClient().startLocalPreview(true, vv)
                         } else {
                             XLog.i("【视频会议】小窗口播放item的远程视频 ${item._data.account}")
                             AVChatManager.getTRTCClient().startRemoteView(item._data.account, vv)
                         }
-                    } else {
-                        if (isMySelf) {
-                            XLog.i("【视频会议】小窗口停止我自己的预览视频 ${mViewModel.mUserId.value}")
-                            AVChatManager.getTRTCClient().stopLocalPreview()
-                        } else {
-                            XLog.i("【视频会议】小窗口停止item的远程视频  ${item._data.account}")
-                            AVChatManager.getTRTCClient().stopRemoteView(item._data.account)
-                        }
                     }
+//                    else {
+//                        if (isMySelf) {
+//                            XLog.i("【视频会议】小窗口停止我自己的预览视频 ${mViewModel.mUserId.value}")
+//                            AVChatManager.getTRTCClient().stopLocalPreview()
+//                        } else {
+//                            XLog.i("【视频会议】小窗口停止item的远程视频  ${item._data.account}")
+//                            AVChatManager.getTRTCClient().stopRemoteView(item._data.account)
+//                        }
+//                    }
                 })
+
+            holder.itemView.tag = item._data.account.toString()
 
         }, {
             //切换视频源

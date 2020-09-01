@@ -44,11 +44,17 @@ class RTCImpl : IRTCInterface {
         trtcParams.userSig = mUserSig
         trtcParams.role = TRTCCloudDef.TRTCRoleAnchor
 
-        setBeautyParam(BEAUTY_STYLE_NATURE,5,1)
-        setVideoEncoderParam(TRTCCloudDef.TRTC_VIDEO_RESOLUTION_640_360,15,550,TRTCCloudDef.TRTC_VIDEO_RESOLUTION_MODE_LANDSCAPE)
+        setBeautyParam(BEAUTY_STYLE_NATURE, 5, 1)
+        setVideoEncoderParam(
+            TRTCCloudDef.TRTC_VIDEO_RESOLUTION_640_360,
+            15,
+            550,
+            TRTCCloudDef.TRTC_VIDEO_RESOLUTION_MODE_LANDSCAPE
+        )
         //顺时针旋转90调整  因为机顶盒上偏转了90°
         mTRTCCloud.setLocalViewRotation(TRTCCloudDef.TRTC_VIDEO_ROTATION_90)
-
+        //表示性能模式，主要用于电视及手表等场景，设置后会强制硬编硬解
+        mTRTCCloud.callExperimentalAPI("{\"api\": \"setPerformanceMode\",\"params\": {\"mode\": 1}}")
         mTRTCCloud.enterRoom(trtcParams, TRTCCloudDef.TRTC_APP_SCENE_VIDEOCALL)
 
         startLocalVedioAndAudio(isFrontCamera, localPreviewView)

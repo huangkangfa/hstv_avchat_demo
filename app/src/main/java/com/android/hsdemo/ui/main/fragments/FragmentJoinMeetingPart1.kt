@@ -131,7 +131,7 @@ class FragmentJoinMeetingPart1 :
         }
     }
 
-    private fun focusThis() {
+    fun focusThis() {
         controlFocusStatusOfView(recyclerView, true)
     }
 

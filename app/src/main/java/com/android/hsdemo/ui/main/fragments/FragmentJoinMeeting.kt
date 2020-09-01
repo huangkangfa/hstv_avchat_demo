@@ -81,7 +81,6 @@ class FragmentJoinMeeting : BaseFragment<VMFJoinMeeting, FragmentJoinMeetingBind
         if (!hidden) {
             if (fType) {
                 (fragments[0] as FragmentJoinMeetingPart1).mViewModel.requestData(this)
-                controlFocusStatusOfView(requireActivity().findViewById(R.id.btnJoinMeeting), true)
             } else {
                 (fragments[1] as FragmentJoinMeetingPart2).focusThis()
             }

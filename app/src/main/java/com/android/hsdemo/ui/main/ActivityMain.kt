@@ -173,6 +173,7 @@ class ActivityMain : BaseFragmentActivity(), View.OnFocusChangeListener {
             (fragmentJoinMeeting.fragments[0] as FragmentJoinMeetingPart1).mViewModel.requestData(
                 this
             )
+            controlFocusStatusOfView(btnJoinMeeting, true)
         }
     }
 

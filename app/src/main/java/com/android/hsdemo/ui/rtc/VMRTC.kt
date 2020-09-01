@@ -36,6 +36,7 @@ import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class VMRTC(application: Application) : AndroidViewModel(application) {
 
@@ -81,32 +82,38 @@ class VMRTC(application: Application) : AndroidViewModel(application) {
     /**
      * 主屏用户交换
      */
-    fun changeScreenMember(temp: ItemOfMemberInfo) {
-        val lastScreenAccid = screenMember._data.account.toString()
-        val lastScreenType = screenMember._type
-        val position = data.indexOf(temp)
+    fun changeScreenMember(currentScreenMember: ItemOfMemberInfo) {
+        val lastScreenMember = screenMember
+        val position = data.indexOf(currentScreenMember)
         if (position != -1) {
-            data.remove(temp)
-            data.add(position, screenMember)
-            screenMember = temp
-            if (screenMember._type == 0) {
+
+            //大小屏数据交换
+            data.remove(currentScreenMember)
+            data.add(position, lastScreenMember)
+            screenMember = currentScreenMember
+
+            //主屏视频流必须先关闭再开启，不然画面会叠加
+            if (lastScreenMember._type == 0 || screenMember._type == 0) {
+                XLog.i("【视频会议】停止自己的预览视频")
                 getTRTCClient().stopLocalPreview()
+            }
+            //主屏视频更新
+            if (screenMember._type == 0) {
                 XLog.i("【视频会议】主屏播放我自己的预览视频 ${screenMember._data.account}")
                 getTRTCClient().startLocalPreview(true, mLocalPreviewView)
             } else {
-                if (lastScreenType == 0) {
-                    XLog.i("【视频会议】停止自己的主屏预览视频")
-                    getTRTCClient().stopLocalPreview()
+                GlobalScope.launch(IO) {
+                    if (lastScreenMember._type == 1) {
+                        //解决窗口黑屏问题
+                        getTRTCClient().stopRemoteView(screenMember._data.account)
+                        delay(50)
+                    }
+                    XLog.i("【视频会议】主屏播放远程用户的预览视频 ${screenMember._data.account}")
+                    getTRTCClient().startRemoteView(screenMember._data.account, mLocalPreviewView)
                 }
-                XLog.i("【视频会议】主屏播放远程用户的预览视频 ${screenMember._data.account}")
-                getTRTCClient().startRemoteView(screenMember._data.account, mLocalPreviewView)
             }
+            //小窗口视频更新
             adapter.notifyItemRangeChanged(position, 1)
-//            GlobalScope.launch(IO) {
-//                delay(50)
-//                XLog.i("【视频会议】更新切换窗口后的视频流数据 发送Event lastScreenAccid = $lastScreenAccid")
-//                EventBus.with("${EventKey.VIDEO_CONTROL}_${lastScreenAccid}").postValue(true)
-//            }
         }
     }
 
@@ -351,9 +358,13 @@ class VMRTC(application: Application) : AndroidViewModel(application) {
                             data.add(ItemOfMemberInfo(1, mMemberInfo))
                             ids.add(userId)
                             adapter.notifyItemChanged(data.size - 1)
-                            EventBus.with(EventKey.MEETING_USER_CHANGE, String::class.java).postValue("1")
+                            EventBus.with(EventKey.MEETING_USER_CHANGE, String::class.java)
+                                .postValue("1")
                             //顺时针旋转270调整  因为机顶盒上小视频窗口偏转了这些角度
-                            getTRTCClient().setRemoteViewRotation(mMemberInfo.account,TRTCCloudDef.TRTC_VIDEO_ROTATION_270)
+//                            getTRTCClient().setRemoteViewRotation(
+//                                mMemberInfo.account,
+//                                TRTCCloudDef.TRTC_VIDEO_ROTATION_270
+//                            )
                         }
                     }
                 ) { throwable: Throwable? ->
