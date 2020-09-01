@@ -13,9 +13,14 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textColor="@color/white"
-        android:text="参会人员列表(0)"
+        android:text="参会人员列表(1)"
         android:textSize="15sp"
         android:textStyle="bold" />
+
+    <include
+        android:id="@+id/itemMyself"
+        layout="@layout/item_adapter_memberlist"
+        android:visibility="gone"/>
 
     <RelativeLayout
         android:layout_width="match_parent"

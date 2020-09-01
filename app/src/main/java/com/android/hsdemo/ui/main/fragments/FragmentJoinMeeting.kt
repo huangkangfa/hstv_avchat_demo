@@ -10,6 +10,7 @@ import com.android.hsdemo.EventKey
 import com.android.hsdemo.R
 import com.android.hsdemo.databinding.FragmentJoinMeetingBinding
 import com.android.hsdemo.ui.main.vm.VMFJoinMeeting
+import com.android.hsdemo.util.controlFocusStatusOfView
 import kotlinx.android.synthetic.main.fragment_join_meeting.*
 
 class FragmentJoinMeeting : BaseFragment<VMFJoinMeeting, FragmentJoinMeetingBinding>() {
@@ -47,8 +48,8 @@ class FragmentJoinMeeting : BaseFragment<VMFJoinMeeting, FragmentJoinMeetingBind
         ).hide(fragments[1]).commitAllowingStateLoss()
 
         //离开视频会议，刷新此界面
-        EventBus.with(EventKey.MEETING_STATUS_END,String::class.java).observe(this, Observer {
-            if(fType){
+        EventBus.with(EventKey.MEETING_STATUS_END, String::class.java).observe(this, Observer {
+            if (fType) {
                 (fragments[0] as FragmentJoinMeetingPart1).mViewModel.requestData(this)
             }
         })
@@ -78,9 +79,10 @@ class FragmentJoinMeeting : BaseFragment<VMFJoinMeeting, FragmentJoinMeetingBind
     override fun onHiddenChanged(hidden: Boolean) {
         super.onHiddenChanged(hidden)
         if (!hidden) {
-            if(fType){
+            if (fType) {
                 (fragments[0] as FragmentJoinMeetingPart1).mViewModel.requestData(this)
-            }else{
+                controlFocusStatusOfView(requireActivity().findViewById(R.id.btnJoinMeeting), true)
+            } else {
                 (fragments[1] as FragmentJoinMeetingPart2).focusThis()
             }
         }

@@ -17,9 +17,9 @@ class VMFAddressBook(application: Application) : AndroidViewModel(application) {
     /** O
      * 列表数据源
      */
-    private var data: ArrayList<ItemOfUser> = arrayListOf()
+    var data: ArrayList<ItemOfUser> = arrayListOf()
 
-    private lateinit var adapter: AbstractAdapter<ItemOfUser>
+    lateinit var adapter: AbstractAdapter<ItemOfUser>
 
     var isInitOK = false
 

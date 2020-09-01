@@ -45,7 +45,9 @@ class RTCImpl : IRTCInterface {
         trtcParams.role = TRTCCloudDef.TRTCRoleAnchor
 
         setBeautyParam(BEAUTY_STYLE_NATURE,5,1)
-        setVideoEncoderParam(TRTCCloudDef.TRTC_VIDEO_RESOLUTION_640_360,15,550,TRTCCloudDef.TRTC_VIDEO_RESOLUTION_MODE_PORTRAIT)
+        setVideoEncoderParam(TRTCCloudDef.TRTC_VIDEO_RESOLUTION_640_360,15,550,TRTCCloudDef.TRTC_VIDEO_RESOLUTION_MODE_LANDSCAPE)
+        //顺时针旋转90调整  因为机顶盒上偏转了90°
+        mTRTCCloud.setLocalViewRotation(TRTCCloudDef.TRTC_VIDEO_ROTATION_90)
 
         mTRTCCloud.enterRoom(trtcParams, TRTCCloudDef.TRTC_APP_SCENE_VIDEOCALL)
 

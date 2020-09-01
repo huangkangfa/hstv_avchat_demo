@@ -19,12 +19,12 @@ import com.android.hsdemo.BTN_BACKGROUNDS
 import com.android.hsdemo.BTN_TEXT_COLORS
 import com.android.hsdemo.MeetingCmd
 import com.android.hsdemo.R
+import com.android.hsdemo.model.ItemOfMemberInfo
 import com.android.hsdemo.model.ItemOfPeople
 import com.android.hsdemo.model.MeetingDetail
 import com.android.hsdemo.model.StatusView
 import com.android.hsdemo.network.RemoteRepositoryImpl
 import com.bumptech.glide.Glide
-import com.elvishew.xlog.XLog
 import kotlinx.android.synthetic.main.dialog_select_people.*
 
 class DialogPeopleList(mActivity: Activity) : BaseDialog(mActivity), View.OnFocusChangeListener,
@@ -39,6 +39,7 @@ class DialogPeopleList(mActivity: Activity) : BaseDialog(mActivity), View.OnFocu
     var isMaster: Boolean = false
     var meetingDetail: MeetingDetail? = null
     var dialogWait: DialogWait = DialogWait(mActivity)
+    var mySelf: ItemOfMemberInfo? = null
 
     /**
      * 列表子项
@@ -85,7 +86,8 @@ class DialogPeopleList(mActivity: Activity) : BaseDialog(mActivity), View.OnFocu
                         {
                             dialogWait.dismiss()
                             item._data.hostMute = "0"
-                            Glide.with(context).load(R.mipmap.icon_people_mute_audio_cancle).into(userMute)
+                            Glide.with(context).load(R.mipmap.icon_people_mute_audio_cancle)
+                                .into(userMute)
                         }
                     ) { throwable: Throwable? ->
                         dialogWait.dismiss()
@@ -159,6 +161,22 @@ class DialogPeopleList(mActivity: Activity) : BaseDialog(mActivity), View.OnFocu
         progressBar.visibility = View.GONE
     }
 
+    fun initMyself(temp: ItemOfMemberInfo) {
+        itemMyself.visibility = View.VISIBLE
+        mySelf = temp
+        //自己要隐藏操作按钮
+        itemMyself.findViewById<ImageView>(R.id.userMute).visibility = View.GONE
+        itemMyself.findViewById<ImageView>(R.id.userDel).visibility = View.GONE
+        //设置昵称
+        itemMyself.findViewById<TextView>(R.id.userNickName).text =
+            "${mySelf?._data?.nickName.toString()}(自己)"
+        //设置头像
+        Glide.with(context).load(mySelf?._data?.avatar.toString())
+            .placeholder(R.mipmap.icon_default_circle)
+            .error(R.mipmap.icon_default_circle)
+            .into(itemMyself.findViewById(R.id.userAvatar))
+    }
+
     @RequiresApi(Build.VERSION_CODES.M)
     override fun onFocusChange(view: View, focus: Boolean) {
         when (view) {
@@ -198,6 +216,10 @@ class DialogPeopleList(mActivity: Activity) : BaseDialog(mActivity), View.OnFocu
                     dialogWait.dismiss()
                     btnMuteAllTv.text = "取消全员静音"
                     view.isSelected = !view.isSelected
+                    for (item in data) {
+                        item._data.hostMute = "1"
+                    }
+                    adapter?.notifyDataSetChanged()
                 }
             ) { throwable: Throwable? ->
                 dialogWait.dismiss()
@@ -216,6 +238,10 @@ class DialogPeopleList(mActivity: Activity) : BaseDialog(mActivity), View.OnFocu
                     dialogWait.dismiss()
                     btnMuteAllTv.text = "全员静音"
                     view.isSelected = !view.isSelected
+                    for (item in data) {
+                        item._data.hostMute = "0"
+                    }
+                    adapter?.notifyDataSetChanged()
                 }
             ) { throwable: Throwable? ->
                 dialogWait.dismiss()
@@ -225,12 +251,12 @@ class DialogPeopleList(mActivity: Activity) : BaseDialog(mActivity), View.OnFocu
     }
 
     fun changeUI() {
-        dialogRecyclerView.setUP(
+        adapter = dialogRecyclerView.setUP(
             data,
             itemOfData,
             manager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
         )
-        title.text = "参会人员列表(${data.size})"
+        title.text = "参会人员列表(${data.size + 1})"
         if (isMaster) {
             btnMuteAll.visibility = View.VISIBLE
         } else {

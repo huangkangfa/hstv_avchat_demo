@@ -2,8 +2,8 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:gravity="center_horizontal"
     android:background="@mipmap/bg_main"
+    android:gravity="center_horizontal"
     android:orientation="vertical">
 
     <FrameLayout
@@ -24,6 +24,7 @@
             android:layout_width="120dp"
             android:layout_height="120dp"
             android:layout_marginEnd="33dp"
+            android:nextFocusLeft="@+id/btnPersionCenter"
             android:background="@drawable/button_main_bg"
             android:orientation="vertical">
 
@@ -32,8 +33,8 @@
                 style="@style/DefaultButtonInnerImageStyle"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
-                android:layout_marginBottom="12dp"
                 android:layout_marginEnd="0dp"
+                android:layout_marginBottom="12dp"
                 android:src="@mipmap/icon_main_join_meeting_0" />
 
             <TextView
@@ -56,8 +57,8 @@
                 style="@style/DefaultButtonInnerImageStyle"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
-                android:layout_marginBottom="12dp"
                 android:layout_marginEnd="0dp"
+                android:layout_marginBottom="12dp"
                 android:src="@mipmap/icon_main_create_meeting_0" />
 
             <TextView
@@ -80,8 +81,8 @@
                 style="@style/DefaultButtonInnerImageStyle"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
-                android:layout_marginBottom="12dp"
                 android:layout_marginEnd="0dp"
+                android:layout_marginBottom="12dp"
                 android:src="@mipmap/icon_main_contact_0" />
 
             <TextView
@@ -96,6 +97,7 @@
             android:layout_width="120dp"
             android:layout_height="120dp"
             android:background="@drawable/button_main_bg"
+            android:nextFocusRight="@+id/btnJoinMeeting"
             android:orientation="vertical">
 
             <ImageView
@@ -103,8 +105,8 @@
                 style="@style/DefaultButtonInnerImageStyle"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
-                android:layout_marginBottom="12dp"
                 android:layout_marginEnd="0dp"
+                android:layout_marginBottom="12dp"
                 android:src="@mipmap/icon_main_persion_center_0" />
 
             <TextView

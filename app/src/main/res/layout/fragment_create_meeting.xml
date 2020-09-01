@@ -48,6 +48,8 @@
                     android:layout_width="275dp"
                     android:layout_height="35dp"
                     android:hint="@string/hint_meeting_name"
+                    android:nextFocusLeft="@+id/etMeetingName"
+                    android:nextFocusRight="@+id/etMeetingName"
                     android:nextFocusDown="@+id/btnSelectPeople"
                     android:text="@={vm.meetingName}" />
 
@@ -81,6 +83,8 @@
                     android:layout_width="24dp"
                     android:layout_height="24dp"
                     android:focusable="true"
+                    android:nextFocusLeft="@+id/btnSelectPeople"
+                    android:nextFocusRight="@+id/btnSelectPeople"
                     android:src="@mipmap/icon_select_people_0" />
 
             </LinearLayout>
@@ -104,6 +108,8 @@
                     android:layout_width="275dp"
                     android:layout_height="35dp"
                     android:hint="@string/hint_meeting_pwd"
+                    android:nextFocusLeft="@+id/etMeetingPwd"
+                    android:nextFocusRight="@+id/etMeetingPwd"
                     android:inputType="numberPassword"
                     android:nextFocusUp="@+id/btnSelectPeople"
                     android:text="@={vm.meetingPassword}" />
@@ -185,6 +191,8 @@
                 <LinearLayout
                     android:id="@+id/btnCreateMeeting"
                     style="@style/DefaultButtonStyle"
+                    android:nextFocusLeft="@+id/btnCreateMeeting"
+                    android:nextFocusRight="@+id/btnCreateMeeting"
                     android:layout_width="230dp"
                     android:layout_height="47dp">
 
@@ -210,6 +218,7 @@
                     <LinearLayout
                         android:id="@+id/btnJoin"
                         style="@style/DefaultButtonStyle"
+                        android:nextFocusLeft="@+id/btnCancel"
                         android:layout_width="186dp"
                         android:layout_height="47dp"
                         android:layout_marginRight="15dp">
@@ -228,6 +237,7 @@
                     <LinearLayout
                         android:id="@+id/btnCancel"
                         style="@style/DefaultButtonStyle"
+                        android:nextFocusRight="@+id/btnJoin"
                         android:layout_width="186dp"
                         android:layout_height="47dp">
 

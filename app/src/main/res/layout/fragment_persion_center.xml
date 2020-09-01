@@ -44,6 +44,8 @@
                     android:id="@+id/etUserName"
                     style="@style/DefaultEditTextStyle"
                     android:layout_width="match_parent"
+                    android:nextFocusLeft="@+id/etUserName"
+                    android:nextFocusRight="@+id/etUserName"
                     android:ellipsize="end"
                     android:hint="@string/input_user_nick"
                     android:maxLines="1"
@@ -111,6 +113,8 @@
             <LinearLayout
                 android:id="@+id/btnExit"
                 style="@style/DefaultButtonStyle"
+                android:nextFocusLeft="@+id/btnExit"
+                android:nextFocusRight="@+id/btnExit"
                 android:layout_width="160dp"
                 android:layout_height="40dp"
                 android:layout_marginTop="25dp">

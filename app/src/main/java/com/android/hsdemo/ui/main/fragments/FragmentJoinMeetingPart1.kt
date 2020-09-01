@@ -1,5 +1,6 @@
 package com.android.hsdemo.ui.main.fragments
 
+import android.view.View
 import android.widget.ImageView
 import android.widget.RelativeLayout
 import android.widget.TextView
@@ -7,15 +8,18 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.android.baselib.base.BaseFragment
 import com.android.baselib.custom.recyleview.adapter.ListItem
 import com.android.baselib.utils.Preferences
+import com.android.baselib.utils.showShortToast
 import com.android.hsdemo.BR
 import com.android.hsdemo.KEY_ACCID
 import com.android.hsdemo.R
 import com.android.hsdemo.custom.ClipLinearLayout
 import com.android.hsdemo.databinding.FragmentJoinMeetingBinding
 import com.android.hsdemo.model.ItemOfMeeting
+import com.android.hsdemo.network.HttpCallback
 import com.android.hsdemo.ui.main.vm.VMFJoinMeeting
 import com.android.hsdemo.ui.rtc.ActivityRTC
 import com.android.hsdemo.util.controlFocusStatusOfView
+import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_join_meeting_part1.*
 
 class FragmentJoinMeetingPart1 :
@@ -43,6 +47,16 @@ class FragmentJoinMeetingPart1 :
                     btnC.setImageResource(R.mipmap.icon_add_0)
                 }
             }
+            //左边焦点不越界
+            holder.itemView.nextFocusLeftId = holder.itemView.id
+            //右边焦点控制，不然跳到下方主界面的另一个选项
+            holder.itemView.nextFocusRightId = holder.itemView.id
+            if (mViewModel.data.size > 1) {
+                holder.itemView.nextFocusRightId = View.NO_ID
+            }
+            //向下焦点控制
+            holder.itemView.nextFocusDownId =
+                requireActivity().findViewById<View>(R.id.btnJoinMeeting).id
         }, {
             //快速输入会议号
             (parentFragment as FragmentJoinMeeting).changeFragment(false)
@@ -68,14 +82,32 @@ class FragmentJoinMeetingPart1 :
                     btnP.setBackgroundResource(R.drawable.border_0)
                 }
             }
+            //最右边item焦点不越界
+            if (mViewModel.isLastItem(item)) {
+                holder.itemView.nextFocusRightId = holder.itemView.id
+            } else {
+                holder.itemView.nextFocusRightId = View.NO_ID
+            }
+            //向下焦点控制
+            holder.itemView.nextFocusDownId =
+                requireActivity().findViewById<View>(R.id.btnJoinMeeting).id
         }, {
-            //快速加入
-            ActivityRTC.start(
-                requireActivity(),
-                Preferences.getString(KEY_ACCID),
-                it._data?.meetingNo.toString(),
-                it._data?.title.toString()
-            )
+            mViewModel.joinQuick(this, it._data, object : HttpCallback<String> {
+                override fun success(t: String) {
+                    //快速加入
+                    ActivityRTC.start(
+                        requireActivity(),
+                        Preferences.getString(KEY_ACCID),
+                        it._data?.meetingNo.toString(),
+                        it._data?.title.toString()
+                    )
+                }
+
+                override fun failed(msg: String) {
+                    showShortToast(msg)
+                }
+
+            })
         }
     )
 

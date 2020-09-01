@@ -74,6 +74,8 @@ class FragmentPersionCenter : BaseFragment<VMFPersionCenter, FragmentPersionCent
 
         //昵称
         etUserName.onFocusChangeListener = this
+
+        btnExit.nextFocusDownId = requireActivity().findViewById<View>(R.id.btnPersionCenter).id
     }
 
     private fun initData() {

@@ -52,7 +52,7 @@ class VMFCreateMeeting(application: Application) : AndroidViewModel(application)
 
     fun clearStatus() {
         meetingName.value = "${Preferences.getString(KEY_USER_NICK_NAME)}的会议"
-        meetingPeopleStr.value = ""
+        meetingPeopleStr.value = "请选择会议人员"
         meetingPassword.value = ""
         meetingNo.value = ""
         meetingId.value = 0

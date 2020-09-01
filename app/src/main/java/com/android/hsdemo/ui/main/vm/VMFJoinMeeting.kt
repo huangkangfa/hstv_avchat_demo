@@ -22,7 +22,7 @@ class VMFJoinMeeting(application: Application) : AndroidViewModel(application) {
     /**
      * 列表数据源
      */
-    private var data: ArrayList<ItemOfMeeting> = arrayListOf(ItemOfMeeting(0, null))
+    var data: ArrayList<ItemOfMeeting> = arrayListOf(ItemOfMeeting(0, null))
 
     /**
      * 自己输入加入会议会议号
@@ -59,6 +59,16 @@ class VMFJoinMeeting(application: Application) : AndroidViewModel(application) {
     }
 
     /**
+     * 是最后一项
+     */
+    fun isLastItem(item: ItemOfMeeting): Boolean {
+        if (TextUtils.equals(data[data.size - 1]._data?.id.toString(), item._data?.id.toString())) {
+            return true
+        }
+        return false
+    }
+
+    /**
      * 获取我的会议数据
      */
     private fun getMyMeetingList(owner: LifecycleOwner, callback: HttpCallback<List<Meeting>>) {
@@ -78,7 +88,7 @@ class VMFJoinMeeting(application: Application) : AndroidViewModel(application) {
             callback.failed("会议号不能为空")
             return
         }
-        getMeetingDetail(meetingNo.value.toString(),owner,object :HttpCallback<MeetingDetail>{
+        getMeetingDetail(meetingNo.value.toString(), owner, object : HttpCallback<MeetingDetail> {
             override fun success(t: MeetingDetail) {
                 if (!TextUtils.isEmpty(t.pwd.toString()) && !TextUtils.equals(
                         MD5Utils.toMD5(meetingPassword.value.toString()),
@@ -105,9 +115,27 @@ class VMFJoinMeeting(application: Application) : AndroidViewModel(application) {
     }
 
     /**
+     * 快速加入会议
+     */
+    fun joinQuick(owner: LifecycleOwner, t: Meeting?, callback: HttpCallback<String>) {
+        RemoteRepositoryImpl.joinOrLeaveMeeting(t?.id.toString(), 1)
+            .life(owner)
+            .subscribe(
+                {
+                    meetingTitle.value = t?.title.toString()
+                    callback.success("加入成功")
+                }
+            ) { throwable: Throwable? -> callback.failed(throwable?.message.toString()) }
+    }
+
+    /**
      * 获取会议详情
      */
-    private fun getMeetingDetail(meetingNo:String,owner: LifecycleOwner, callback: HttpCallback<MeetingDetail>) {
+    private fun getMeetingDetail(
+        meetingNo: String,
+        owner: LifecycleOwner,
+        callback: HttpCallback<MeetingDetail>
+    ) {
         RemoteRepositoryImpl.getMeetingDetail(meetingNo)
             .life(owner)
             .subscribe(

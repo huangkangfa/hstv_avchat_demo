@@ -1,6 +1,7 @@
 package com.android.hsdemo.ui.main.fragments
 
 import android.os.Build
+import android.text.TextUtils
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
@@ -49,27 +50,27 @@ class FragmentCreateMeeting : BaseFragment<VMFCreateMeeting, FragmentCreateMeeti
             mViewModel.userBalance.value = "0"
         }
 
-        btns[0] = StatusView<View>(btnCreateMeeting, 0, BTN_BACKGROUNDS[0], BTN_BACKGROUNDS[1])
-        btns[1] = StatusView<View>(btnJoin, 1, BTN_BACKGROUNDS[0], BTN_BACKGROUNDS[1])
-        btns[2] = StatusView<View>(btnCancel, 2, BTN_BACKGROUNDS[0], BTN_BACKGROUNDS[1])
+        btns[0] = StatusView(btnCreateMeeting, 0, BTN_BACKGROUNDS[0], BTN_BACKGROUNDS[1])
+        btns[1] = StatusView(btnJoin, 1, BTN_BACKGROUNDS[0], BTN_BACKGROUNDS[1])
+        btns[2] = StatusView(btnCancel, 2, BTN_BACKGROUNDS[0], BTN_BACKGROUNDS[1])
 
-        tvs[0] = StatusView<TextView>(btnCreateMeetingTv, 0, BTN_TEXT_COLORS[0], BTN_TEXT_COLORS[1])
-        tvs[1] = StatusView<TextView>(btnJoinTv, 1, BTN_TEXT_COLORS[0], BTN_TEXT_COLORS[1])
-        tvs[2] = StatusView<TextView>(btnCancelTv, 2, BTN_TEXT_COLORS[0], BTN_TEXT_COLORS[1])
+        tvs[0] = StatusView(btnCreateMeetingTv, 0, BTN_TEXT_COLORS[0], BTN_TEXT_COLORS[1])
+        tvs[1] = StatusView(btnJoinTv, 1, BTN_TEXT_COLORS[0], BTN_TEXT_COLORS[1])
+        tvs[2] = StatusView(btnCancelTv, 2, BTN_TEXT_COLORS[0], BTN_TEXT_COLORS[1])
 
-        imgs[0] = StatusView<ImageView>(
+        imgs[0] = StatusView(
             btnCreateMeetingImg,
             0,
             R.mipmap.icon_f_create2_meeting_1,
             R.mipmap.icon_f_create2_meeting_0
         )
-        imgs[1] = StatusView<ImageView>(
+        imgs[1] = StatusView(
             btnJoinImg,
             0,
             R.mipmap.icon_join_1,
             R.mipmap.icon_join_0
         )
-        imgs[2] = StatusView<ImageView>(
+        imgs[2] = StatusView(
             btnCancelImg,
             0,
             R.mipmap.icon_back_1,
@@ -144,42 +145,46 @@ class FragmentCreateMeeting : BaseFragment<VMFCreateMeeting, FragmentCreateMeeti
         //选人结果返回处理
         dialogSelect.listener = object : OnStatusClickListener {
             override fun onSureClick(data: HashMap<String, User>) {
-
                 //设置UI显示
-                var str = ""
-                var count = 0
-                val maxCount = 2
-                for (item in data) {
-                    str += item.value.nickName.toString()
-                    if (count >= maxCount - 1) {
-                        break
-                    }
-                    if (count in 0 until maxCount) {
-                        if (count == 0 && data.size == 1) {
+                if(data.size == 0){
+                    mViewModel.meetingPeopleStr.value = "请选择会议人员"
+                    mViewModel.meetingMembersIds.value = ""
+                }else{
+                    var str = ""
+                    var count = 0
+                    val maxCount = 2
+                    for (item in data) {
+                        str += item.value.nickName.toString()
+                        if (count >= maxCount - 1) {
                             break
                         }
-                        str += "、"
+                        if (count in 0 until maxCount) {
+                            if (count == 0 && data.size == 1) {
+                                break
+                            }
+                            str += "、"
+                        }
+                        count++
                     }
-                    count++
-                }
-                mViewModel.meetingPeopleStr.value = str
-                if (data.size > maxCount) {
-                    mViewModel.meetingPeopleStr.value += "等${data.size}人"
-                }
+                    mViewModel.meetingPeopleStr.value = str
+                    if (data.size > maxCount) {
+                        mViewModel.meetingPeopleStr.value += "等${data.size}人"
+                    }
 
-                //设置实际数据
-                mViewModel.meetingMembersIds.value = ""
-                count = 0
-                str = ""
-                for (item in data) {
-                    str += item.value.id
-                    if (count in 0 until data.size - 1) {
-                        str += ","
+                    //设置实际数据
+                    mViewModel.meetingMembersIds.value = ""
+                    count = 0
+                    str = ""
+                    for (item in data) {
+                        str += item.value.id
+                        if (count in 0 until data.size - 1) {
+                            str += ","
+                        }
+                        count++
                     }
-                    count++
+                    mViewModel.meetingMembersIds.value = str
+                    dialogSelect.clear()
                 }
-                mViewModel.meetingMembersIds.value = str
-                dialogSelect.clear()
             }
 
             override fun onCancleClick() {
@@ -260,6 +265,7 @@ class FragmentCreateMeeting : BaseFragment<VMFCreateMeeting, FragmentCreateMeeti
             btnSelectPeople.visibility = View.VISIBLE
             llJoin.visibility = View.GONE
             llMeetingNo.visibility = View.GONE
+            controlFocusStatusOfView(btnCreateMeeting, true)
         } else {
             etMeetingName.isEnabled = false
             btnCreateMeeting.visibility = View.GONE
@@ -268,6 +274,8 @@ class FragmentCreateMeeting : BaseFragment<VMFCreateMeeting, FragmentCreateMeeti
             btnSelectPeople.visibility = View.INVISIBLE
             llJoin.visibility = View.VISIBLE
             llMeetingNo.visibility = View.VISIBLE
+            etMeetingName.isFocusableInTouchMode = false
+//            controlFocusStatusOfView(etMeetingName, false)
             controlFocusStatusOfView(btnJoin, true)
         }
     }
