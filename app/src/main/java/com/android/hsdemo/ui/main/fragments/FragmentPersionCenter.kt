@@ -51,7 +51,7 @@ class FragmentPersionCenter : BaseFragment<VMFPersionCenter, FragmentPersionCent
 
     private fun initHeadImg() {
         Glide.with(this)
-            .load(mViewModel.userAvatar.toString())
+            .load(mViewModel.userAvatar.value.toString())
             .placeholder(R.mipmap.icon_default)
             .error(R.mipmap.icon_default)
             .into(ivHead)

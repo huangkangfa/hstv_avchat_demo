@@ -21,6 +21,8 @@ import kotlinx.coroutines.*
 class ActivityWelcome : AppCompatActivity() {
 
     private val userName = Preferences.getString(KEY_USER_NAME)
+    private val userAccid = Preferences.getString(KEY_ACCID)
+    private val userSig = Preferences.getString(KEY_USERSIG)
     private val userPassword = Preferences.getString(KEY_USER_PASSWORD)
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -32,22 +34,33 @@ class ActivityWelcome : AppCompatActivity() {
         if (TextUtils.isEmpty(userName)) {
             goLogin()
         } else {
-            //再次登录
-            autoLogin(this@ActivityWelcome, object : HttpCallback<User> {
-                override fun success(t: User) {
-                    goMain(t)
+            //再次登录IM
+            AVChatManager.login(userAccid,userSig,object :
+                V2TIMCallback {
+                override fun onError(p0: Int, p1: String?) {
+                    showShortToast("自动登录失败，请手动登录")
                 }
 
-                override fun failed(msg: String) {
-                    showShortToast("自动登录失败，请手动登录")
-                    goLogin()
+                override fun onSuccess() {
+                    goMain(null)
                 }
             })
+//            autoLogin(this@ActivityWelcome, object : HttpCallback<User> {
+//                override fun success(t: User) {
+//                    goMain(t)
+//                }
+//
+//                override fun failed(msg: String) {
+//                    showShortToast("自动登录失败，请手动登录")
+//                    goLogin()
+//                }
+//            })
         }
     }
 
-    private fun goMain(t: User) {
-        saveUser(t)
+    private fun goMain(t: User?) {
+        if(t!=null)
+            saveUser(t)
         //跳转主界面
         ActivityMain.start(this@ActivityWelcome)
         this@ActivityWelcome.finish()

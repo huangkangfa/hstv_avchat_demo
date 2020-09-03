@@ -40,5 +40,7 @@
 
     <color name="white">#ffffff</color>
     <color name="black">#2F1609</color>
+    <color name="yellow">#FFCA28</color>
+    <color name="black_2f1609">#2F1609</color>
 
 </resources>

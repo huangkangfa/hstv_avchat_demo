@@ -13,6 +13,7 @@ import com.android.baselib.custom.eventbus.EventBus
 import com.android.baselib.utils.Preferences
 import com.android.baselib.utils.showShortToast
 import com.android.hsdemo.*
+import com.android.hsdemo.custom.dialog.DialogDesc
 import com.android.hsdemo.custom.dialog.DialogSelectPeople
 import com.android.hsdemo.custom.dialog.DialogSelectPeople.OnStatusClickListener
 import com.android.hsdemo.databinding.FragmentCreateMeetingBinding
@@ -35,16 +36,18 @@ class FragmentCreateMeeting : BaseFragment<VMFCreateMeeting, FragmentCreateMeeti
 
     override fun getVariableId(): Int = BR.vm
 
-    private var btns = arrayOfNulls<StatusView<View>>(3)
-    private var tvs = arrayOfNulls<StatusView<TextView>>(3)
-    private var imgs = arrayOfNulls<StatusView<ImageView>>(3)
+    private var btns = arrayOfNulls<StatusView<View>>(4)
+    private var tvs = arrayOfNulls<StatusView<TextView>>(4)
+    private var imgs = arrayOfNulls<StatusView<ImageView>>(4)
     private lateinit var currentActivity: ActivityMain
 
     private lateinit var dialogSelect: DialogSelectPeople
+    private lateinit var dialogDesc: DialogDesc
 
     override fun afterCreate() {
         currentActivity = requireActivity() as ActivityMain
         dialogSelect = DialogSelectPeople(currentActivity)
+        dialogDesc = DialogDesc(currentActivity)
         mViewModel.userBalance.value = Preferences.getString(KEY_USER_BALANCE, "0")
         if (mViewModel.userBalance.value == null) {
             mViewModel.userBalance.value = "0"
@@ -53,10 +56,12 @@ class FragmentCreateMeeting : BaseFragment<VMFCreateMeeting, FragmentCreateMeeti
         btns[0] = StatusView(btnCreateMeeting, 0, BTN_BACKGROUNDS[0], BTN_BACKGROUNDS[1])
         btns[1] = StatusView(btnJoin, 1, BTN_BACKGROUNDS[0], BTN_BACKGROUNDS[1])
         btns[2] = StatusView(btnCancel, 2, BTN_BACKGROUNDS[0], BTN_BACKGROUNDS[1])
+        btns[3] = StatusView(btnDesc, 3, BTN_BACKGROUNDS[0], BTN_BACKGROUNDS[1])
 
         tvs[0] = StatusView(btnCreateMeetingTv, 0, BTN_TEXT_COLORS[0], BTN_TEXT_COLORS[1])
         tvs[1] = StatusView(btnJoinTv, 1, BTN_TEXT_COLORS[0], BTN_TEXT_COLORS[1])
         tvs[2] = StatusView(btnCancelTv, 2, BTN_TEXT_COLORS[0], BTN_TEXT_COLORS[1])
+        tvs[3] = StatusView(btnDescTv, 3, BTN_TEXT_COLORS2[1], BTN_TEXT_COLORS2[0])
 
         imgs[0] = StatusView(
             btnCreateMeetingImg,
@@ -76,6 +81,12 @@ class FragmentCreateMeeting : BaseFragment<VMFCreateMeeting, FragmentCreateMeeti
             R.mipmap.icon_back_1,
             R.mipmap.icon_back_0
         )
+        imgs[3] = StatusView(
+            btnDescImg,
+            0,
+            R.mipmap.icon_desc_0,
+            R.mipmap.icon_desc_1
+        )
 
         initListener()
         changeTypeUI(true)
@@ -86,6 +97,7 @@ class FragmentCreateMeeting : BaseFragment<VMFCreateMeeting, FragmentCreateMeeti
         btnSelectPeople.onFocusChangeListener = this
         btnJoin.onFocusChangeListener = this
         btnCancel.onFocusChangeListener = this
+        btnDesc.onFocusChangeListener = this
 
         //离开视频会议，刷新此界面至发起部分
         EventBus.with(EventKey.MEETING_STATUS_END, String::class.java).observe(this, Observer {
@@ -142,14 +154,19 @@ class FragmentCreateMeeting : BaseFragment<VMFCreateMeeting, FragmentCreateMeeti
             dialogSelect.show()
         }
 
+        //费用明细
+        btnDesc.setOnClickListener {
+            dialogDesc.show()
+        }
+
         //选人结果返回处理
         dialogSelect.listener = object : OnStatusClickListener {
             override fun onSureClick(data: HashMap<String, User>) {
                 //设置UI显示
-                if(data.size == 0){
+                if (data.size == 0) {
                     mViewModel.meetingPeopleStr.value = "请选择会议人员"
                     mViewModel.meetingMembersIds.value = ""
-                }else{
+                } else {
                     var str = ""
                     var count = 0
                     val maxCount = 2
@@ -247,6 +264,21 @@ class FragmentCreateMeeting : BaseFragment<VMFCreateMeeting, FragmentCreateMeeti
                         context?.getColor(it)?.let { btnCancelTv.setTextColor(it) }
                     }
                     imgs[2]?.unSelectedResId?.let { btnCancelImg.setImageResource(it) }
+                }
+            }
+            btnDesc -> {
+                if (focus) {
+                    btns[3]?.selectedResId?.let { btnDesc.setBackgroundResource(it) }
+                    tvs[3]?.selectedResId?.let {
+                        context?.getColor(it)?.let { btnDescTv.setTextColor(it) }
+                    }
+                    imgs[3]?.selectedResId?.let { btnDescImg.setImageResource(it) }
+                } else {
+                    btns[3]?.unSelectedResId?.let { btnDesc.setBackgroundResource(it) }
+                    tvs[3]?.unSelectedResId?.let {
+                        context?.getColor(it)?.let { btnDescTv.setTextColor(it) }
+                    }
+                    imgs[3]?.unSelectedResId?.let { btnDescImg.setImageResource(it) }
                 }
             }
         }

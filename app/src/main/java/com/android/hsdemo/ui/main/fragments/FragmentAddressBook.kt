@@ -1,5 +1,6 @@
 package com.android.hsdemo.ui.main.fragments
 
+import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.GridLayoutManager
@@ -12,7 +13,9 @@ import com.android.hsdemo.R
 import com.android.hsdemo.databinding.FragmentAddressBookBinding
 import com.android.hsdemo.model.ItemOfUser
 import com.android.hsdemo.ui.main.vm.VMFAddressBook
+import com.android.hsdemo.util.controlFocusStatusOfView
 import com.bumptech.glide.Glide
+import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_address_book.recyclerView
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -38,6 +41,12 @@ class FragmentAddressBook : BaseFragment<VMFAddressBook, FragmentAddressBookBind
                 .placeholder(R.mipmap.icon_default)
                 .error(R.mipmap.icon_default)
                 .into(userImg)
+
+            holder.itemView.nextFocusLeftId = requireActivity().findViewById<View>(R.id.btnAddressBook).id
+            holder.itemView.nextFocusRightId = requireActivity().findViewById<View>(R.id.btnAddressBook).id
+            holder.itemView.nextFocusDownId = requireActivity().findViewById<View>(R.id.btnAddressBook).id
+            holder.itemView.nextFocusUpId = requireActivity().findViewById<View>(R.id.btnAddressBook).id
+
         }, {
 
         }
@@ -54,7 +63,7 @@ class FragmentAddressBook : BaseFragment<VMFAddressBook, FragmentAddressBookBind
         )
         mViewModel.initRecycleView(
             recyclerView,
-            GridLayoutManager(context, 3, GridLayoutManager.VERTICAL, false),
+            GridLayoutManager(context, 2, GridLayoutManager.HORIZONTAL, false),
             itemOfUser
         )
     }
@@ -74,5 +83,8 @@ class FragmentAddressBook : BaseFragment<VMFAddressBook, FragmentAddressBookBind
         }
     }
 
+    fun focusThis() {
+        controlFocusStatusOfView(recyclerView, true)
+    }
 
 }

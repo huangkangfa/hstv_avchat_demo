@@ -5,7 +5,6 @@ import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.text.TextUtils
-import android.util.Log
 import android.view.KeyEvent
 import android.view.View
 import android.view.WindowManager
@@ -37,12 +36,12 @@ import com.bumptech.glide.Glide
 import com.elvishew.xlog.XLog
 import com.google.gson.Gson
 import com.tbruyelle.rxpermissions2.RxPermissions
-import com.tencent.imsdk.v2.*
+import com.tencent.imsdk.v2.V2TIMAdvancedMsgListener
+import com.tencent.imsdk.v2.V2TIMManager
+import com.tencent.imsdk.v2.V2TIMMessage
 import com.tencent.rtmp.ui.TXCloudVideoView
-import com.tencent.trtc.TRTCCloudDef
 import com.uber.autodispose.android.lifecycle.autoDispose
 import kotlinx.android.synthetic.main.activity_rtc.*
-import okio.ByteString.Companion.toByteString
 import java.util.*
 import kotlin.concurrent.fixedRateTimer
 
@@ -79,6 +78,7 @@ class ActivityRTC : BaseActivity<VMRTC, ActivityRtcBinding>(),
     val itemOfData = ListItem<ItemOfMemberInfo>(
         R.layout.item_adapter_video_view,
         { holder, item ->
+//            holder.setIsRecyclable(false)
 
             val vv = holder.getView<TXCloudVideoView>(R.id.mTXCloudVideoView)
             val tv = holder.getView<TextView>(R.id.mNickName)
@@ -143,13 +143,18 @@ class ActivityRTC : BaseActivity<VMRTC, ActivityRtcBinding>(),
              */
             if (item._type == 0) {
                 AVChatManager.getTRTCClient().stopLocalPreview()
-                XLog.i("【视频会议】尝试开启小窗口本地预览视频 ${item._data.account.toString()}")
-                AVChatManager.getTRTCClient().startLocalPreview(true, vv)
                 tv.text = "我自己"
+                if (item._data.videoOpen == true) {
+                    XLog.i("【视频会议】尝试开启小窗口本地预览视频 ${item._data.account.toString()}")
+                    AVChatManager.getTRTCClient().startLocalPreview(true, vv)
+                }
             } else {
-                XLog.i("【视频会议】尝试开启小窗口远端用户视频 ${item._data.account.toString()}")
-                AVChatManager.getTRTCClient().startRemoteView(item._data.account, vv)
                 tv.text = item._data.nickName
+                if (item._data.videoOpen == true) {
+                    AVChatManager.getTRTCClient().stopRemoteView(item._data.account)
+                    XLog.i("【视频会议】尝试开启小窗口远端用户视频 ${item._data.account.toString()}")
+                    AVChatManager.getTRTCClient().startRemoteView(item._data.account, vv)
+                }
             }
 
             /**
@@ -159,23 +164,24 @@ class ActivityRTC : BaseActivity<VMRTC, ActivityRtcBinding>(),
                 .observe(this, Observer<Boolean> {
                     XLog.i("【视频会议】${holder.itemView.tag} 中接收视频状态 $it")
                     if (it) {
+                        item._data.videoOpen = true
                         if (isMySelf) {
                             XLog.i("【视频会议】小窗口播放我自己的预览视频 ${mViewModel.mUserId.value}")
                             AVChatManager.getTRTCClient().startLocalPreview(true, vv)
                         } else {
+                            AVChatManager.getTRTCClient().stopRemoteView(item._data.account)
                             XLog.i("【视频会议】小窗口播放item的远程视频 ${item._data.account}")
                             AVChatManager.getTRTCClient().startRemoteView(item._data.account, vv)
                         }
+                    }else {
+                        if (isMySelf) {
+                            XLog.i("【视频会议】小窗口停止我自己的预览视频 ${mViewModel.mUserId.value}")
+                            AVChatManager.getTRTCClient().stopLocalPreview()
+                        } else {
+                            XLog.i("【视频会议】小窗口停止item的远程视频  ${item._data.account}")
+                            AVChatManager.getTRTCClient().stopRemoteView(item._data.account)
+                        }
                     }
-//                    else {
-//                        if (isMySelf) {
-//                            XLog.i("【视频会议】小窗口停止我自己的预览视频 ${mViewModel.mUserId.value}")
-//                            AVChatManager.getTRTCClient().stopLocalPreview()
-//                        } else {
-//                            XLog.i("【视频会议】小窗口停止item的远程视频  ${item._data.account}")
-//                            AVChatManager.getTRTCClient().stopRemoteView(item._data.account)
-//                        }
-//                    }
                 })
 
             holder.itemView.tag = item._data.account.toString()
@@ -246,11 +252,7 @@ class ActivityRTC : BaseActivity<VMRTC, ActivityRtcBinding>(),
             Int::class.java
         ).observe(this,
             Observer {
-                if (it > 0) {
-                    mViewModel.visibilityOfMuteAudio.value = View.VISIBLE
-                } else {
-                    mViewModel.visibilityOfMuteAudio.value = View.GONE
-                }
+                mViewModel.setVisibilityOfMuteAudio(it > 10)
             })
 
         V2TIMManager.getMessageManager()
@@ -281,13 +283,13 @@ class ActivityRTC : BaseActivity<VMRTC, ActivityRtcBinding>(),
                     // （主持人）全员静音
                     for (item in mViewModel.data) {
                         if (item._type == 1 || !isMaster) {
-                            item._data.hostMute = "1"
+                            item._data.hostMute = true
                             //更新小窗口
                             mViewModel.changeUI(item)
                         }
                     }
                     if (mViewModel.screenMember._type == 1 || !isMaster) {
-                        mViewModel.screenMember._data.hostMute = "1"
+                        mViewModel.screenMember._data.hostMute = true
                         //更新主屏
                         updateUI()
                     }
@@ -298,18 +300,18 @@ class ActivityRTC : BaseActivity<VMRTC, ActivityRtcBinding>(),
                     // （主持人）取消全员静音
                     for (item in mViewModel.data) {
                         if (item._type == 1 || !isMaster) {
-                            item._data.hostMute = "0"
+                            item._data.hostMute = false
                             //更新小窗口
                             mViewModel.changeUI(item)
                         }
                     }
                     if (mViewModel.screenMember._type == 1 || !isMaster) {
-                        mViewModel.screenMember._data.hostMute = "0"
+                        mViewModel.screenMember._data.hostMute = false
                         //更新主屏
                         updateUI()
                     }
                     //功能变更自己
-                    if (TextUtils.equals(mViewModel.myself._data.mute.toString(), "1")) {
+                    if (mViewModel.myself._data.mute == true) {
                         AVChatManager.getTRTCClient().stopLocalAudio()
                     } else {
                         AVChatManager.getTRTCClient().startLocalAudio()
@@ -319,7 +321,7 @@ class ActivityRTC : BaseActivity<VMRTC, ActivityRtcBinding>(),
                     // （主持人）设置他人静音
                     for (item in mViewModel.data) {
                         if (TextUtils.equals(item._data.account.toString(), cmd.a.toString())) {
-                            item._data.hostMute = "1"
+                            item._data.hostMute = true
                             mViewModel.changeUI(item)
                         }
                     }
@@ -328,7 +330,7 @@ class ActivityRTC : BaseActivity<VMRTC, ActivityRtcBinding>(),
                             cmd.a.toString()
                         )
                     ) {
-                        mViewModel.screenMember._data.hostMute = "1"
+                        mViewModel.screenMember._data.hostMute = true
                         //更新主屏
                         updateUI()
                     }
@@ -341,7 +343,7 @@ class ActivityRTC : BaseActivity<VMRTC, ActivityRtcBinding>(),
                     // （主持人）取消他人静音
                     for (item in mViewModel.data) {
                         if (TextUtils.equals(item._data.account.toString(), cmd.a.toString())) {
-                            item._data.hostMute = "0"
+                            item._data.hostMute = false
                             mViewModel.changeUI(item)
                         }
                     }
@@ -350,13 +352,13 @@ class ActivityRTC : BaseActivity<VMRTC, ActivityRtcBinding>(),
                             cmd.a.toString()
                         )
                     ) {
-                        mViewModel.screenMember._data.hostMute = "0"
+                        mViewModel.screenMember._data.hostMute = false
                         //更新主屏
                         updateUI()
                     }
                     //功能变更自己
                     if (isMe) {
-                        if (TextUtils.equals(mViewModel.myself._data.mute.toString(), "1")) {
+                        if (mViewModel.myself._data.mute == true) {
                             AVChatManager.getTRTCClient().stopLocalAudio()
                         } else {
                             AVChatManager.getTRTCClient().startLocalAudio()
@@ -368,7 +370,7 @@ class ActivityRTC : BaseActivity<VMRTC, ActivityRtcBinding>(),
                     if (!isMe) {
                         for (item in mViewModel.data) {
                             if (TextUtils.equals(item._data.account.toString(), cmd.a.toString())) {
-                                item._data.mute = "1"
+                                item._data.mute = true
                                 mViewModel.changeUI(item)
                             }
                         }
@@ -377,7 +379,7 @@ class ActivityRTC : BaseActivity<VMRTC, ActivityRtcBinding>(),
                                 cmd.a.toString()
                             )
                         ) {
-                            mViewModel.screenMember._data.mute = "1"
+                            mViewModel.screenMember._data.mute = false
                             //更新主屏
                             updateUI()
                         }
@@ -388,7 +390,7 @@ class ActivityRTC : BaseActivity<VMRTC, ActivityRtcBinding>(),
                     if (!isMe) {
                         for (item in mViewModel.data) {
                             if (TextUtils.equals(item._data.account.toString(), cmd.a.toString())) {
-                                item._data.mute = "0"
+                                item._data.mute = false
                                 mViewModel.changeUI(item)
                             }
                         }
@@ -397,7 +399,7 @@ class ActivityRTC : BaseActivity<VMRTC, ActivityRtcBinding>(),
                                 cmd.a.toString()
                             )
                         ) {
-                            mViewModel.screenMember._data.mute = "0"
+                            mViewModel.screenMember._data.mute = false
                             //更新主屏
                             updateUI()
                         }
@@ -528,10 +530,18 @@ class ActivityRTC : BaseActivity<VMRTC, ActivityRtcBinding>(),
         dialogPeopleList.initMyself(mViewModel.myself)
 
         //更新自己的声音变化
-        if (mViewModel.myself._data.hostMute == "1" || mViewModel.myself._data.mute == "1") {
-            mViewModel.visibilityOfMuteAudio.value = View.GONE
+        if (mViewModel.myself._data.hostMute == true || mViewModel.myself._data.mute == true) {
+            AVChatManager.getTRTCClient().stopLocalAudio()
         } else {
-            mViewModel.visibilityOfMuteAudio.value = View.VISIBLE
+            AVChatManager.getTRTCClient().startLocalAudio()
+        }
+        //更新自己的摄像头变化
+        if (mViewModel.myself._data.videoOpen == true) {
+            mViewModel.visibilityOfMuteVideoDefault.value = View.GONE
+            AVChatManager.getTRTCClient().startLocalPreview(true, mViewModel.mLocalPreviewView)
+        } else {
+            mViewModel.visibilityOfMuteVideoDefault.value = View.VISIBLE
+            AVChatManager.getTRTCClient().stopLocalPreview()
         }
         //更新主屏视图
         updateUI()
@@ -606,7 +616,7 @@ class ActivityRTC : BaseActivity<VMRTC, ActivityRtcBinding>(),
         btnMuteVideo.isSelected = mViewModel.myself._data.videoOpen != true
         //更新静音
         btnMuteAudio.isSelected =
-            mViewModel.myself._data.hostMute == "1" || mViewModel.myself._data.mute == "1"
+            mViewModel.myself._data.hostMute == true || mViewModel.myself._data.mute == true
     }
 
     override fun onClick(view: View) {

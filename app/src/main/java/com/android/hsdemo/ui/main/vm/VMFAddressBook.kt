@@ -1,6 +1,7 @@
 package com.android.hsdemo.ui.main.vm
 
 import android.app.Application
+import android.view.View
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LifecycleOwner
 import androidx.recyclerview.widget.RecyclerView
@@ -76,5 +77,14 @@ class VMFAddressBook(application: Application) : AndroidViewModel(application) {
         })
     }
 
-
 }
+
+
+
+
+
+
+
+
+
+

@@ -16,14 +16,18 @@ class MemberInfo {
     var avatar: String? = null //成员头像
 
     @SerializedName("mute")
-    var mute: String? = null //静音 0未静音；1：静音
+    var mute: Boolean? = null //静音 0未静音；1：静音
 
     @SerializedName("hostMute")
-    var hostMute: String? = null //被主持人静音 0未静音；1：静音
+    var hostMute: Boolean? = null //被主持人静音 0未静音；1：静音
 
     @SerializedName("state")
     var state: String? = null //状态1-未加入，1-在线，2-离开
 
     @SerializedName("videoOpen")
     var videoOpen: Boolean? = null //摄像头是否开启
+
+    override fun toString(): String {
+        return "MemberInfo(userName=$userName, nickName=$nickName, account=$account, avatar=$avatar, mute=$mute, hostMute=$hostMute, state=$state, videoOpen=$videoOpen)"
+    }
 }

@@ -85,6 +85,7 @@
                     android:focusable="true"
                     android:nextFocusLeft="@+id/btnSelectPeople"
                     android:nextFocusRight="@+id/btnSelectPeople"
+                    android:nextFocusDown="@+id/etMeetingPwd"
                     android:src="@mipmap/icon_select_people_0" />
 
             </LinearLayout>
@@ -148,7 +149,33 @@
                     <TextView
                         style="@style/DefaultShowTextStyle"
                         android:layout_width="wrap_content"
+                        android:layout_weight="1"
                         android:text="元" />
+                    
+                    <LinearLayout
+                        android:id="@+id/btnDesc"
+                        android:layout_width="95dp"
+                        android:layout_height="26dp"
+                        android:nextFocusUp="@+id/etMeetingPwd"
+                        android:background="@drawable/button_bg"
+                        android:focusable="true"
+                        android:gravity="center"
+                        android:orientation="horizontal">
+                        <ImageView
+                            android:id="@+id/btnDescImg"
+                            android:layout_width="16dp"
+                            android:layout_height="16dp"
+                            android:layout_marginEnd="5dp"
+                            android:src="@mipmap/icon_desc_1"/>
+                        <TextView
+                            android:id="@+id/btnDescTv"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textColor="#FFCA28"
+                            android:textSize="15sp"
+                            android:text="费用说明"/>
+                    </LinearLayout>
+
                 </LinearLayout>
 
 

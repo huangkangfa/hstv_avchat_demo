@@ -40,37 +40,52 @@ import kotlinx.coroutines.withContext
 
 class VMRTC(application: Application) : AndroidViewModel(application) {
 
+    /**
+     * 自己音量变化gif自动隐藏的倒计时
+     */
+    var autoAudioDismissTime = 0
+
+    /**
+     * 主屏摄像头关闭的默认背景是否显示
+     */
     var visibilityOfMuteVideoDefault: MutableLiveData<Int> = MutableLiveData(View.GONE)
+
+    /**
+     * 主屏自己的音量gif是否显示
+     */
     var visibilityOfMuteAudio: MutableLiveData<Int> = MutableLiveData(View.GONE)
 
-    private var mIsFrontCamera: MutableLiveData<Boolean> = MutableLiveData(true) // 默认摄像头前置
+    /**
+     * 默认摄像头前置
+     */
+    private var mIsFrontCamera: MutableLiveData<Boolean> = MutableLiveData(true)
 
     val mRoomName: MutableLiveData<String> = MutableLiveData("") // 房间名称
     val mRoomId: MutableLiveData<String> = MutableLiveData() // 房间Id
     val mUserId: MutableLiveData<String> = MutableLiveData() // 我的Id
-    val mTimeDownStr: MutableLiveData<String> = MutableLiveData("00:00:00") // 倒计时
-    var time: Long = 0L
+    val mTimeDownStr: MutableLiveData<String> = MutableLiveData("00:00:00") // 会议时间文本
+    var time: Long = 0L // 会议时间
 
     val mMeetingDetail: MutableLiveData<MeetingDetail> = MutableLiveData() // 会议详情
 
-    lateinit var mLocalPreviewView: TXCloudVideoView
+    lateinit var mLocalPreviewView: TXCloudVideoView //主屏视图控件
 
     var ids: ArrayList<String> = ArrayList() // 视频用户id数据
     var data: ArrayList<ItemOfMemberInfo> = ArrayList() // 视频用户详情数据
 
-    private lateinit var adapter: AbstractAdapter<ItemOfMemberInfo>
+    private lateinit var adapter: AbstractAdapter<ItemOfMemberInfo> //小窗口列表适配器
 
     var isScreen: Boolean = false //是否是全屏状态
 
-    var myself: ItemOfMemberInfo
-    var screenMember: ItemOfMemberInfo
+    var myself: ItemOfMemberInfo //我自己的数据
+    var screenMember: ItemOfMemberInfo //主屏的数据
 
     init {
         val self = MemberInfo()
         self.account = Preferences.getString(KEY_ACCID)
         self.avatar = Preferences.getString(KEY_AVATAR)
-        self.hostMute = "0"
-        self.mute = "0"
+        self.hostMute = false
+        self.mute = false
         self.nickName = Preferences.getString(KEY_USER_NICK_NAME)
         self.userName = Preferences.getString(KEY_USER_NAME)
         self.videoOpen = true
@@ -92,24 +107,47 @@ class VMRTC(application: Application) : AndroidViewModel(application) {
             data.add(position, lastScreenMember)
             screenMember = currentScreenMember
 
+            XLog.i("【视频会议】currentScreenMember = ${currentScreenMember.toString()}")
+            XLog.i("【视频会议】lastScreenMember = ${lastScreenMember.toString()}")
+
             //主屏视频流必须先关闭再开启，不然画面会叠加
             if (lastScreenMember._type == 0 || screenMember._type == 0) {
                 XLog.i("【视频会议】停止自己的预览视频")
                 getTRTCClient().stopLocalPreview()
             }
             //主屏视频更新
+            XLog.i("【视频会议】主屏用户摄像头的开关状态：${screenMember._data.videoOpen}")
             if (screenMember._type == 0) {
-                XLog.i("【视频会议】主屏播放我自己的预览视频 ${screenMember._data.account}")
-                getTRTCClient().startLocalPreview(true, mLocalPreviewView)
-            } else {
-                GlobalScope.launch(IO) {
-                    if (lastScreenMember._type == 1) {
-                        //解决窗口黑屏问题
-                        getTRTCClient().stopRemoteView(screenMember._data.account)
-                        delay(50)
+                if (screenMember._data.videoOpen == true) {
+                    GlobalScope.launch(IO) {
+                        delay(800)
+                        withContext(Main){
+                            XLog.i("【视频会议】主屏播放我自己的预览视频 ${screenMember._data.account}")
+                            visibilityOfMuteVideoDefault.value = View.GONE
+                            getTRTCClient().startLocalPreview(true, mLocalPreviewView)
+                        }
                     }
-                    XLog.i("【视频会议】主屏播放远程用户的预览视频 ${screenMember._data.account}")
-                    getTRTCClient().startRemoteView(screenMember._data.account, mLocalPreviewView)
+                } else {
+                    XLog.i("【视频会议】主屏关闭我自己的预览视频 ${screenMember._data.account}")
+                    visibilityOfMuteVideoDefault.value = View.VISIBLE
+                }
+            } else {
+                if (screenMember._data.videoOpen == true) {
+                    getTRTCClient().stopRemoteView(screenMember._data.account)
+                    GlobalScope.launch(IO) {
+                        delay(800)
+                        withContext(Main){
+                            XLog.i("【视频会议】主屏播放远程用户的预览视频 ${screenMember._data.account}")
+                            getTRTCClient().startRemoteView(
+                                screenMember._data.account,
+                                mLocalPreviewView
+                            )
+                            visibilityOfMuteVideoDefault.value = View.GONE
+                        }
+                    }
+                } else {
+                    XLog.i("【视频会议】主屏关闭远程用户的预览视频 ${screenMember._data.account}")
+                    visibilityOfMuteVideoDefault.value = View.VISIBLE
                 }
             }
             //小窗口视频更新
@@ -162,6 +200,20 @@ class VMRTC(application: Application) : AndroidViewModel(application) {
             .subscribe(
                 { result: MeetingDetail ->
                     mMeetingDetail.value = result
+                    if (result.memberInfos != null && result.memberInfos!!.size > 0) {
+                        for (item in result.memberInfos!!) {
+                            if (TextUtils.equals(item.account, myself._data.account)) {
+                                myself._data.avatar = item.avatar
+                                myself._data.hostMute = item.hostMute
+                                myself._data.mute = item.mute
+                                myself._data.nickName = item.nickName
+                                myself._data.userName = item.userName
+                                myself._data.videoOpen = item.videoOpen
+                                myself._data.state = item.state
+                            }
+                        }
+                    }
+
                     callback.success(result)
                 }
             ) { throwable: Throwable? -> callback.failed(throwable?.message.toString()) }
@@ -235,7 +287,7 @@ class VMRTC(application: Application) : AndroidViewModel(application) {
             )
         ) {
             //观众身份
-            if (TextUtils.equals(myself._data.hostMute, "1")) {
+            if (myself._data.hostMute == true) {
                 showShortToast("主持人已经强制静音，不可操作")
                 return
             }
@@ -253,7 +305,6 @@ class VMRTC(application: Application) : AndroidViewModel(application) {
                 "${MEETING_USER_VOICE_VOLUME}_${mUserId.value.toString()}",
                 Int::class.java
             ).postValue(0)
-            visibilityOfMuteAudio.value = View.GONE
         } else {
             getTRTCClient().startLocalAudio()
             //上报自己取消静音
@@ -292,6 +343,24 @@ class VMRTC(application: Application) : AndroidViewModel(application) {
             mLocalPreviewView,
             object : TRTCCloudListener() {
 
+                override fun onConnectionLost() {
+                    //SDK 跟服务器的连接断开。
+                    super.onConnectionLost()
+                    XLog.i("【视频会议】跟服务器的连接断开")
+                }
+
+                override fun onTryToReconnect() {
+                    //SDK 尝试重新连接到服务器。
+                    super.onTryToReconnect()
+                    XLog.i("【视频会议】尝试重新连接到服务器")
+                }
+
+                override fun onConnectionRecovery() {
+                    //SDK 跟服务器的连接恢复。
+                    super.onConnectionRecovery()
+                    XLog.i("【视频会议】跟服务器的连接恢复")
+                }
+
                 override fun onUserVoiceVolume(
                     userVolumes: ArrayList<TRTCCloudDef.TRTCVolumeInfo>?,
                     totalVolume: Int
@@ -310,8 +379,8 @@ class VMRTC(application: Application) : AndroidViewModel(application) {
 
                 override fun onRemoteUserEnterRoom(userId: String) {
                     super.onRemoteUserEnterRoom(userId)
-                    XLog.i("【视频会议】加入成员 $userId")
-                    addUserById(userId)
+//                    XLog.i("【视频会议】加入成员 $userId")
+//                    addUserById(userId)
                 }
 
                 //
@@ -323,8 +392,17 @@ class VMRTC(application: Application) : AndroidViewModel(application) {
 
                 override fun onUserVideoAvailable(userId: String, available: Boolean) {
                     super.onUserVideoAvailable(userId, available)
-                    XLog.i("【视频会议】成员$userId 视频流状态 $available")
-                    EventBus.with("${EventKey.VIDEO_CONTROL}_${userId}").postValue(available)
+                    if (available) {
+                        XLog.i("【视频会议】加入成员 $userId")
+                        addUserById(userId)
+                    }
+                    GlobalScope.launch(IO) {
+                        delay(100)
+                        XLog.i("【视频会议】成员$userId 视频流状态 $available")
+                        if (ids.indexOf(userId) != -1)
+                            EventBus.with("${EventKey.VIDEO_CONTROL}_${userId}")
+                                .postValue(available)
+                    }
                 }
 
                 override fun onError(errCode: Int, errMsg: String, extraInfo: Bundle) {
@@ -360,11 +438,6 @@ class VMRTC(application: Application) : AndroidViewModel(application) {
                             adapter.notifyItemChanged(data.size - 1)
                             EventBus.with(EventKey.MEETING_USER_CHANGE, String::class.java)
                                 .postValue("1")
-                            //顺时针旋转270调整  因为机顶盒上小视频窗口偏转了这些角度
-//                            getTRTCClient().setRemoteViewRotation(
-//                                mMemberInfo.account,
-//                                TRTCCloudDef.TRTC_VIDEO_ROTATION_270
-//                            )
                         }
                     }
                 ) { throwable: Throwable? ->
@@ -398,9 +471,9 @@ class VMRTC(application: Application) : AndroidViewModel(application) {
                 screenMember = myself
                 data.removeAt(index)
                 ids.remove(userId)
-                adapter.notifyItemRangeRemoved(index, 1)
-                EventBus.with("${EventKey.VIDEO_CONTROL}_${userId}")
-                    .postValue(myself._data.videoOpen)
+                adapter.notifyItemRangeChanged(index,1)
+                EventBus.with("${EventKey.VIDEO_CONTROL}_${userId}").postValue(myself._data.videoOpen)
+                EventBus.with(EventKey.MEETING_USER_CHANGE, String::class.java).postValue("0")
             }
         }
     }
@@ -425,6 +498,32 @@ class VMRTC(application: Application) : AndroidViewModel(application) {
             if (index != -1) {
                 adapter.notifyItemRangeChanged(index, 1)
             }
+        }
+    }
+
+    /**
+     * 设置播放语音大小的显隐
+     */
+    fun setVisibilityOfMuteAudio(isVisibility: Boolean) {
+        if (isVisibility) {
+            visibilityOfMuteAudio.value = View.VISIBLE
+            if (autoAudioDismissTime == 0) {
+                autoAudioDismissTime = 2
+                GlobalScope.launch(IO) {
+                    while (autoAudioDismissTime > 0) {
+                        delay(1000)
+                        autoAudioDismissTime--
+                    }
+                    withContext(Main) {
+                        setVisibilityOfMuteAudio(false)
+                    }
+                }
+            } else {
+                autoAudioDismissTime = 2
+            }
+        } else {
+            visibilityOfMuteAudio.value = View.GONE
+            autoAudioDismissTime = 0
         }
     }
 

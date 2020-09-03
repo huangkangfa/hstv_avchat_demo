@@ -1,6 +1,8 @@
 package com.android.hsdemo.ui.main.fragments
 
+import android.text.TextUtils
 import android.view.View
+import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.RelativeLayout
 import android.widget.TextView
@@ -71,10 +73,20 @@ class FragmentJoinMeetingPart1 :
         { holder, item ->
             val listItem = holder.getView<ClipLinearLayout>(R.id.listItem)
             val btnP = holder.getView<RelativeLayout>(R.id.btnP)
+            val flagC = holder.getView<FrameLayout>(R.id.flagC)
             val tvTitle = holder.getView<TextView>(R.id.tvTitle)
             val tvContent = holder.getView<TextView>(R.id.tvContent)
             tvTitle.text = item._data?.title ?: "未知"
             tvContent.text = "会议号：${item._data?.meetingNo ?: "未知"}"
+            if (TextUtils.equals(
+                    item._data?.creater.toString(),
+                    Preferences.getString(KEY_ACCID)
+                )
+            ) {
+                flagC.visibility = View.VISIBLE
+            } else {
+                flagC.visibility = View.GONE
+            }
             listItem.setOnFocusChangeListener { _, focus ->
                 if (focus) {
                     btnP.setBackgroundResource(R.drawable.border_1)

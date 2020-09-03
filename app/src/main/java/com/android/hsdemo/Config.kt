@@ -19,3 +19,7 @@ val BTN_TEXT_COLORS = arrayOf(
     R.color.black,
     R.color.white
 )
+val BTN_TEXT_COLORS2 = arrayOf(
+    R.color.yellow,
+    R.color.black_2f1609
+)

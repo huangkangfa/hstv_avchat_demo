@@ -2,7 +2,6 @@ package com.android.hsdemo.custom.dialog
 
 import android.app.Activity
 import android.os.Build
-import android.text.TextUtils
 import android.view.Gravity
 import android.view.View
 import android.widget.ImageView
@@ -66,7 +65,7 @@ class DialogPeopleList(mActivity: Activity) : BaseDialog(mActivity), View.OnFocu
                 userDel.visibility = View.GONE
             }
 
-            if (TextUtils.equals(item._data.hostMute, "1")) {
+            if (item._data.hostMute == true) {
                 Glide.with(context).load(R.mipmap.icon_people_mute_audio).into(userMute)
             } else {
                 Glide.with(context).load(R.mipmap.icon_people_mute_audio_cancle).into(userMute)
@@ -74,7 +73,7 @@ class DialogPeopleList(mActivity: Activity) : BaseDialog(mActivity), View.OnFocu
 
             userMute.setOnClickListener {
                 //静音与否操作
-                if (TextUtils.equals(item._data.hostMute, "1")) {
+                if (item._data.hostMute == true) {
                     dialogWait.show()
                     //取消静音
                     RemoteRepositoryImpl.opReport(
@@ -85,7 +84,7 @@ class DialogPeopleList(mActivity: Activity) : BaseDialog(mActivity), View.OnFocu
                     ).subscribe(
                         {
                             dialogWait.dismiss()
-                            item._data.hostMute = "0"
+                            item._data.hostMute = false
                             Glide.with(context).load(R.mipmap.icon_people_mute_audio_cancle)
                                 .into(userMute)
                         }
@@ -94,7 +93,7 @@ class DialogPeopleList(mActivity: Activity) : BaseDialog(mActivity), View.OnFocu
                         showShortToast("操作失败:${throwable?.message.toString()}")
                     }
                 }
-                if (item._data.hostMute == null || TextUtils.equals(item._data.hostMute, "0")) {
+                if (item._data.hostMute == null || item._data.hostMute == false) {
                     dialogWait.show()
                     //静音
                     RemoteRepositoryImpl.opReport(
@@ -105,7 +104,7 @@ class DialogPeopleList(mActivity: Activity) : BaseDialog(mActivity), View.OnFocu
                     ).subscribe(
                         {
                             dialogWait.dismiss()
-                            item._data.hostMute = "1"
+                            item._data.hostMute = true
                             Glide.with(context).load(R.mipmap.icon_people_mute_audio)
                                 .into(userMute)
                         }
@@ -217,7 +216,7 @@ class DialogPeopleList(mActivity: Activity) : BaseDialog(mActivity), View.OnFocu
                     btnMuteAllTv.text = "取消全员静音"
                     view.isSelected = !view.isSelected
                     for (item in data) {
-                        item._data.hostMute = "1"
+                        item._data.hostMute = true
                     }
                     adapter?.notifyDataSetChanged()
                 }
@@ -239,7 +238,7 @@ class DialogPeopleList(mActivity: Activity) : BaseDialog(mActivity), View.OnFocu
                     btnMuteAllTv.text = "全员静音"
                     view.isSelected = !view.isSelected
                     for (item in data) {
-                        item._data.hostMute = "0"
+                        item._data.hostMute = false
                     }
                     adapter?.notifyDataSetChanged()
                 }

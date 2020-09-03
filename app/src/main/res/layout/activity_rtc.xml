@@ -122,6 +122,7 @@
                     android:id="@+id/btnMuteAudio"
                     android:layout_width="60dp"
                     android:layout_height="60dp"
+                    android:nextFocusLeft="@+id/btnExit"
                     android:layout_gravity="center_horizontal"
                     android:layout_marginEnd="72dp"
                     android:background="@drawable/selector_slice"
@@ -160,6 +161,7 @@
                     android:id="@+id/btnExit"
                     android:layout_width="60dp"
                     android:layout_height="60dp"
+                    android:nextFocusRight="@+id/btnMuteAudio"
                     android:layout_gravity="center_horizontal"
                     android:background="@drawable/selector_exit"
                     android:focusable="true" />
