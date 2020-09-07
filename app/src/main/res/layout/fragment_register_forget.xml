@@ -90,6 +90,7 @@
                         style="@style/DefaultEditTextStyle"
                         android:layout_height="35dp"
                         android:inputType="numberPassword"
+                        android:maxLength="6"
                         android:hint="@string/input_password"
                         android:nextFocusDown="@+id/etUserRepeatPassword"
                         android:text="@={vm.userPassword2}" />
@@ -115,6 +116,7 @@
                         style="@style/DefaultEditTextStyle"
                         android:layout_height="35dp"
                         android:inputType="numberPassword"
+                        android:maxLength="6"
                         android:hint="@string/input_password"
                         android:nextFocusDown="@+id/btnOK"
                         android:text="@={vm.repeatPassword}" />

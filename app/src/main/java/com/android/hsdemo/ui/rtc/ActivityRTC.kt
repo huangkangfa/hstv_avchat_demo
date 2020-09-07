@@ -78,7 +78,6 @@ class ActivityRTC : BaseActivity<VMRTC, ActivityRtcBinding>(),
     val itemOfData = ListItem<ItemOfMemberInfo>(
         R.layout.item_adapter_video_view,
         { holder, item ->
-//            holder.setIsRecyclable(false)
 
             val vv = holder.getView<TXCloudVideoView>(R.id.mTXCloudVideoView)
             val tv = holder.getView<TextView>(R.id.mNickName)

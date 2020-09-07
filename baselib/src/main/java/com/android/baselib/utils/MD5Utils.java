@@ -36,7 +36,6 @@ public class MD5Utils {
                 //换2次为32位的16进制
                 sb.append(Character.forDigit(b & 0xf, 16));
             }
-            System.out.println("加密后的结果是:" + sb.toString());
         } catch (NoSuchAlgorithmException e) {
         }
         return sb.toString();

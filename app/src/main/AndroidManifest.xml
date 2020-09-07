@@ -56,6 +56,9 @@
         <activity
             android:name=".ui.rtc.ActivityRTC"
             android:screenOrientation="landscape" />
+        <activity
+            android:name=".ui.custom_rtc.ActivityRTC2"
+            android:screenOrientation="landscape" />
     </application>
 
 </manifest>

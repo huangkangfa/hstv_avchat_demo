@@ -96,7 +96,7 @@ object AVChatManager {
         mUserSig: String,
         mRoomId: Int,
         isFrontCamera: Boolean,
-        localPreviewView: TXCloudVideoView,
+        localPreviewView: TXCloudVideoView?,
         mTRTCCloudListener: TRTCCloudListener
     ) {
         mRTCImpl.enterRoom(

@@ -13,6 +13,7 @@ import com.android.hsdemo.databinding.FragmentJoinMeetingBinding
 import com.android.hsdemo.model.MeetingDetail
 import com.android.hsdemo.model.StatusView
 import com.android.hsdemo.network.HttpCallback
+import com.android.hsdemo.ui.custom_rtc.ActivityRTC2
 import com.android.hsdemo.ui.main.ActivityMain
 import com.android.hsdemo.ui.main.vm.VMFJoinMeeting
 import com.android.hsdemo.ui.rtc.ActivityRTC

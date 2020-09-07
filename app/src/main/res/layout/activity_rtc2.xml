@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <data>
+
+        <variable
+            name="vm"
+            type="com.android.hsdemo.ui.custom_rtc.VMRTC2" />
+    </data>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/rtc_main_bg"
+        android:clipChildren="false">
+
+
+        <TextureView
+            android:id="@+id/vTRTCMain"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+        <LinearLayout
+            android:id="@+id/ll_trtc_mute_video_default"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:background="#9EA1A4"
+            android:visibility="@{vm.visibilityOfMuteVideoDefault}">
+
+            <ImageView
+                android:layout_width="180dp"
+                android:layout_height="180dp"
+                android:src="@mipmap/rtc_user_portrait" />
+
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:id="@+id/screenTop"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_gradient_title"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:paddingTop="20dp"
+            android:paddingBottom="20dp">
+
+            <TextView
+                android:id="@+id/roomTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@={vm.mRoomName}"
+                android:textColor="@android:color/white"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/roomDesc"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="6dp"
+                    android:text="@={vm.mRoomId}"
+                    android:textColor="@android:color/white"
+                    android:textSize="15sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="6dp"
+                    android:text=" | "
+                    android:textColor="@android:color/white"
+                    android:textSize="15sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/roomTime"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="6dp"
+                    android:text="@={vm.mTimeDownStr}"
+                    android:textColor="@android:color/white"
+                    android:textSize="15sp"
+                    android:textStyle="bold" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/screenRight"
+            android:layout_width="wrap_content"
+            android:layout_height="400dp"
+            android:layout_alignParentEnd="true"
+            android:layout_marginTop="30dp"
+            android:layout_marginEnd="39dp"
+            android:layout_marginBottom="30dp" />
+
+        <FrameLayout
+            android:id="@+id/screenBottom"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="25dp"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:background="@drawable/bg_gradient_bottom">
+            <com.android.hsdemo.custom.ClipLinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="35dp"
+                android:clipChildren="false"
+                android:gravity="center"
+                android:orientation="horizontal">
+
+                <View
+                    android:id="@+id/btnMuteAudio"
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:nextFocusLeft="@+id/btnExit"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginEnd="72dp"
+                    android:background="@drawable/selector_slice"
+                    android:focusable="true"
+                    android:onClick="@{vm.onMuteAudioClick}" />
+
+                <View
+                    android:id="@+id/btnMuteVideo"
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginEnd="72dp"
+                    android:background="@drawable/selector_camera"
+                    android:focusable="true"
+                    android:onClick="@{vm.onMuteVideoClick}" />
+
+                <View
+                    android:id="@+id/btnScreen"
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginEnd="72dp"
+                    android:background="@drawable/selector_screen"
+                    android:focusable="true" />
+
+                <View
+                    android:id="@+id/btnControl"
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginEnd="72dp"
+                    android:background="@drawable/selector_control"
+                    android:focusable="true" />
+
+                <View
+                    android:id="@+id/btnExit"
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:nextFocusRight="@+id/btnMuteAudio"
+                    android:layout_gravity="center_horizontal"
+                    android:background="@drawable/selector_exit"
+                    android:focusable="true" />
+
+            </com.android.hsdemo.custom.ClipLinearLayout>
+        </FrameLayout>
+
+        <RelativeLayout
+            android:id="@+id/llVoice"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="100dp"
+            android:gravity="center_horizontal"
+            android:orientation="vertical"
+            android:visibility="@{vm.visibilityOfMuteAudio}">
+
+            <ImageView
+                android:id="@+id/gifVoice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <ImageView
+                android:layout_width="10dp"
+                android:layout_height="10dp"
+                android:layout_alignBottom="@+id/gifVoice"
+                android:layout_centerHorizontal="true"
+                android:layout_marginBottom="8dp"
+                android:src="@mipmap/icon_voice_promit" />
+        </RelativeLayout>
+
+    </RelativeLayout>
+</layout>

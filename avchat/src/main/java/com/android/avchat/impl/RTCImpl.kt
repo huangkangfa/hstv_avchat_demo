@@ -32,7 +32,7 @@ class RTCImpl : IRTCInterface {
         mUserSig: String,
         mRoomId: Int,
         isFrontCamera: Boolean,
-        localPreviewView: TXCloudVideoView,
+        localPreviewView: TXCloudVideoView?,
         mTRTCCloudListener: TRTCCloudListener
     ) {
         mTRTCCloud = TRTCCloud.sharedInstance(context)
@@ -75,14 +75,15 @@ class RTCImpl : IRTCInterface {
      */
     override fun startLocalVedioAndAudio(
         isFront: Boolean,
-        localPreviewView: TXCloudVideoView
+        localPreviewView: TXCloudVideoView?
     ) {
         // 开启音量回调
         mTRTCCloud.enableAudioVolumeEvaluation(300)
         // 开启本地声音采集并上行
         mTRTCCloud.startLocalAudio()
-        // 开启本地画面采集并上行
-        mTRTCCloud.startLocalPreview(isFront, localPreviewView)
+        // 开启本地画面采集并上行,为null的情况是自定义渲染的时候
+        if (localPreviewView != null)
+            mTRTCCloud.startLocalPreview(isFront, localPreviewView)
     }
 
     /**
