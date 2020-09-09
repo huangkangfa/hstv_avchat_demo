@@ -254,6 +254,13 @@ class ActivityRTC : BaseActivity<VMRTC, ActivityRtcBinding>(),
                 mViewModel.setVisibilityOfMuteAudio(it > 10)
             })
 
+        /**
+         * 收到退出登录消息  关闭当前
+         */
+        EventBus.with(EventKey.LOGOUT,String::class.java).observe(this, Observer {
+            finish()
+        })
+
         V2TIMManager.getMessageManager()
             .addAdvancedMsgListener(object : V2TIMAdvancedMsgListener() {
                 override fun onRecvNewMessage(msg: V2TIMMessage?) {

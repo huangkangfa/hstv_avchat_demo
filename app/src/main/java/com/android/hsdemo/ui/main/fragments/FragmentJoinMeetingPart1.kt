@@ -18,11 +18,9 @@ import com.android.hsdemo.custom.ClipLinearLayout
 import com.android.hsdemo.databinding.FragmentJoinMeetingBinding
 import com.android.hsdemo.model.ItemOfMeeting
 import com.android.hsdemo.network.HttpCallback
-import com.android.hsdemo.ui.custom_rtc.ActivityRTC2
 import com.android.hsdemo.ui.main.vm.VMFJoinMeeting
 import com.android.hsdemo.ui.rtc.ActivityRTC
 import com.android.hsdemo.util.controlFocusStatusOfView
-import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_join_meeting_part1.*
 
 class FragmentJoinMeetingPart1 :

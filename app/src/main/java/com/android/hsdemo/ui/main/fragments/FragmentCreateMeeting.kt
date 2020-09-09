@@ -18,16 +18,13 @@ import com.android.hsdemo.custom.dialog.DialogSelectPeople
 import com.android.hsdemo.custom.dialog.DialogSelectPeople.OnStatusClickListener
 import com.android.hsdemo.databinding.FragmentCreateMeetingBinding
 import com.android.hsdemo.model.Meeting
-import com.android.hsdemo.model.MeetingDetail
 import com.android.hsdemo.model.StatusView
 import com.android.hsdemo.model.User
 import com.android.hsdemo.network.HttpCallback
-import com.android.hsdemo.ui.custom_rtc.ActivityRTC2
 import com.android.hsdemo.ui.main.ActivityMain
 import com.android.hsdemo.ui.main.vm.VMFCreateMeeting
 import com.android.hsdemo.ui.rtc.ActivityRTC
 import com.android.hsdemo.util.controlFocusStatusOfView
-import com.elvishew.xlog.XLog
 import kotlinx.android.synthetic.main.fragment_create_meeting.*
 
 class FragmentCreateMeeting : BaseFragment<VMFCreateMeeting, FragmentCreateMeetingBinding>(),

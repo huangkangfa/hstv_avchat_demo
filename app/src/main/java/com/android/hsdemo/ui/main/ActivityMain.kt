@@ -9,6 +9,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
+import com.android.baselib.ActivityManager
 import com.android.baselib.base.BaseFragmentActivity
 import com.android.hsdemo.BTN_MAIN_BACKGROUNDS
 import com.android.hsdemo.BTN_TEXT_COLORS
@@ -116,6 +117,7 @@ class ActivityMain : BaseFragmentActivity(), View.OnFocusChangeListener {
         dialogHint = DialogHint(this@ActivityMain)
         dialogHint.setContent("确定要退出应用吗？")
         dialogHint.setOnSureClickListener(View.OnClickListener {
+            ActivityManager.finishAll()
             exitProcess(0)
         })
     }

@@ -1,6 +1,8 @@
 package com.android.hsdemo
 
 import com.android.avchat.AVchatApplication
+import com.android.baselib.custom.eventbus.EventBus
+import com.android.baselib.utils.showShortToast
 import com.android.hsdemo.network.http.NetConfig
 import com.elvishew.xlog.XLog
 import com.tencent.imsdk.v2.V2TIMSDKConfig
@@ -44,12 +46,16 @@ class HSApplication : AVchatApplication() {
             super.onKickedOffline()
             // 当前用户被踢下线
             XLog.i("【IM】当前用户被踢下线")
+            showShortToast("您已经在其他地方登陆，请重新登录")
+            EventBus.with(EventKey.LOGOUT, String::class.java).postValue("")
         }
 
         override fun onUserSigExpired() {
             super.onUserSigExpired()
             // 登录票据已经过期
             XLog.i("【IM】登录票据已经过期")
+            showShortToast("登录票据已经过期，请重新登录")
+            EventBus.with(EventKey.LOGOUT, String::class.java).postValue("")
         }
 
         override fun onSelfInfoUpdated(info: V2TIMUserFullInfo?) {

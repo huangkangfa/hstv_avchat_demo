@@ -5,6 +5,7 @@ import android.content.Intent
 import android.view.KeyEvent
 import android.view.View
 import androidx.fragment.app.Fragment
+import com.android.baselib.ActivityManager
 import com.android.baselib.base.BaseFragmentActivity
 import com.android.baselib.utils.Preferences
 import com.android.baselib.utils.showShortToast
@@ -53,6 +54,7 @@ class ActivityLogin : BaseFragmentActivity() {
         dialogHint = DialogHint(this@ActivityLogin)
         dialogHint.setContent("确定要退出应用吗？")
         dialogHint.setOnSureClickListener(View.OnClickListener {
+            ActivityManager.finishAll()
             exitProcess(0)
         })
     }

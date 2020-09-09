@@ -23,6 +23,12 @@ import com.bumptech.glide.Glide
 import com.elvishew.xlog.XLog
 import kotlinx.android.synthetic.main.fragment_join_meeting_part2.*
 import kotlinx.android.synthetic.main.fragment_persion_center.*
+import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.Dispatchers.Main
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class FragmentPersionCenter : BaseFragment<VMFPersionCenter, FragmentPersionCenterBinding>(),
     View.OnFocusChangeListener {
@@ -45,7 +51,6 @@ class FragmentPersionCenter : BaseFragment<VMFPersionCenter, FragmentPersionCent
         EventBus.with(LOGOUT,String::class.java).observe(this, Observer {
             clearUser()
             ActivityLogin.start(requireActivity())
-            requireActivity().finish()
         })
     }
 

@@ -47,8 +47,8 @@ class RTCImpl : IRTCInterface {
         setBeautyParam(BEAUTY_STYLE_NATURE, 5, 1)
         setVideoEncoderParam(
             TRTCCloudDef.TRTC_VIDEO_RESOLUTION_640_360,
-            15,
-            550,
+            15, //fps
+            600, //视频码率
             TRTCCloudDef.TRTC_VIDEO_RESOLUTION_MODE_LANDSCAPE
         )
         //顺时针旋转90调整  因为机顶盒上偏转了90°
@@ -127,6 +127,7 @@ class RTCImpl : IRTCInterface {
         encParam.videoFps = fps
         encParam.videoBitrate = bitrate
         encParam.videoResolutionMode = resolutionMode
+        encParam.enableAdjustRes = true // 是否允许调整分辨率.视频通话模式，若更关注流畅性，建议选择 true，此时若遇到带宽有限的弱网，SDK 会自动降低分辨率以保障更好的流畅度（仅针对 TRTCVideoStreamTypeBig 生效）。
         mTRTCCloud.setVideoEncoderParam(encParam)
     }
 
